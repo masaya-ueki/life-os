@@ -16,12 +16,28 @@
 
 現在は構築の初期段階。各領域はこれから対話的に設計・実装していく。
 
-## ディレクトリ構成
+## アーキテクチャ
 
-現状は開発の「運用・ドキュメント基盤（メタ構造）」を整備した段階。各領域の機能ディレクトリは要件が固まり次第、順次追加する。
+性質の異なる複数領域を 1 リポジトリで共存させるため、**Modular Monolith × Bounded Context**（Python / uv workspace）を採用する。各領域は独立した Bounded Context で、領域間連携は各領域の `public.py`（契約）経由のみ。境界は `.importlinter` で機械的に強制する。
+
+> **設計根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](./docs/adr/0002-modular-monolith-bounded-context.md)
+
+領域は性質に応じて 2 アーキタイプを使い分ける。
+
+- **アーキタイプA（動く領域）**: `task` / `content-sales` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
+- **アーキタイプB（データ領域）**: `media` / `travel` — 薄い構成（`models` / `index`）+ `data/`
+
+## ディレクトリ構成
 
 ```
 .
+├── pyproject.toml            # uv workspace ルート（各領域をメンバー化）
+├── .importlinter             # 領域境界の強制（lint-imports で検査）
+├── shared/                   # Shared Kernel（領域非依存の最小限の基盤のみ）
+├── task/                     # 領域: タスク管理（アーキタイプA）
+├── content-sales/            # 領域: 販売管理（アーキタイプA）
+├── media/                    # 領域: 画像・動画管理（アーキタイプB）
+├── travel/                   # 領域: 旅行の行先管理（アーキタイプB）
 ├── .github/
 │   ├── ISSUE_TEMPLATE/        # Issue テンプレート（ProductBacklog / Task / 調査）
 │   ├── skills/create-issue/   # Issue を対話形式で作成するスキル
@@ -34,7 +50,17 @@
 └── README.md
 ```
 
-今後、各領域（タスク管理・旅行・メディア・販売）の要件を整理しながら、`task/`・`travel/`・`media/`・`content-sales/` などの機能ディレクトリを順次追加していく。新しい領域を追加する際は、対応する `system: *` ラベル（scope）も併せて整備する。
+各領域はスケルトン段階で、要件が固まり次第 `public.py` と内部を肉付けしていく。新しい領域を追加する際は、トップレベルディレクトリ・uv workspace の `members`・`.importlinter` のコントラクト・対応する `system: *` ラベルを併せて整備する（手順は ADR-0002 参照）。
+
+## 開発セットアップ
+
+[uv](https://docs.astral.sh/uv/) を使用する。
+
+```bash
+uv sync                 # 依存をインストール（dev グループに import-linter / pytest）
+uv run lint-imports     # 領域境界（.importlinter）を検査
+uv run pytest           # 各領域のスモークテストを実行
+```
 
 ## Git 戦略
 

@@ -271,18 +271,21 @@ Issue の本質的な性質を表す。
 
 > ブランチ・コミット・ラベルですべて同じ識別子を使う。
 
-### system ラベル（4 件・コミット scope と一致）
+### system ラベル（6 件・コミット scope と一致）
 
-対象領域（システム）を分類する。0〜複数件付与可。
+対象領域（システム = Bounded Context）を分類する。0〜複数件付与可。
+各領域の構成方針は [ADR-0002](../../docs/adr/0002-modular-monolith-bounded-context.md) を参照。
 
 | ラベル | 用途 |
 |--------|------|
 | `system: task` | タスク管理 |
+| `system: travel` | 旅行の行先管理 |
+| `system: media` | 画像・動画管理 |
 | `system: common` | 横断的・共通基盤 |
 | `system: content-sales` | 自作ツール等の販売管理 |
 | `system: deps` | 依存パッケージ |
 
-> 今後 life-os の領域（旅行・メディア等）が増えたら、`system: *` ラベルを本表と `scripts/setup-github-labels.sh` に追加する。
+> 今後 life-os の領域が増えたら、`system: *` ラベルを本表と `scripts/setup-github-labels.sh` に追加する。
 
 ### ラベル付与の判断フロー
 
