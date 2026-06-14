@@ -173,7 +173,11 @@ gh issue create \
 ## ブランチ運用
 
 \`\`\`bash
-./scripts/create_worktree.sh {type}/issue-{N}-{作業名-kebab-case}
+# main から feature ブランチを作成
+git switch -c {type}/issue-{N}-{作業名-kebab-case}
+
+# 並行作業する場合は git worktree を使う（Claude Code は --worktree でも可）
+# git worktree add ../life-os-{type}-issue-{N} -b {type}/issue-{N}-{作業名-kebab-case}
 \`\`\`
 
 ## 完了条件
