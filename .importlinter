@@ -1,0 +1,92 @@
+# 領域（Bounded Context）境界の機械的強制
+# 設計根拠: docs/adr/0002-modular-monolith-bounded-context.md
+#
+# 原則:
+#   1. 領域間は public.py 経由のみ（他領域の内部パッケージを直接 import しない）
+#   2. shared は領域に依存しない
+#
+# 各領域は他領域の「内部パッケージ」を forbidden に列挙し、public は許可する。
+# 領域直下に public.py 以外の新規トップレベルモジュールを足したら、ここにも追記すること。
+# 実行: `lint-imports`（uv run lint-imports）
+
+[importlinter]
+root_packages =
+    shared
+    task
+    content_sales
+    media
+    travel
+
+# --- shared は基盤。いかなる領域にも依存しない ---
+[importlinter:contract:shared-is-foundation]
+name = shared は領域に依存しない
+type = forbidden
+source_modules =
+    shared
+forbidden_modules =
+    task
+    content_sales
+    media
+    travel
+
+# --- task は他領域の内部を直接 import しない（public のみ許可） ---
+[importlinter:contract:task-uses-only-public]
+name = task は他領域を public 経由でのみ参照する
+type = forbidden
+source_modules =
+    task
+forbidden_modules =
+    content_sales.domain
+    content_sales.application
+    content_sales.adapters
+    media.models
+    media.index
+    travel.models
+    travel.index
+
+# --- content_sales は他領域の内部を直接 import しない ---
+[importlinter:contract:content-sales-uses-only-public]
+name = content-sales は他領域を public 経由でのみ参照する
+type = forbidden
+source_modules =
+    content_sales
+forbidden_modules =
+    task.domain
+    task.application
+    task.adapters
+    media.models
+    media.index
+    travel.models
+    travel.index
+
+# --- media は他領域の内部を直接 import しない ---
+[importlinter:contract:media-uses-only-public]
+name = media は他領域を public 経由でのみ参照する
+type = forbidden
+source_modules =
+    media
+forbidden_modules =
+    task.domain
+    task.application
+    task.adapters
+    content_sales.domain
+    content_sales.application
+    content_sales.adapters
+    travel.models
+    travel.index
+
+# --- travel は他領域の内部を直接 import しない ---
+[importlinter:contract:travel-uses-only-public]
+name = travel は他領域を public 経由でのみ参照する
+type = forbidden
+source_modules =
+    travel
+forbidden_modules =
+    task.domain
+    task.application
+    task.adapters
+    content_sales.domain
+    content_sales.application
+    content_sales.adapters
+    media.models
+    media.index
