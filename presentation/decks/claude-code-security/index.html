@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code を安全に使う：懸念を設計で抑え込む</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a2e;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent2: #7e57c2;
+    --good: #16a34a;
+    --bad: #dc2626;
+    --line: #e5e7eb;
+    --card: #f8fafc;
+  }
+  [data-theme="dark"] {
+    --bg:#0f172a; --fg:#f1f5f9; --muted:#94a3b8; --accent:#60a5fa;
+    --card:#1e293b; --line:#334155;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background:#33373f; color:var(--fg);
+    font-family: system-ui,-apple-system,"Hiragino Sans","Hiragana Sans","Yu Gothic",sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .slide {
+    position: relative; width: 1280px; max-width: 100%; aspect-ratio: 16/9;
+    margin: 24px auto; padding: 56px 72px; background: var(--bg);
+    box-shadow: 0 4px 24px rgba(0,0,0,.3); overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .slide h2 {
+    font-size: 44px; color: var(--accent);
+    border-bottom: 3px solid var(--line); padding-bottom: 12px; flex: 0 0 auto;
+  }
+  .slide .lead { font-size: 28px; font-weight: 700; margin: 20px 0; flex: 0 0 auto; }
+  .slide ul { font-size: 26px; line-height: 1.7; padding-left: 1.2em; }
+  .slide ul li { margin: 8px 0; }
+  .slide__body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+
+  /* --- title --- */
+  .slide[data-variant="title"] {
+    justify-content:center; align-items:center; text-align:center;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #7e57c2 100%);
+    color:#fff;
+  }
+  .slide[data-variant="title"] h1 { font-size: 64px; line-height: 1.15; max-width: 22ch; }
+  .slide[data-variant="title"] .subtitle { font-size: 30px; margin-top: 24px; opacity: .92; }
+  .slide[data-variant="title"] .meta { margin-top: 48px; font-size: 22px; line-height: 1.9; opacity: .9; }
+  .slide[data-variant="title"] .date { position:absolute; bottom: 40px; right: 56px; font-size: 20px; opacity:.85; }
+
+  /* --- emphasis (message) --- */
+  .slide[data-variant="emphasis"] {
+    background: var(--accent); color:#fff;
+    justify-content:center; align-items:center; text-align:center;
+  }
+  .slide[data-variant="emphasis"] .emph-eyebrow { font-size: 26px; font-weight:700; opacity:.85; letter-spacing:.05em; }
+  .slide[data-variant="emphasis"] .emph-msg {
+    font-size: 64px; font-weight: 800; line-height: 1.3; margin: 28px 0; max-width: 24ch;
+  }
+  .slide[data-variant="emphasis"] .emph-sub { font-size: 26px; opacity:.9; max-width: 40ch; }
+  .big-number { font-size: 140px; font-weight: 800; line-height: 1; }
+
+  /* --- structure: matrix-2x2 --- */
+  .matrix {
+    position: relative; display: grid;
+    grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 18px; flex: 1 1 auto; margin: 12px 60px 48px 96px; min-height: 0;
+  }
+  .matrix__cell {
+    background: var(--card); border: 2px solid var(--line); border-radius: 12px;
+    padding: 20px 24px; font-size: 23px; line-height: 1.4; font-weight: 600;
+    display: flex; align-items: center;
+  }
+  .matrix__cell--tl { border-color: var(--accent2); }
+  .matrix__cell--tr { border-color: var(--bad); background:#fef2f2; }
+  .matrix__cell--bl { border-color: var(--good); }
+  .matrix__cell--br { border-color: var(--muted); }
+  .matrix__axis-y {
+    position: absolute; left: -78px; top: 50%; transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center; font-size: 22px; font-weight: 700; color: var(--accent);
+    white-space: nowrap;
+  }
+  .matrix__axis-x {
+    position: absolute; left: 50%; bottom: -38px; transform: translateX(-50%);
+    font-size: 22px; font-weight: 700; color: var(--accent); white-space: nowrap;
+  }
+
+  /* --- structure: tree --- */
+  .tree { display: flex; flex-direction: column; align-items: center; gap: 24px; padding-top: 8px; }
+  .tree__root {
+    background: var(--accent); color:#fff; font-size: 28px; font-weight: 700;
+    padding: 16px 36px; border-radius: 12px; position: relative;
+  }
+  .tree__branches { display: flex; gap: 56px; justify-content: center; width: 100%; }
+  .tree__node { display: flex; flex-direction: column; align-items: center; gap: 16px; flex: 1; max-width: 480px; }
+  .tree__parent {
+    background: var(--card); border: 2px solid var(--accent2); border-radius: 10px;
+    padding: 14px 26px; font-size: 25px; font-weight: 700; color: var(--fg); text-align: center;
+  }
+  .tree__children { display: flex; flex-direction: column; gap: 12px; width: 100%; position: relative; }
+  .tree__children::before {
+    content:""; position:absolute; top:-16px; left:50%; width:2px; height:16px; background: var(--line);
+  }
+  .tree__leaf {
+    background: #fff; border: 2px solid var(--line); border-left: 6px solid var(--accent2);
+    border-radius: 8px; padding: 12px 20px; font-size: 22px; line-height: 1.35;
+  }
+  .tree__connector { width: 2px; height: 18px; background: var(--line); }
+
+  /* --- flow: steps horizontal --- */
+  .flow--steps { list-style: none; display: flex; align-items: stretch; gap: 0; padding: 0; flex: 1 1 auto; }
+  .flow__step {
+    flex: 1; background: var(--card); border: 2px solid var(--line); border-top: 6px solid var(--accent);
+    border-radius: 12px; padding: 24px 22px; margin: 0 8px; position: relative;
+    display: flex; flex-direction: column; gap: 10px; justify-content: flex-start;
+  }
+  .flow__step + .flow__step::before {
+    content:"→"; position: absolute; left: -28px; top: 50%; transform: translateY(-50%);
+    font-size: 40px; font-weight: 800; color: var(--accent);
+  }
+  .flow__no {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color:#fff;
+    font-size: 26px; font-weight: 800;
+  }
+  .flow__step h3 { font-size: 27px; color: var(--fg); }
+  .flow__step p { font-size: 22px; color: var(--muted); line-height: 1.4; }
+
+  /* --- comparison: table --- */
+  .cmp-table { width: 100%; border-collapse: collapse; font-size: 24px; margin-top: 8px; }
+  .cmp-table th, .cmp-table td {
+    border: 1px solid var(--line); padding: 16px 18px; text-align: left; vertical-align: middle;
+  }
+  .cmp-table thead th { background: var(--fg); color:#fff; font-size: 25px; }
+  .cmp-table thead th.col-accent { background: var(--accent); }
+  .cmp-table tbody th { background: var(--card); font-weight: 700; width: 230px; }
+  .cmp-table td.col-accent { background: #eff6ff; }
+  .cmp-table tbody tr:nth-child(even) td { background: #fcfcfd; }
+  .cmp-table tbody tr:nth-child(even) td.col-accent { background: #e8f1fe; }
+
+  /* --- comparison: two-column --- */
+  .cmp--two {
+    display: grid; grid-template-columns: 1fr 64px 1fr; gap: 12px; align-items: stretch;
+    flex: 1 1 auto;
+  }
+  .cmp__col { border-radius: 14px; padding: 24px 28px; display: flex; flex-direction: column; }
+  .cmp__col--before { background: #f3f4f6; border: 2px solid var(--muted); }
+  .cmp__col--after { background: #eff6ff; border: 2px solid var(--accent); }
+  .cmp__col h3 { font-size: 28px; margin-bottom: 12px; }
+  .cmp__col--before h3 { color: var(--muted); }
+  .cmp__col--after h3 { color: var(--accent); }
+  .cmp__col ul { font-size: 23px; line-height: 1.45; }
+  .cmp__col ul li { margin: 10px 0; }
+  .cmp__arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px; font-weight: 800; color: var(--accent);
+  }
+  .cmp__note { margin-top: 16px; font-size: 19px; color: var(--muted); flex: 0 0 auto; }
+
+  /* --- pager --- */
+  .pager {
+    position: fixed; right: 14px; bottom: 12px; background: rgba(0,0,0,.55); color:#fff;
+    font-size: 14px; padding: 6px 12px; border-radius: 20px; z-index: 10;
+  }
+
+  /* --- print --- */
+  @media print {
+    body { background:#fff; }
+    .controls, .pager { display: none !important; }
+    .slide { margin:0; box-shadow:none; page-break-after: always; width:100%; }
+    @page { size: 1280px 720px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 1. 表紙 (title) -->
+<section class="slide" data-variant="title">
+  <h1>Claude Code を安全に使う</h1>
+  <p class="subtitle">セキュリティは後付けでなく、権限・隔離・レビューの設計で作る。</p>
+  <div class="meta">
+    サンプル：ClaudeCode のセキュリティ懸念とその対策について<br>
+    対象: 開発チーム / プラットフォーム・セキュリティ担当<br>
+    ゴール: 懸念を正しく理解し、明日からの運用に落とす
+  </div>
+  <div class="date">2026-06-16</div>
+</section>
+
+<!-- 2. アジェンダ (bullet) -->
+<section class="slide">
+  <h2>本日の流れ</h2>
+  <p class="lead">背景から課題・目的・対策・効果・次の一歩まで順に押さえる。</p>
+  <div class="slide__body">
+    <ul>
+      <li>背景: Claude Code とは何か</li>
+      <li>課題/懸念: 何がリスクなのか（5つの論点）</li>
+      <li>目的: 何を達成したいのか</li>
+      <li>対策: 権限・隔離・レビュー・シークレット管理・自動レビュー</li>
+      <li>効果・まとめ・Next Action</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. 背景 (bullet) -->
+<section class="slide">
+  <h2>Claude Code とは</h2>
+  <p class="lead">Claude Code はターミナルで動き、ファイル編集やコマンド実行までエージェントが代行する開発ツール。</p>
+  <div class="slide__body">
+    <ul>
+      <li>自然言語の指示でコード探索・編集・テスト・コミットを実行</li>
+      <li>ファイル読み書き・シェルコマンド・MCP 経由の外部ツール連携が可能</li>
+      <li>強力ゆえに『何をどこまで実行させるか』の制御が前提になる</li>
+      <li>利用が広がるほど、組織としての安全な運用設計が必要</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 4. 懸念の全体像 (structure: matrix-2x2) -->
+<section class="slide">
+  <h2>懸念の全体像</h2>
+  <p class="lead">リスクは『影響の大きさ × 起こりやすさ』で4象限に整理でき、まず右上から手当てする。</p>
+  <div class="slide__body">
+    <div class="matrix">
+      <span class="matrix__axis-y">→ 影響の大きさ</span>
+      <span class="matrix__axis-x">→ 起こりやすさ</span>
+      <div class="matrix__cell matrix__cell--tl">サプライチェーン・外部MCP汚染（要備え）</div>
+      <div class="matrix__cell matrix__cell--tr">破壊的変更 / 任意コマンド実行（最優先）</div>
+      <div class="matrix__cell matrix__cell--bl">軽微な情報露出（監視で対応）</div>
+      <div class="matrix__cell matrix__cell--br">操作ミス・誤差分（仕組みで防ぐ）</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. 懸念の核心 (structure: tree) -->
+<section class="slide">
+  <h2>懸念の核心: 漏えいとインジェクション</h2>
+  <p class="lead">破壊的操作に加え、シークレットの読み取りと悪意あるコンテンツによる指示の乗っ取りが二大経路。</p>
+  <div class="slide__body">
+    <div class="tree">
+      <div class="tree__root">信頼できない入力 → 被害</div>
+      <div class="tree__connector"></div>
+      <div class="tree__branches">
+        <div class="tree__node">
+          <div class="tree__parent">機密情報の漏えい</div>
+          <div class="tree__children">
+            <div class="tree__leaf">シークレット読取(.env/鍵)</div>
+            <div class="tree__leaf">ログ・履歴への露出</div>
+          </div>
+        </div>
+        <div class="tree__node">
+          <div class="tree__parent">プロンプトインジェクション</div>
+          <div class="tree__children">
+            <div class="tree__leaf">悪意あるファイル/README</div>
+            <div class="tree__leaf">汚染された依存・外部MCP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. 目的 (emphasis: message) -->
+<section class="slide" data-variant="emphasis">
+  <p class="emph-eyebrow">本プレゼンの目的</p>
+  <p class="emph-msg">便利さを殺さず、取り返しのつかない事故をゼロに</p>
+  <p class="emph-sub">生産性を落とさずに『取り返しのつかない事故』をゼロに近づけることがゴール。</p>
+</section>
+
+<!-- 7. 対策の全体方針 (flow: steps horizontal) -->
+<section class="slide">
+  <h2>対策の全体方針</h2>
+  <p class="lead">『権限で絞る → 環境で隔離する → 人がレビューする』の三層で多重防御する。</p>
+  <div class="slide__body">
+    <ol class="flow flow--steps">
+      <li class="flow__step">
+        <span class="flow__no">1</span>
+        <h3>権限で絞る</h3>
+        <p>許可制 / プランモード</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">2</span>
+        <h3>環境で隔離</h3>
+        <p>サンドボックス / コンテナ</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">3</span>
+        <h3>人がレビュー</h3>
+        <p>差分・コミット前確認</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- 8. 対策1: 権限モード (comparison: table) -->
+<section class="slide">
+  <h2>対策1: 権限モードを使い分ける</h2>
+  <p class="lead">既定は許可制かプランモードにし、全自動の自動承認は限定された安全な環境だけに留める。</p>
+  <div class="slide__body">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>プランモード</th>
+          <th class="col-accent">許可制(既定推奨)</th>
+          <th>自動承認</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>実行前の確認</th>
+          <td>計画のみ提示</td>
+          <td class="col-accent">都度確認</td>
+          <td>なし</td>
+        </tr>
+        <tr>
+          <th>破壊的操作</th>
+          <td>実行しない</td>
+          <td class="col-accent">確認後のみ</td>
+          <td>そのまま実行</td>
+        </tr>
+        <tr>
+          <th>適する場面</th>
+          <td>設計・調査</td>
+          <td class="col-accent">通常の開発</td>
+          <td>隔離環境限定</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 9. 対策2: シークレット管理と隔離 (bullet) -->
+<section class="slide">
+  <h2>対策2: シークレット管理と隔離</h2>
+  <p class="lead">シークレットは『読ませない・置かない・隔離する』を徹底し、流出経路を物理的に断つ。</p>
+  <div class="slide__body">
+    <ul>
+      <li>読ませない: .env / secrets を deny ルールと除外設定で対象外に</li>
+      <li>置かない: 鍵はリポジトリ外、.gitignore でコミット防止</li>
+      <li>隔離する: サンドボックス/コンテナで本番認証情報に触れさせない</li>
+      <li>最小権限: トークンは用途を絞った短命なものを使う</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 10. 対策3: レビューと信頼できないコンテンツ (bullet) -->
+<section class="slide">
+  <h2>対策3: レビューと信頼できないコンテンツの扱い</h2>
+  <p class="lead">差分は必ず人がレビューし、信頼できない入力はデータとして扱い指示にしない。</p>
+  <div class="slide__body">
+    <ul>
+      <li>差分レビュー: 変更は人が確認してからコミット/プッシュ</li>
+      <li>コミット前確認: force push・本番反映は手動ゲートを置く</li>
+      <li>信頼できないコンテンツ: 外部Issue/Web/MCP応答を『命令』として実行しない</li>
+      <li>自動レビュー: 公式 security-guidance プラグイン等で変更を機械チェック（要確認: 提供状況）</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 11. インシデント対応フロー (flow: steps horizontal) -->
+<section class="slide">
+  <h2>万一に備える: インシデント対応フロー</h2>
+  <p class="lead">防御をすり抜けても、検知から復旧・再発防止まで回せる運用を用意しておく。</p>
+  <div class="slide__body">
+    <ol class="flow flow--steps">
+      <li class="flow__step">
+        <span class="flow__no">1</span>
+        <h3>検知</h3>
+        <p>監査ログ・差分監視</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">2</span>
+        <h3>封じ込め</h3>
+        <p>権限剥奪・トークン失効</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">3</span>
+        <h3>復旧</h3>
+        <p>Git から安全状態へ復元</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">4</span>
+        <h3>再発防止</h3>
+        <p>ルール・手順を更新</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- 12. 効果 (comparison: two-column) -->
+<section class="slide">
+  <h2>対策導入の効果(Before / After)</h2>
+  <p class="lead">三層防御で『取り返しのつかない事故』を仕組みで止め、安心して活用できる状態になる。</p>
+  <div class="slide__body">
+    <div class="cmp--two">
+      <div class="cmp__col cmp__col--before">
+        <h3>Before（無防備）</h3>
+        <ul>
+          <li>全許可で破壊的操作が自動実行</li>
+          <li>シークレットが読み取り可能</li>
+          <li>差分レビューは任意</li>
+          <li>汚染入力を指示として実行</li>
+        </ul>
+      </div>
+      <div class="cmp__arrow">→</div>
+      <div class="cmp__col cmp__col--after">
+        <h3>After（三層防御）</h3>
+        <ul>
+          <li>許可制/プランモードで都度確認</li>
+          <li>シークレットは読ませない・隔離</li>
+          <li>コミット前レビューを必須化</li>
+          <li>信頼できない入力はデータ扱い</li>
+        </ul>
+      </div>
+    </div>
+    <p class="cmp__note">※ 要確認(例示値): 効果の定量値は自組織での計測が必要。本スライドの主張は一般論。</p>
+  </div>
+</section>
+
+<!-- 13. まとめ (bullet) -->
+<section class="slide">
+  <h2>まとめ</h2>
+  <p class="lead">Claude Code の安全性は『最小権限・隔離・人によるレビュー』の3原則に集約される。</p>
+  <div class="slide__body">
+    <ul>
+      <li>権限: 既定を安全側に。許可制/プランモードを基本にする</li>
+      <li>隔離: サンドボックスでシークレットと本番から切り離す</li>
+      <li>レビュー: 差分は人が確認し、汚染入力を指示にしない</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 14. Next Action (bullet) -->
+<section class="slide">
+  <h2>明日からの一歩</h2>
+  <p class="lead">まずは権限とシークレットの初期設定を整え、レビュー手順をチームに明文化する。</p>
+  <div class="slide__body">
+    <ul>
+      <li>1. 権限モードを許可制に設定し、破壊的コマンドの deny ルールを追加</li>
+      <li>2. .env/secrets を除外設定と .gitignore で読ませない・置かない</li>
+      <li>3. サンドボックス/コンテナで隔離実行する環境を用意</li>
+      <li>4. 差分レビュー&コミット前確認の手順をチームで合意・明文化</li>
+      <li>5. 自動レビュー(security-guidance 等)の導入を評価（要確認: 提供状況）</li>
+    </ul>
+  </div>
+</section>
+
+<div class="pager" id="pager">1 / 14</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const pager=document.getElementById('pager');
+  let i=0;
+  function go(){ slides[i]?.scrollIntoView({behavior:'smooth'}); pager.textContent=(i+1)+' / '+slides.length; }
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'){ i=Math.min(i+1,slides.length-1); go(); }
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){ i=Math.max(i-1,0); go(); }
+  });
+</script>
+</body>
+</html>
