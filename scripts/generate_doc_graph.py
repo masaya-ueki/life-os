@@ -18,7 +18,7 @@ from pathlib import Path
 # レイヤー定義（プロトタイプはスクリプト内直書き / 先勝ち）
 LAYERS: list[tuple[str, list[str]]] = [
     ("L0_common_rules",  ["AGENTS.md"]),
-    ("L1_tool_specific", ["CLAUDE.md", ".github/copilot-instructions.md"]),
+    ("L1_tool_specific", ["CLAUDE.md"]),
     ("L2_domain_rules",  [".claude/rules/*.md"]),
     ("L3_adr",           ["docs/adr/*.md"]),
     ("L4_design_docs",   ["docs/**/*.md"]),
