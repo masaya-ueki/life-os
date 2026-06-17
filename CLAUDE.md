@@ -41,7 +41,7 @@ uv run pytest           # 各領域のスモークテストを実行
 
 純粋な **GitHub Flow（`main` ブランチのみ）**。長命ブランチは `main` だけ。
 
-- ブランチ: `main` から `{type}/issue-{N}-{作業名-kebab-case}` を切る（例: `feat/issue-12-add-travel-list`）。
+- ブランチ: **最新化した `main`** から `{type}/issue-{N}-{作業名-kebab-case}` を切る（**ブランチ作成前に必ず `git pull`**。例: `feat/issue-12-add-travel-list`）。詳細手順は [Issue 運用ルール 4](./guides/development-policy/issue-operation-rules.md#4-ブランチコミット命名規則) を参照。
 - コミット: Conventional Commits 形式 `{type}({scope}): {要約}`（例: `feat(task): タスク並び替え機能を追加`）。`{type}` は type ラベル、`{scope}` は `system: *` ラベルと一致させる。
 - PR 本文に `Closes #N` を記載し、レビュー後 `main` に直接マージする。
 - Issue の分類・ラベル・作業フローは [Issue 運用ルール](./guides/development-policy/issue-operation-rules.md) に従う。
