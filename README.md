@@ -86,7 +86,7 @@ uv run pytest           # 各領域のスモークテストを実行
 純粋な **GitHub Flow（`main` ブランチのみ）** を採用する。
 
 - 長命ブランチは `main` だけ
-- 作業は `main` から `{type}/issue-{N}-{作業名}` の feature ブランチを切る
+- 作業は**最新化した `main`**（ブランチ作成前に必ず `git pull`）から `{type}/issue-{N}-{作業名}` の feature ブランチを切る
 - PR（本文に `Closes #N`）でレビュー後、`main` に直接マージする
 
 ## 開発運用

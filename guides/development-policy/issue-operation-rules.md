@@ -104,10 +104,24 @@
 | Issue 種別 | ブランチ | PR マージ先 |
 |-----------|---------|------------|
 | ProductBacklog Issue | **作成しない** | — |
-| Task Issue | `{type}/issue-{N}-{task名}`（`main` から作成） | `main` |
-| 単発 Task Issue（`no-product-backlog`） | `{type}/issue-{N}-{task名}`（`main` から作成） | `main` |
+| Task Issue | `{type}/issue-{N}-{task名}`（最新化した `main` から作成） | `main` |
+| 単発 Task Issue（`no-product-backlog`） | `{type}/issue-{N}-{task名}`（最新化した `main` から作成） | `main` |
 
 PR 本文に `Closes #Task番号` を記載することで、マージ時に Task Issue が自動クローズされる。
+
+### ブランチ作成手順（main を最新化してから切る）
+
+feature ブランチは**必ず最新の `main` から切る**。PR のマージで `main` は随時進むため、古い `main` から分岐すると不要なコンフリクトや古い基盤の上での作業を生む。**ブランチを切る前に必ず `main` を pull で最新化すること。**
+
+```bash
+git switch main                          # main に切り替える
+git pull --ff-only                       # リモートの最新を取り込む（必ず実行）
+git switch -c {type}/issue-{N}-{作業名}   # 最新化した main からブランチを作成
+```
+
+- 作業中の未コミット変更があるときは `git stash` 等で退避してから上記を実行する。
+- `main` を最新化せずにブランチを切ってしまった場合は、`git rebase origin/main`（事前に `git fetch`）で最新の `main` に追従させる。
+- このルールは AI（Claude Code 等）がブランチを作成する場合も同様に適用する。
 
 ### コミットメッセージ
 
@@ -135,7 +149,7 @@ sequenceDiagram
     作業者->>Issues: ② Task Issue（Sub-issue）を作成<br/>（task テンプレート × フェーズ数）
 
     loop フェーズ完了ごとに繰り返す
-        作業者->>作業者: ③ Task Issue のブランチを main から作成
+        作業者->>作業者: ③ main を最新化（pull）し、Task Issue のブランチを切る
         作業者->>Issues: ④ 対象 Task Issue で作業を実施
         Note over 作業者,Issues: 実装・PR 作成（Closes #Task番号 を本文に記載）
         作業者->>Issues: ⑤ PR をレビュー・main にマージ（Task Issue が自動クローズ）
@@ -153,7 +167,7 @@ sequenceDiagram
     participant Issues as GitHub Issues
 
     作業者->>Issues: ① Task Issue を作成（task テンプレート）<br/>+ `no-product-backlog` ラベル付与
-    作業者->>作業者: ② ブランチを main から作成
+    作業者->>作業者: ② main を最新化（pull）してブランチを切る
     作業者->>Issues: ③ 作業を実施
     Note over 作業者,Issues: 実装・PR 作成（Closes #Task番号 を本文に記載）
     作業者->>Issues: ④ PR をレビュー・main にマージ（Task Issue が自動クローズ）
