@@ -54,6 +54,7 @@ uv run pytest           # 各領域のスモークテストを実行
 
 - [README.md](./README.md) — プロジェクトの一次情報源（**最初に読む**）
 - [docs/adr/](./docs/adr/README.md) — 設計決定記録（なぜその設計にしたか）
+- [guides/development-policy/loop-engineering.md](./guides/development-policy/loop-engineering.md) — 目指す開発スタイル（Loop Engineering）
 - [guides/development-policy/issue-operation-rules.md](./guides/development-policy/issue-operation-rules.md) — Issue 運用ルール
 - [.github/skills/create-issue/SKILL.md](./.github/skills/create-issue/SKILL.md) — Issue を対話形式で起票するスキル
 - [presentation/README.md](./presentation/README.md) — テーマから HTML スライドを生成するエージェント・スキル基盤
