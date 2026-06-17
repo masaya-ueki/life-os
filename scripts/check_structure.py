@@ -41,6 +41,8 @@ ROOT_ALLOWED_FILES = {
     ".python-version",
     "LICENSE",
     ".pre-commit-config.yaml",
+    "compose.yaml",  # ローカル実行用 Docker Compose（docs/adr/0006）
+    ".dockerignore",  # Docker ビルドコンテキスト除外（context=ルートのため直下に必要）
 }
 
 # content 領域 + 支援ディレクトリ（領域=workspace members は pyproject から動的に取得）
@@ -50,6 +52,7 @@ CONTENT_AND_SUPPORT_DIRS = {
     "guides",
     "rule",
     "scripts",
+    "docker",  # 支援: テスト実行用 Dockerfile（docs/adr/0006）
     ".claude",
     ".github",
 }

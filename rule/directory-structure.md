@@ -1,6 +1,6 @@
 # ディレクトリ構成ルール
 
-> **親**: [rule/README.md](./README.md) ／ **根拠**: [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md)・[ADR-0005](../docs/adr/0005-directory-governance-daily-keeper.md)
+> **親**: [rule/README.md](./README.md) ／ **根拠**: [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md)・[ADR-0005](../docs/adr/0005-directory-governance-daily-keeper.md)・[ADR-0006](../docs/adr/0006-docker-test-environment.md)
 
 「リポジトリの正典構成」と「どこに何を置くか」を定める。検査は `scripts/check_structure.py`。
 
@@ -23,13 +23,16 @@ life-os/
 ├── guides/            # (2) content: 開発運用の手順・ルール
 ├── rule/              # (2) content: 構造ガバナンスルール（このディレクトリ）
 ├── scripts/           # (3) 支援: 自動化スクリプト
+├── docker/            # (3) 支援: テスト実行用 Dockerfile（ADR-0006）
 ├── .claude/           # (3) 支援: Claude Code エージェント/スキル
 ├── .github/           # (3) 支援: Issue/PR/workflow 設定
 ├── README.md          # (4) ルートファイル（ハブ・索引）
 ├── CLAUDE.md          # (4) Claude Code のプロジェクト指示書
 ├── pyproject.toml     # (4) uv workspace ルート
 ├── uv.lock            # (4) 生成物だが再現性のためコミット
+├── compose.yaml       # (4) ローカル実行用 Docker Compose（ADR-0006）
 ├── .importlinter      # (4) 領域境界の強制
+├── .dockerignore      # (4) Docker ビルドコンテキスト除外
 └── .gitignore         # (4)
 ```
 
@@ -70,6 +73,7 @@ life-os/
 
 ```
 README.md  CLAUDE.md  pyproject.toml  uv.lock  .importlinter  .gitignore
+compose.yaml  .dockerignore   （← テスト実行環境 / ADR-0006）
 .python-version  LICENSE  .pre-commit-config.yaml   （← 必要になれば許可）
 ```
 

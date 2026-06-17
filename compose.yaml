@@ -1,0 +1,34 @@
+# life-os ローカル開発用 Docker Compose
+# 設計根拠: docs/adr/0004-docker-test-environment.md
+#
+# 使い方:
+#   docker compose run --rm test    # スモークテスト（pytest）
+#   docker compose run --rm lint    # 領域境界検査（lint-imports / .importlinter）
+#   docker compose build            # イメージを明示的にビルド
+#
+# test / lint は同一イメージ（docker/Dockerfile）を共有し、実行コマンドだけ替える。
+# ソースをマウントし、実行時は --no-sync（editable 導入済み）のため、
+# コード変更は再ビルド無しで即反映される。依存を変えたときだけ `build` し直す。
+name: life-os
+
+services:
+  # スモークテスト実行（各 Bounded Context の pytest）
+  test:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: life-os-test:local
+    # ソースをマウントして反復実行を速くする（venv は /opt/venv でマウント対象外）
+    volumes:
+      - .:/workspace
+    command: ["uv", "run", "--no-sync", "pytest"]
+
+  # 領域境界（.importlinter）検査
+  lint:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: life-os-test:local
+    volumes:
+      - .:/workspace
+    command: ["uv", "run", "--no-sync", "lint-imports"]
