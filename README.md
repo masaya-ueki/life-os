@@ -16,6 +16,20 @@
 
 現在は構築の初期段階。各領域はこれから対話的に設計・実装していく。
 
+## 目指す開発スタイル — Loop Engineering
+
+life-os が目指す開発スタイルは **Loop Engineering（loop エンジニア）** である。AI に一手ずつプロンプトを打つ人ではなく、**AI を呼び出す loop（自動化された反復）そのものを設計・所有する人**を目指す。
+
+Boris Cherny の「loop」三段階定義では、進むほど人の関与が**減る**のではなく層が**上がる** — 手を動かす対象が「コード」から「並列セッション群」、そして「loop の設計」へと移る。
+
+1. **Stage 1** — モデルは自分が操作する道具（補完で一行ずつ）
+2. **Stage 2** — モデルは並列に動かす相棒（複数セッションを人がプロンプト）
+3. **Stage 3** — モデルは自分のプログラムが呼ぶサブルーチン（loop が自律的に次を決める）
+
+life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化・再利用スキル・検証ゲート・歯止め）を仕込んでいる**段階にある。実践原則（意図を一度だけ書く / 反復の委譲 / 再利用可能なスキル群 / 検証ゲート / ハードストップ）と、この repo での現在地・ロードマップは下記ガイドにまとめる。
+
+> **指針**: [目指す開発スタイル — Loop Engineering](./guides/development-policy/loop-engineering.md)
+
 ## アーキテクチャ
 
 性質の異なる複数領域を 1 リポジトリで共存させるため、**Modular Monolith × Bounded Context**（Python / uv workspace）を採用する。各領域は独立した Bounded Context で、領域間連携は各領域の `public.py`（契約）経由のみ。境界は `.importlinter` で機械的に強制する。
@@ -78,6 +92,7 @@ uv run pytest           # 各領域のスモークテストを実行
 
 ## 開発運用
 
+- [目指す開発スタイル — Loop Engineering](./guides/development-policy/loop-engineering.md) — loop エンジニアを目指す方針と Stage 3 へのロードマップ
 - [Issue 運用ルール](./guides/development-policy/issue-operation-rules.md) — Issue の分類・ラベル・作業フロー
 - [Issue 作成スキル](./.github/skills/create-issue/SKILL.md) — Issue を対話形式で起票する
 - [ADR（設計決定記録）](./docs/adr/README.md) — 「なぜその設計にしたか」を残す
