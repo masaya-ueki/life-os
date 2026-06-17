@@ -7,7 +7,7 @@ description: GitHub Issue を対話形式で作成するスキル。ProductBackl
 
 このスキルは GitHub Issue を `.github/ISSUE_TEMPLATE/` のテンプレートに従って対話形式で作成します。
 
-詳細な Issue 運用ルールは [`guides/development-policy/issue-operation-rules.md`](../../guides/development-policy/issue-operation-rules.md) を参照してください。
+詳細な Issue 運用ルールは [`guides/development-policy/issue-operation-rules.md`](../../../guides/development-policy/issue-operation-rules.md) を参照してください。
 
 ---
 

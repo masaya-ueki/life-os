@@ -81,3 +81,7 @@ Python コードを持たないため **content 領域**とする（`docs/`・`g
 - [ADR-0002](./0002-modular-monolith-bounded-context.md) — Modular Monolith × Bounded Context（`presentation/` を BC 非該当とする根拠）
 - [ADR-0001](./0001-claude-code-native-multi-session.md) — Claude Code ネイティブ機能への移行方針
 - Anthropic Agent Skills（`anthropics/skills` の `pptx` 構成）/ Claude Code サブエージェント・スキル仕様（#3 調査）
+
+## 追記（2026-06-17）
+
+「結果・トレードオフ」で*今後の課題*として残した `create-issue` スキルの配置不整合を解消した。GitHub Copilot を使用しない方針に伴い、`.github/skills/create-issue/` を Claude Code ネイティブ認識パスの `.claude/skills/create-issue/` へ移設し、`.github/skills/` を廃止。これによりスキルの配置規約が `.claude/skills/`（slide-structure / slide-expression と同所）に統一された。本 ADR の決定（ネイティブ `.claude/` 配置）自体に変更はない。

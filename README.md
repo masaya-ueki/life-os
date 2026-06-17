@@ -41,10 +41,9 @@
 ├── presentation/             # content領域: プレゼン作成（HTMLスライド生成・コード非依存）
 ├── .claude/
 │   ├── agents/               # Claude Code サブエージェント（スライド生成パイプライン）
-│   └── skills/               # Claude Code スキル（slide-structure / slide-expression）
+│   └── skills/               # Claude Code スキル（create-issue / slide-structure / slide-expression）
 ├── .github/
 │   ├── ISSUE_TEMPLATE/        # Issue テンプレート（ProductBacklog / Task / 調査）
-│   ├── skills/create-issue/   # Issue を対話形式で作成するスキル
 │   └── pull_request_template.md
 ├── docs/
 │   └── adr/                   # 設計決定記録（Architecture Decision Records）
@@ -79,7 +78,7 @@ uv run pytest           # 各領域のスモークテストを実行
 ## 開発運用
 
 - [Issue 運用ルール](./guides/development-policy/issue-operation-rules.md) — Issue の分類・ラベル・作業フロー
-- [Issue 作成スキル](./.github/skills/create-issue/SKILL.md) — Issue を対話形式で起票する
+- [Issue 作成スキル](./.claude/skills/create-issue/SKILL.md) — Issue を対話形式で起票する
 - [ADR（設計決定記録）](./docs/adr/README.md) — 「なぜその設計にしたか」を残す
 - [プレゼン作成システム](./presentation/README.md) — テーマから HTML スライドを生成するエージェント・スキル基盤
 - ラベルの一括作成: `./scripts/setup-github-labels.sh --dry-run`（確認）/ `./scripts/setup-github-labels.sh`（適用）

@@ -316,6 +316,6 @@ Issue の本質的な性質を表す。
 ## 参考
 
 - Issue テンプレート: `.github/ISSUE_TEMPLATE/`
-- Issue 作成スキル: `.github/skills/create-issue/SKILL.md`
+- Issue 作成スキル: `.claude/skills/create-issue/SKILL.md`
 - ラベル一括作成スクリプト: `scripts/setup-github-labels.sh`
 - ADR（設計決定記録）: `docs/adr/README.md`
