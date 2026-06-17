@@ -27,21 +27,15 @@ life-os は個人のための「なんでも」環境（personal life operating 
 
 ## よく使うコマンド
 
-テスト・境界検査は **Docker** か、ローカルの **uv** のどちらでも実行できる（詳細は [README の開発セットアップ](./README.md#開発セットアップ)、構成根拠は [ADR-0004](./docs/adr/0004-docker-test-environment.md)）。
+テスト・境界検査は **Docker（Docker Compose）で実行する**。ローカルに Python / uv を導入する必要はない（uv は Docker イメージ内部でのみ使う。詳細は [README の開発セットアップ](./README.md#開発セットアップ)、構成根拠は [ADR-0004](./docs/adr/0004-docker-test-environment.md)）。
 
 ```bash
-# Docker（ローカルに uv 不要・推奨）
 docker compose run --rm test    # 各領域のスモークテスト（pytest）
 docker compose run --rm lint    # 領域境界（.importlinter）を検査
 docker compose build            # 依存を変えたときにイメージを再ビルド
-
-# uv（ローカル）
-uv sync                 # 依存をインストール（dev グループに import-linter / pytest）
-uv run lint-imports     # 領域境界（.importlinter）を検査
-uv run pytest           # 各領域のスモークテストを実行
 ```
 
-**コードを変更したら、上記いずれかで lint-imports と pytest を実行して境界とテストを確認すること。**
+**コードを変更したら `docker compose run --rm lint` と `docker compose run --rm test` を実行して境界とテストを確認すること。**
 
 ## Git・Issue 運用
 
