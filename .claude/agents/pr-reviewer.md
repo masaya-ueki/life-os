@@ -11,6 +11,8 @@ model: inherit
 **修正点があれば修正PRを作成**／**問題なければマージ → `main` を pull** するまでを回すのが責務。
 運用ルールの単一の真実は [`guides/development-policy/code-review-rules.md`](../../guides/development-policy/code-review-rules.md)。
 
+> **設計根拠**: [ADR-0004 PRレビューをエージェント＋観点別スキルで運用する](../../docs/adr/0004-pr-review-agent.md)
+
 ## パイプライン
 
 ```
