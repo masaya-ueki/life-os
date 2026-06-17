@@ -86,7 +86,7 @@ life-os 環境（WSL2 上の Claude Code v2.1.177・VSCode 統合ターミナル
 
 - **永続キューの等価物が無い**: 「未処理タスクを行列で溜める」挙動が必要なら、CI/CD（GitHub Actions）や薄い `claude -p` グルー、もしくは Agent Teams の共有タスクリストで代替する。
 - **鮮度リスク**: Agent View・Agent Teams・Routines は research preview / 実験的機能。採用前に使用中の Claude Code バージョンで有効か（例: `claude agents` が存在するか、`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` が効くか）を確認すること。
-- **2026-06-15 の料金変更**: Agent SDK / `claude -p` の利用は対話の上限とは別の月次クレジットから消費される（自律運用の設計時に考慮）。
+- **~~2026-06-15 の料金変更~~（訂正・2026-06-17）**: 当初「Agent SDK / `claude -p` の利用が対話の上限とは別の月次クレジットから消費される」と記載していたが、**この課金変更は実施直前に撤回・保留された**。現在 `claude -p` / Agent SDK は引き続き通常のサブスク上限から消費される（Anthropic は変更前に改めて告知するとしている）。一方、GitHub Actions を `ANTHROPIC_API_KEY` で動かす場合は元来 API クレジット（トークン従量）課金であり、本保留とは無関係（[ADR-0005](./0005-directory-governance-daily-keeper.md) 参照）。
 
 ### 他リポジトリへの移行手順（このADRの再利用）
 

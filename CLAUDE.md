@@ -57,5 +57,6 @@ uv run pytest           # 各領域のスモークテストを実行
 - [guides/development-policy/loop-engineering.md](./guides/development-policy/loop-engineering.md) — 目指す開発スタイル（Loop Engineering）
 - [guides/development-policy/issue-operation-rules.md](./guides/development-policy/issue-operation-rules.md) — Issue 運用ルール
 - [guides/development-policy/code-review-rules.md](./guides/development-policy/code-review-rules.md) — コードレビュー運用ルール（`pr-reviewer` エージェント＋`code-review-*` スキル）
+- [rule/README.md](./rule/README.md) — ディレクトリ構成論ルール（配置・命名・ドキュメント重複禁止）
 - [.claude/skills/create-issue/SKILL.md](./.claude/skills/create-issue/SKILL.md) — Issue を対話形式で起票するスキル
 - [presentation/README.md](./presentation/README.md) — テーマから HTML スライドを生成するエージェント・スキル基盤
