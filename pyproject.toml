@@ -37,7 +37,9 @@ dev = [
 [tool.pytest.ini_options]
 # workspace のスモークテストは各領域(member)のみ対象。
 # scripts/deckgen は member 外の支援ツールで独自依存(python-pptx)を持つため除外し、
-# `uv run --project scripts/deckgen pytest` で個別に検証する（docs/adr/0007）。
+# `uv run --directory scripts/deckgen pytest` で個別に検証する（docs/adr/0007）。
+# 注: --project ではなく --directory を使う。--project だと rootdir がこの設定になり
+#     scripts/deckgen が ignore されて deckgen のテストが収集されない。
 addopts = "--ignore=scripts/deckgen"
 
 [build-system]

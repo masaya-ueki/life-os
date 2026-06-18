@@ -24,7 +24,9 @@ uv run --project scripts/deckgen -m deckgen path/to/outline.yml --out deck.pptx
 uv run --project scripts/deckgen -m deckgen claude-code-security --template brand.potx
 ```
 
-テスト: `uv run --project scripts/deckgen pytest`
+テスト: `uv run --directory scripts/deckgen pytest`
+
+> `--directory` で deckgen を作業ディレクトリにする（pytest の rootdir を `scripts/deckgen` に固定するため）。`--project scripts/deckgen pytest` だとリポジトリルートの pytest 設定（`addopts=--ignore=scripts/deckgen`）が効き、deckgen のテストが収集されないので注意。
 
 ## expression → ネイティブ pptx マッピング
 

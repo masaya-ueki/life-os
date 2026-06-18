@@ -1,0 +1,85 @@
+deck:
+  title: "deckgen チャートデモ"
+  subtitle: "サンプル：bar / line / pie / stacked のネイティブチャート検証用 deck"
+  theme: default
+  date: "2026-06-18"
+
+# このdeckは chart expression(bar/line/pie/stacked)を実運用で検証するためのサンプル。
+# data 契約は .claude/skills/slide-expression/references/chart.md に準拠する。
+# 回帰テスト: scripts/deckgen/tests/test_builder.py（slug "deckgen-chart-demo" を参照）。
+
+chapters:
+  - chapter: "表紙"
+    slides:
+      - title: "deckgen チャートデモ"
+        summary: "4種のネイティブチャート(bar/line/pie/stacked)が編集可能な形で生成されることを確認する。"
+        content:
+          - "対象: deckgen の chart レンダラ検証"
+          - "data 契約: chart.md（単系列=label/value, 複数系列=name/points）"
+        expression: title
+        data: {}
+
+  - chapter: "チャート"
+    slides:
+      - title: "棒グラフ（bar・単系列）"
+        summary: "項目間の量を比較する。単系列は label/value で与える。"
+        expression: chart
+        data:
+          type: bar
+          unit: "件"
+          series:
+            - { label: "2023", value: 42 }
+            - { label: "2024", value: 58 }
+            - { label: "2025", value: 91 }
+          note: "出典: サンプルデータ"
+
+      - title: "折れ線（line・複数系列）"
+        summary: "時間推移を複数系列で比較する。各系列は name と points(x,y)。"
+        expression: chart
+        data:
+          type: line
+          unit: "%"
+          series:
+            - name: "製品A"
+              points:
+                - { x: "Q1", y: 10 }
+                - { x: "Q2", y: 22 }
+                - { x: "Q3", y: 35 }
+                - { x: "Q4", y: 48 }
+            - name: "製品B"
+              points:
+                - { x: "Q1", y: 5 }
+                - { x: "Q2", y: 14 }
+                - { x: "Q3", y: 26 }
+                - { x: "Q4", y: 40 }
+          note: "出典: サンプルデータ"
+
+      - title: "円グラフ（pie・構成比）"
+        summary: "合計100%の内訳を示す。単系列 label/value（割合）。"
+        expression: chart
+        data:
+          type: pie
+          series:
+            - { label: "新規", value: 45 }
+            - { label: "既存", value: 35 }
+            - { label: "離反", value: 20 }
+          note: "出典: サンプルデータ（合計100）"
+
+      - title: "積み上げ棒（stacked・内訳の推移）"
+        summary: "内訳の時系列変化を示す。複数系列 name/points(x,y)。"
+        expression: chart
+        data:
+          type: stacked
+          unit: "件"
+          series:
+            - name: "国内"
+              points:
+                - { x: "1月", y: 12 }
+                - { x: "2月", y: 18 }
+                - { x: "3月", y: 25 }
+            - name: "海外"
+              points:
+                - { x: "1月", y: 5 }
+                - { x: "2月", y: 9 }
+                - { x: "3月", y: 15 }
+          note: "出典: サンプルデータ"
