@@ -46,7 +46,7 @@ uv run --project scripts/deckgen -m deckgen claude-code-security --template bran
 | `chart` | `type: bar/line/pie/stacked` | **ネイティブ PowerPoint チャート**（編集可能。データ不足時は本文の箇条書きにフォールバック） |
 | 未知/欠落 | — | `bullet` にフォールバックし、警告を出力 |
 
-配色は `theme.py`（`presentation/templates/base.css.md` のトークンを転記、`deck.theme` で `default`/`dark`）。`--template` 指定時はマスター背景・配色を優先するため自前の背景塗りは行わない。
+配色は `theme.py`（`presentation/templates/theme-tokens.yml` を単一ソースとして読み、`deck.theme` で `default`/`dark`）。HTML スライドと同じトークンを共有する。`--template` 指定時はマスター背景・配色を優先するため自前の背景塗りは行わない。
 
 ## 既知の割り切り（編集可能性を優先した結果）
 - アニメーション・スピーカーノート・高度チャート（Waterfall 等）は非対応（python-pptx の制約）。
@@ -61,7 +61,7 @@ scripts/deckgen/
   src/deckgen/
     __main__.py           # CLI
     loader.py             # outline.yml 読込・検証・パス解決
-    theme.py              # 配色トークン（base.css.md と一致）
+    theme.py              # 配色トークン（theme-tokens.yml を読む単一ソース）
     layout.py             # 寸法・色・テキストボックス・図形・表の共通ヘルパ
     builder.py            # Presentation 組み立て（ヘッダ＋expression dispatch）
     expressions/          # title / bullet / comparison / flow / structure / emphasis / chart

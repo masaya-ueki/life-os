@@ -10,23 +10,16 @@
 
 ## 配色トークン（CSS 変数で `deck.theme` を切替）
 
-```css
-:root {                 /* theme: default */
-  --bg: #ffffff;        /* スライド背景 */
-  --fg: #1a1a2e;        /* 本文 */
-  --muted: #6b7280;     /* 補足・Before */
-  --accent: #2563eb;    /* 強調・After */
-  --accent2: #7e57c2;   /* 対比2色目（system: common と同系） */
-  --good: #16a34a;      /* 良い・メリット */
-  --bad: #dc2626;       /* 悪い・デメリット */
-  --line: #e5e7eb;      /* 罫線 */
-  --card: #f8fafc;      /* カード背景 */
-}
-[data-theme="dark"] {
-  --bg:#0f172a; --fg:#f1f5f9; --muted:#94a3b8; --accent:#60a5fa;
-  --card:#1e293b; --line:#334155;
-}
-```
+配色の**単一ソースは [`theme-tokens.yml`](./theme-tokens.yml)**（HTML/pptx 共有）。ここに色値は持たない。
+`slide-html-renderer` は `theme-tokens.yml` を読み、各テーマを CSS 変数ブロックへ展開する:
+
+- `themes.default` → `:root { --bg: …; --fg: …; … }`（`#rrggbb` をそのまま CSS 値に使う）
+- それ以外の各テーマ → `[data-theme="<name>"] { … }`（例: `dark`）
+- トークン名はそのまま CSS 変数名にする（`accent` → `--accent`、`on_accent` → `--on-accent`）
+
+トークンの意味（`accent`=強調/After、`muted`=補足/Before、`good`/`bad`=良/悪、`card`=カード背景、
+`line`=罫線、`on_accent`=アクセント面上の文字色 など）は `theme-tokens.yml` のコメントを参照。
+新テーマの追加は `theme-tokens.yml` に 1 ブロック足すだけでよい（HTML/pptx 両方に反映される）。
 
 ## 必須レイアウト
 
@@ -44,7 +37,7 @@ body { background:#33373f; color:var(--fg);
 .slide ul { font-size: 26px; line-height: 1.8; padding-left: 1.2em; }
 .slide--title { display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
 .slide--title h1 { font-size: 64px; }
-.slide--emphasis { background: var(--accent); color:#fff; display:flex; flex-direction:column;
+.slide--emphasis { background: var(--accent); color: var(--on-accent); display:flex; flex-direction:column;
   justify-content:center; align-items:center; text-align:center; }
 .big-number { font-size: 140px; font-weight: 800; line-height: 1; }
 ```

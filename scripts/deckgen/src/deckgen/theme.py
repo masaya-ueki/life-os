@@ -1,42 +1,46 @@
-"""配色トークン。presentation/templates/base.css.md のパレットを Python に転記。
+"""配色トークン。presentation/templates/theme-tokens.yml を単一ソースとして読む。
 
-HTML スライドと pptx のブランドを一致させるための単一情報源。
-deck.theme（default / dark）で切り替える。色は "RRGGBB"（先頭 # なし）。
+HTML スライド（slide-html-renderer）と pptx でブランドを一致させるための共有パレット。
+deck.theme（default / dark / ...）で切り替える。色は内部的に "RRGGBB"（先頭 # なし）。
 """
 
 from __future__ import annotations
 
-# base.css.md の :root / [data-theme="dark"] と同値
-THEMES: dict[str, dict[str, str]] = {
-    "default": {
-        "bg": "FFFFFF",
-        "fg": "1A1A2E",
-        "muted": "6B7280",
-        "accent": "2563EB",
-        "accent2": "7E57C2",
-        "good": "16A34A",
-        "bad": "DC2626",
-        "line": "E5E7EB",
-        "card": "F8FAFC",
-        "on_accent": "FFFFFF",  # アクセント面上の文字色
-    },
-    "dark": {
-        "bg": "0F172A",
-        "fg": "F1F5F9",
-        "muted": "94A3B8",
-        "accent": "60A5FA",
-        "accent2": "7E57C2",
-        "good": "16A34A",
-        "bad": "DC2626",
-        "line": "334155",
-        "card": "1E293B",
-        "on_accent": "0F172A",
-    },
-}
+from pathlib import Path
 
-# OS 標準フォント（base.css.md と同方針: Web フォント禁止）。
-# 日本語が含まれるため和文ゴシックを既定にする。
-FONT = "Yu Gothic"
+import yaml
+
+
+def _find_tokens_file() -> Path:
+    """配置場所に依存せず presentation/templates/theme-tokens.yml を探す。
+
+    deckgen は支援ツール（scripts/deckgen）。loader._find_decks_dir と同様に、
+    このファイルから上方向にリポジトリルートを辿って単一ソースを解決する。
+    """
+    for parent in Path(__file__).resolve().parents:
+        candidate = parent / "presentation" / "templates" / "theme-tokens.yml"
+        if candidate.is_file():
+            return candidate
+    raise FileNotFoundError(
+        "theme-tokens.yml が見つかりません（presentation/templates/）"
+    )
+
+
+def _load() -> tuple[dict[str, dict[str, str]], str]:
+    """単一ソースを読み、(THEMES, FONT) を返す。
+
+    色は #rrggbb で記述されているため、pptx 用に先頭 # を外して大文字化する。
+    """
+    data = yaml.safe_load(_find_tokens_file().read_text(encoding="utf-8"))
+    themes = {
+        name: {k: str(v).lstrip("#").upper() for k, v in tokens.items()}
+        for name, tokens in data["themes"].items()
+    }
+    return themes, str(data.get("font", "Yu Gothic"))
+
+
+# base.css.md と同じ配色を theme-tokens.yml から読み込む（二重定義を排除）。
+THEMES, FONT = _load()
 
 
 def get_theme(name: str | None) -> dict[str, str]:

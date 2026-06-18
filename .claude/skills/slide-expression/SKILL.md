@@ -37,12 +37,12 @@ description: スライド1枚の「表現方法」（比較・グラフ・フロ
 
 ## 共通実装規約（全 expression 共通）
 
-renderer（`slide-html-renderer`）はこの規約に従って自己完結 HTML を生成する。詳細な CSS 方針は [`presentation/templates/base.css.md`](../../../presentation/templates/base.css.md) を参照。
+renderer（`slide-html-renderer`）はこの規約に従って自己完結 HTML を生成する。配色トークンの単一ソースは [`presentation/templates/theme-tokens.yml`](../../../presentation/templates/theme-tokens.yml)（HTML/pptx 共有）、レイアウト・印刷の CSS 方針は [`presentation/templates/base.css.md`](../../../presentation/templates/base.css.md) を参照。
 
 1. **自己完結**: 1つの `index.html` に CSS を `<style>` でインライン。外部 CSS/JS/画像依存なし（SVG はインライン、画像は data URI）。
 2. **16:9**: 各スライドは `aspect-ratio: 16 / 9`、基準サイズ 1280×720px を想定。`.slide` クラスで統一。
 3. **1スライド1要素**: 1つの `<section class="slide">` が1枚。`page-break-after: always` で印刷時に改ページ。
-4. **配色トークン**: CSS 変数（`--bg`, `--fg`, `--accent`, `--muted` 等）で `deck.theme` を切替可能にする。
+4. **配色トークン**: CSS 変数（`--bg`, `--fg`, `--accent`, `--muted` 等）で `deck.theme` を切替可能にする。色値の単一ソースは `presentation/templates/theme-tokens.yml`。
 5. **印刷対応**: `@media print` で操作UIを隠し、`@page { size: 1280px 720px landscape; margin: 0 }` 相当でPDF化できるようにする。
 6. **画面操作**: 任意で軽量な JS（キーボード ←/→ でスクロール）を1つだけインライン可。フレームワーク不要。
 7. **可読性**: 本文 24px 以上、見出し 40px 以上を目安。1行は折り返さない長さに。

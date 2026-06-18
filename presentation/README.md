@@ -21,7 +21,8 @@
 | スキル `slide-pptx` | `.claude/skills/slide-pptx/` | expression → ネイティブ pptx マッピングの索引 |
 | ツール `deckgen` | `scripts/deckgen/` | `outline.yml` → `.pptx` を生成する python-pptx 製ツール（[ADR-0007](../docs/adr/0007-pptx-output.md)） |
 | 生成物 | `presentation/decks/{slug}/` | `outline.yml` ＋ `index.html` ＋ `{slug}.pptx` |
-| CSS 方針 | `presentation/templates/base.css.md` | 配色トークン・16:9・印刷の実装指針 |
+| 配色トークン | `presentation/templates/theme-tokens.yml` | 配色の単一ソース（HTML/pptx 共有） |
+| CSS 方針 | `presentation/templates/base.css.md` | 16:9・レイアウト・印刷の実装指針 |
 
 ## パイプライン
 

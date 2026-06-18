@@ -1,0 +1,31 @@
+# 配色テーマの単一ソース（Single Source of Truth）。
+# HTML スライド（slide-html-renderer）と pptx（scripts/deckgen）が共有して読む。
+#
+# - 色は #rrggbb（CSS ネイティブ表記）。HTML はそのまま CSS 変数に展開し、
+#   pptx 側（deckgen/theme.py）は先頭 # を外して大文字 16 進に正規化する。
+# - 新しいテーマは themes に 1 ブロック追記するだけで HTML/pptx 両方に反映される。
+# - トークン名はそのまま CSS 変数名（例: accent → --accent / on_accent → --on-accent）。
+font: "Yu Gothic"          # OS 標準の和文ゴシック（Web フォント禁止方針）
+themes:
+  default:
+    bg: "#ffffff"          # スライド背景
+    fg: "#1a1a2e"          # 本文
+    muted: "#6b7280"       # 補足・Before
+    accent: "#2563eb"      # 強調・After
+    accent2: "#7e57c2"     # 対比 2 色目（system: common と同系）
+    good: "#16a34a"        # 良い・メリット
+    bad: "#dc2626"         # 悪い・デメリット
+    line: "#e5e7eb"        # 罫線
+    card: "#f8fafc"        # カード背景
+    on_accent: "#ffffff"   # アクセント面上の文字色
+  dark:
+    bg: "#0f172a"          # スライド背景（深紺）
+    fg: "#f1f5f9"          # 本文（白）
+    muted: "#94a3b8"       # 補足（グレー）
+    accent: "#60a5fa"      # 強調（明るい青）
+    accent2: "#7e57c2"     # 対比 2 色目（共通）
+    good: "#16a34a"        # 良い（共通）
+    bad: "#dc2626"         # 悪い（共通）
+    line: "#334155"        # 罫線（濃グレー）
+    card: "#1e293b"        # カード背景（濃紺）
+    on_accent: "#0f172a"   # アクセント面上の文字色
