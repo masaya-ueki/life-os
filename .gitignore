@@ -14,5 +14,8 @@ dist/
 .mypy_cache/
 .ruff_cache/
 
+# 生成プレゼン（deckgen の出力。outline.yml から都度生成する成果物）
+presentation/decks/**/*.pptx
+
 # OS / エディタ
 .DS_Store

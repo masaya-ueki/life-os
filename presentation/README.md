@@ -17,25 +17,32 @@
 | エージェント `slide-content-planner` | `.claude/agents/` | テーマ → `outline.yml`（内容まとめ） |
 | エージェント `slide-html-renderer` | `.claude/agents/` | `outline.yml` → `index.html`（スライド化） |
 | エージェント `slide-deck-builder` | `.claude/agents/` | 上記2つを統括するオーケストレーター |
-| 生成物 | `presentation/decks/{slug}/` | `outline.yml` と `index.html` |
+| エージェント `slide-pptx-builder` | `.claude/agents/` | `outline.yml` → 編集可能 `.pptx`（pptx 出力） |
+| スキル `slide-pptx` | `.claude/skills/slide-pptx/` | expression → ネイティブ pptx マッピングの索引 |
+| ツール `deckgen` | `scripts/deckgen/` | `outline.yml` → `.pptx` を生成する python-pptx 製ツール（[ADR-0007](../docs/adr/0007-pptx-output.md)） |
+| 生成物 | `presentation/decks/{slug}/` | `outline.yml` ＋ `index.html` ＋ `{slug}.pptx` |
 | CSS 方針 | `presentation/templates/base.css.md` | 配色トークン・16:9・印刷の実装指針 |
 
 ## パイプライン
+
+`outline.yml` を単一の真実として、HTML と pptx の2系統に出力できる。
 
 ```
 テーマ
   └─ slide-deck-builder（統括）
        ├─① slide-content-planner → presentation/decks/{slug}/outline.yml
-       └─② slide-html-renderer    → presentation/decks/{slug}/index.html
+       ├─②a slide-html-renderer   → presentation/decks/{slug}/index.html   （閲覧・PDF用）
+       └─②b slide-pptx-builder    → presentation/decks/{slug}/{slug}.pptx  （編集可能 PowerPoint）
 ```
 
 ## 使い方
 
-`slide-deck-builder` エージェントにテーマを渡す（例:「スライドを作って: ○○について」）。または段階実行で `slide-content-planner` → `slide-html-renderer` を個別に呼ぶ。
+`slide-deck-builder` エージェントにテーマを渡す（例:「スライドを作って: ○○について」）。または段階実行で `slide-content-planner` → `slide-html-renderer` / `slide-pptx-builder` を個別に呼ぶ。
 
 生成後:
-- **閲覧**: `presentation/decks/{slug}/index.html` をブラウザで開く。
-- **PDF化**: ブラウザの印刷 → 用紙 landscape・余白なし・背景画像ON で PDF 保存（`@media print` 対応済み）。
+- **HTML 閲覧**: `presentation/decks/{slug}/index.html` をブラウザで開く。
+- **HTML→PDF化**: ブラウザの印刷 → 用紙 landscape・余白なし・背景画像ON で PDF 保存（`@media print` 対応済み）。
+- **PowerPoint**: `uv run --project scripts/deckgen -m deckgen {slug}` で `{slug}.pptx` を生成。文字・表・図形は**ネイティブ＝編集可能**。詳細は [scripts/deckgen/README.md](../scripts/deckgen/README.md)。
 
 ---
 
