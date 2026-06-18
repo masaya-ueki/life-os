@@ -89,3 +89,86 @@ def test_titles_present():
     )
     assert "棒グラフ" in texts
     assert "マトリクス" in texts
+
+
+# --- chart 実運用検証 + data 契約の回帰テスト (#33) ---
+
+CHART_DECK = "deckgen-chart-demo"
+
+
+def _count_charts(prs):
+    return sum(1 for sh in _all_shapes(prs) if sh.has_chart)
+
+
+def _chart_outline(ctype, series, *, unit="%", content=None):
+    """chart 1枚だけの最小 outline を組み立てる（契約テスト用）。"""
+    slide = {"title": "chart", "expression": "chart",
+             "data": {"type": ctype, "unit": unit, "series": series}}
+    if content is not None:
+        slide["content"] = content
+    return {
+        "deck": {"title": "t", "theme": "default"},
+        "chapters": [{"chapter": "c", "slides": [slide]}],
+    }
+
+
+def test_chart_demo_deck_renders_native_charts():
+    """chart サンプル deck(bar/line/pie/stacked)が実運用でネイティブ生成される。"""
+    outline = load_outline(CHART_DECK)
+    expected = sum(1 for _ in iter_slides(outline))
+    prs, warnings = build_presentation(outline)
+    assert len(prs.slides) == expected
+    # 表紙1 + チャート4枚（bar/line/pie/stacked）
+    assert _count_charts(prs) == 4
+    assert warnings == []
+    # 画像なし＝編集可能ネイティブ
+    assert not any(
+        sh.shape_type == MSO_SHAPE_TYPE.PICTURE for sh in _all_shapes(prs)
+    )
+
+
+def test_chart_contract_single_series_builds_chart():
+    """単系列(bar/pie): label/value 契約でネイティブチャートになる。"""
+    series = [{"label": "A", "value": 1}, {"label": "B", "value": 2}]
+    for ctype in ("bar", "pie"):
+        prs, _ = build_presentation(_chart_outline(ctype, series))
+        assert _count_charts(prs) == 1, ctype
+
+
+def test_chart_contract_multi_series_builds_chart():
+    """複数系列(line/stacked): name/points(x,y)契約でネイティブチャートになる。"""
+    series = [{"name": "S", "points": [{"x": "1", "y": 1}, {"x": "2", "y": 3}]}]
+    for ctype in ("line", "stacked"):
+        prs, _ = build_presentation(_chart_outline(ctype, series))
+        assert _count_charts(prs) == 1, ctype
+
+
+def test_chart_empty_series_falls_back_to_bullet():
+    """series 空 → チャートを作らず本文へフォールバック（契約破綻の検知）。"""
+    prs, _ = build_presentation(
+        _chart_outline("bar", [], content=["フォールバック本文"])
+    )
+    assert _count_charts(prs) == 0
+    texts = " ".join(
+        sh.text_frame.text for sh in _all_shapes(prs) if sh.has_text_frame
+    )
+    assert "フォールバック本文" in texts
+
+
+def test_chart_multi_series_without_points_falls_back():
+    """複数系列で points が無い → カテゴリ不能でフォールバック（チャート無し）。"""
+    prs, _ = build_presentation(_chart_outline("line", [{"name": "S"}]))
+    assert _count_charts(prs) == 0
+
+
+def test_html_pptx_slide_count_parity():
+    """同一 outline.yml の論理スライド数と生成 pptx の枚数が一致する。
+
+    HTML レンダラは決定的コードを持たない（エージェント生成）ため、HTML/pptx の
+    整合は「outline.yml という単一の真実から導かれるスライド数の一致」で担保する。
+    outline 側の章/枚数変更や、ビルダのスライド生成漏れを検知する。
+    """
+    for slug in ("claude-code-security", CHART_DECK):
+        outline = load_outline(slug)
+        prs, _ = build_presentation(outline)
+        assert len(prs.slides) == sum(1 for _ in iter_slides(outline)), slug
