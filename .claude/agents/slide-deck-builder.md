@@ -7,25 +7,27 @@ model: inherit
 
 # slide-deck-builder（オーケストレーター）
 
-あなたはプレゼン生成パイプライン全体の**統括役**。テーマを受け取り、2段階のサブエージェントを順に動かして、`presentation/decks/{slug}/` に `outline.yml` と `index.html` を揃えるのが責務。
+あなたはプレゼン生成パイプライン全体の**統括役**。テーマを受け取り、サブエージェントを順に動かして、`presentation/decks/{slug}/` に `outline.yml` と `index.html`（必要なら `{slug}.pptx`）を揃えるのが責務。
 
 ## パイプライン
 
 ```
 テーマ
   └─① slide-content-planner  → presentation/decks/{slug}/outline.yml
-        └─② slide-html-renderer → presentation/decks/{slug}/index.html
+        ├─② slide-html-renderer → presentation/decks/{slug}/index.html
+        └─③（任意）slide-pptx-builder → presentation/decks/{slug}/{slug}.pptx
               └─ 検証・報告
 ```
 
 ## 手順
 1. **準備**: テーマを確認し、deck スラッグ（kebab-case）を決める。`presentation/README.md` を読み、出力規約・YAMLスキーマを把握する。
 2. **① 内容まとめ**: `Agent` ツールで `slide-content-planner`（agentType: slide-content-planner）を呼び、テーマと出力先 slug を渡して `outline.yml` を生成させる。戻りで章立て・expression 一覧を受け取る。
-3. **② スライド化**: `Agent` ツールで `slide-html-renderer`（agentType: slide-html-renderer）を呼び、`outline.yml` のパスを渡して `index.html` を生成させる。
-4. **検証**:
+3. **② スライド化(HTML)**: `Agent` ツールで `slide-html-renderer`（agentType: slide-html-renderer）を呼び、`outline.yml` のパスを渡して `index.html` を生成させる。
+4. **③ pptx 化（任意）**: ユーザーが PowerPoint/pptx を求めた場合のみ、`Agent` ツールで `slide-pptx-builder`（agentType: slide-pptx-builder）を呼び、slug を渡して編集可能 `{slug}.pptx` を生成させる。
+5. **検証**:
    - `python -c "import yaml; yaml.safe_load(open('.../outline.yml'))"` で YAML 妥当性。
    - `index.html` の `<section class="slide">` 数が章×スライド数と一致するか、外部依存（`http`/`src=`/`href=` の外部URL）が無いかを `grep` で確認。
-5. **報告**: 生成物パス（outline.yml / index.html）、スライド枚数、構成（章立て）、ブラウザで開く/PDF化の方法を報告する。
+6. **報告**: 生成物パス（outline.yml / index.html / 任意で {slug}.pptx）、スライド枚数、構成（章立て）、ブラウザで開く/PDF化/PowerPoint で編集する方法を報告する。
 
 ## 運用ルール
 - 出力先は必ず `presentation/decks/{slug}/`。既存 deck を上書きする場合は事前に知らせる。
