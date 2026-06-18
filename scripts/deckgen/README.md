@@ -10,6 +10,8 @@
 
 ## 使い方
 
+> 前提: Python **3.12 以上**（リポジトリ標準 `requires-python = ">=3.12"` に統一。根拠は [ADR-0007](../../docs/adr/0007-pptx-output.md)）。
+
 ```bash
 # slug 指定（presentation/decks/{slug}/outline.yml を読む）
 uv run --project scripts/deckgen -m deckgen claude-code-security

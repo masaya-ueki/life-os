@@ -79,6 +79,7 @@
 ## 結果・トレードオフ
 
 - **配置**: `scripts/deckgen/`（`pyproject.toml` + `src/deckgen/` + `tests/`）。uv member 外・`.importlinter` 対象外。実行は `uv run --project scripts/deckgen -m deckgen <slug>`。
+- **Python バージョン**: リポジトリ標準（ルート / 各領域）の `requires-python = ">=3.12"` に統一する。deckgen は uv member 外で独自に `requires-python` を宣言するが、検証環境を揃え方針の一貫性を保つため標準に合わせる（導入初期の暫定 `>=3.10` 差異は解消済み。コードは `from __future__ import annotations` と `X | None` 記法のみで 3.10 固有の回避策は無く、除去対象は無い）。
 - **単一の真実**: `outline.yml`（[presentation/README.md](../../presentation/README.md)）は不変。HTML と pptx は同じ契約を読む別レンダラ。
 - **マッピング仕様**: expression→ネイティブ pptx の対応は [scripts/deckgen/README.md](../../scripts/deckgen/README.md) に定義。索引スキル `.claude/skills/slide-pptx/` からも参照する。
 - **生成物**: 出力 `.pptx` はビルド成果物として `.gitignore` で除外する（[R-STRUCT-4](../../rule/directory-structure.md)）。deck はコマンドで都度再生成する。
