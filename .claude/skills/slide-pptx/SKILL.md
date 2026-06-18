@@ -26,4 +26,4 @@ description: outline.yml を編集可能なネイティブ PowerPoint(.pptx) に
 ## 関連
 - 生成ツール: [scripts/deckgen/README.md](../../../scripts/deckgen/README.md)
 - 出力エージェント: `.claude/agents/slide-pptx-builder.md`
-- 配色トークン: [presentation/templates/base.css.md](../../../presentation/templates/base.css.md)
+- 配色トークン（単一ソース）: [presentation/templates/theme-tokens.yml](../../../presentation/templates/theme-tokens.yml)

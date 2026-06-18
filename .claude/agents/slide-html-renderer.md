@@ -15,11 +15,11 @@ model: inherit
 ## 必ず参照する知識
 1. **`slide-expression` スキル**を Skill ツールで読む。共通実装規約（自己完結・16:9・1スライド1要素・配色トークン・印刷対応）に従う。
 2. 各スライドの `expression` に対応する **`references/{comparison,chart,flow,structure,emphasis}.md`** を読み、その型と HTML/CSS 実装指針・`data` スキーマ通りに描画する。
-3. CSS 方針は **`presentation/templates/base.css.md`** を読んで踏襲する（配色トークン・レイアウト・印刷）。
+3. 配色は **`presentation/templates/theme-tokens.yml`**（HTML/pptx 共有の単一ソース）を読む。レイアウト・印刷の CSS 方針は **`presentation/templates/base.css.md`** を読んで踏襲する。
 
 ## 手順
 1. `outline.yml` を読み、`Bash` で `python -c "import yaml,...; yaml.safe_load(...)"` を実行して**パース可能か検証**する。壊れていれば内容を報告して停止。
-2. `deck.theme` から配色トークン（CSS 変数）を決める。
+2. `theme-tokens.yml` の各テーマを CSS 変数ブロックへ展開する（`themes.default` → `:root`、その他は `[data-theme="<name>"]`。トークン名はそのまま CSS 変数名: `accent` → `--accent`、`on_accent` → `--on-accent`）。`deck.theme` で適用テーマを選ぶ。
 3. 各スライドを 1 `<section class="slide">` として生成:
    - 共通: `h2`(title) + `p.lead`(summary)。表紙は `slide--title`。
    - `expression` ごとに対応 reference の型で本文を描画（`data` を使う）。
