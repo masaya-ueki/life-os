@@ -75,6 +75,11 @@ LABELS=(
   "system: common|7e57c2|横断的・共通基盤"
   "system: content-sales|7e57c2|自作ツール等の販売管理"
   "system: deps|7e57c2|依存パッケージ"
+
+  # === priority ラベル（3 件、派生課題・改善 Issue の緊急度） ===
+  "priority: high|b60205|既存の正しさ・健全性・回帰検知に関わる/他作業の前提"
+  "priority: medium|fbca04|機能の実用性・保守性に直結"
+  "priority: low|c2e0c6|付加価値的な拡張"
 )
 
 #########################################
