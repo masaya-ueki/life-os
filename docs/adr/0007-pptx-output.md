@@ -83,7 +83,7 @@
 - **単一の真実**: `outline.yml`（[presentation/README.md](../../presentation/README.md)）は不変。HTML と pptx は同じ契約を読む別レンダラ。
 - **マッピング仕様**: expression→ネイティブ pptx の対応は [scripts/deckgen/README.md](../../scripts/deckgen/README.md) に定義。索引スキル `.claude/skills/slide-pptx/` からも参照する。
 - **生成物**: 出力 `.pptx` はビルド成果物として `.gitignore` で除外する（[R-STRUCT-4](../../rule/directory-structure.md)）。deck はコマンドで都度再生成する。
-- **割り切り**: アニメ・スピーカーノート・高度チャート非対応。凝った図解は簡略ネイティブ表現。完全ブランド再現は `--template` 運用。
+- **割り切り**: アニメ・スピーカーノート・高度チャート非対応。完全ブランド再現は `--template` 運用。図解（matrix-2x2 / tree / pyramid / venn）はネイティブ図形で描き（#32 で tree のコネクタ線・venn の重なり円を作り込み）、表現の限界を超えるものは箇条書きにフォールバックする。`matrix-2x2` の `quadrants` は `[右上, 左上, 右下, 左下]` の順序契約（[structure.md](../../.claude/skills/slide-expression/references/structure.md)）に従い、HTML・pptx で一致させる。
 - **ADR-0003 との関係**: ADR-0003 の HTML パイプラインは無改変で併存。本 ADR は出力ターゲットを追加するのみ。`presentation/` の「コード無し content 領域」という位置づけも維持する（コードは `scripts/` 側に置くため）。
 
 ## 関連ドキュメント・リンク

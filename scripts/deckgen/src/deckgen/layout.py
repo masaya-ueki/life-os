@@ -9,6 +9,7 @@ from __future__ import annotations
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+from pptx.oxml.ns import qn
 from pptx.util import Emu, Inches, Pt
 
 from deckgen.theme import FONT
@@ -187,12 +188,31 @@ def add_down_arrow(slide, left, top, width, height, color="6B7280"):
 
 def add_rule(slide, left, top, width, color, weight=2.5):
     """水平の罫線（タイトル下線など）。"""
-    conn = slide.shapes.add_connector(
-        MSO_CONNECTOR.STRAIGHT, left, top, left + width, top
-    )
+    return add_connector(slide, left, top, left + width, top, color, weight)
+
+
+def add_connector(slide, x1, y1, x2, y2, color="6B7280", weight=1.5):
+    """任意の2点を結ぶ直線コネクタ（ツリーの枝など）。"""
+    conn = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, x1, y1, x2, y2)
     conn.line.color.rgb = rgb(color)
     conn.line.width = Pt(weight)
     return conn
+
+
+def set_fill_alpha(shape, pct: float) -> None:
+    """ソリッド塗りの不透明度を pct%（0–100）に設定する。
+
+    python-pptx は塗りの透過を直接サポートしないため、`a:srgbClr` に
+    `a:alpha` 子要素を付与する。ベン図の重なり表現などに使う。
+    """
+    spPr = shape._element.spPr
+    solidFill = spPr.find(qn("a:solidFill"))
+    if solidFill is None:
+        return
+    srgb = solidFill.find(qn("a:srgbClr"))
+    if srgb is None:
+        return
+    srgb.append(srgb.makeelement(qn("a:alpha"), {"val": str(int(pct * 1000))}))
 
 
 def style_cell(cell, text, *, size=18, color="1A1A2E", bold=False, fill=None,
