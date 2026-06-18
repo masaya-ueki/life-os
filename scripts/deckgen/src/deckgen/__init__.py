@@ -1,6 +1,6 @@
 """deckgen — outline.yml を編集可能なネイティブ pptx に変換するビルドツール。
 
-設計根拠: docs/adr/0004-pptx-output.md
+設計根拠: docs/adr/0007-pptx-output.md
 契約(outline.yml スキーマ): presentation/README.md と
 .claude/skills/slide-expression/references/*.md
 """
