@@ -18,6 +18,18 @@
 - **ベン図**: 2つの半透明円（`border-radius:50%; mix-blend-mode: multiply` または `opacity`）を重ねる。重なり部にラベル。
 - 各領域に**短いラベル**。色で分類を区別。中心/頂点ほど重要と直感させる。
 
+## quadrants の順序契約（matrix-2x2）
+`matrix-2x2` の `quadrants` は **4 要素・固定順序**で象限に割り当てる。軸は `axis_x`（→ 右ほど高い）・`axis_y`（↑ 上ほど高い）。**右上＝両軸が高い＝最優先**として強調表示する（HTML・pptx 共通の契約）。
+
+| index | 象限 | axis_x | axis_y | 強調 |
+|-------|------|--------|--------|------|
+| `quadrants[0]` | 右上 | 高 | 高 | **最優先（accent 強調）** |
+| `quadrants[1]` | 左上 | 低 | 高 | — |
+| `quadrants[2]` | 右下 | 高 | 低 | — |
+| `quadrants[3]` | 左下 | 低 | 低 | — |
+
+順序は `[右上, 左上, 右下, 左下]`。HTML レンダラ・pptx レンダラ（deckgen）はともにこの契約に従う。要素が4未満なら不足分は空セルとして扱う。
+
 ```html
 <section class="slide">
   <h2>{title}</h2>
@@ -38,8 +50,9 @@ data:
   # matrix-2x2:
   axis_x: "緊急度"
   axis_y: "重要度"
+  # 順序固定: [右上, 左上, 右下, 左下]。右上(=最優先)を accent 強調。
   quadrants: ["最優先", "計画的に", "委譲", "やらない"]
-  # pyramid: layers: ["土台:...", "中:...", "頂点:..."]
-  # tree: root: "...", children: [{name:"...", children:[...]}]
-  # venn: sets: ["A","B"], overlap: "共通"
+  # pyramid: layers: ["土台:...", "中:...", "頂点:..."]  # 先頭=土台(最下段), 末尾=頂点
+  # tree: root: "...", children: [{name:"...", children:[...]}]  # root+第1階層をコネクタ線で接続
+  # venn: sets: ["A","B"], overlap: "共通"  # 2集合の半透明な重なり円。重なり部に overlap
 ```

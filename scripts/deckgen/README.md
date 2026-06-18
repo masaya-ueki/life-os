@@ -38,10 +38,11 @@ uv run --project scripts/deckgen -m deckgen claude-code-security --template bran
 | `comparison` | `mode: table` | ネイティブ表（ヘッダ行=accent、行=評価軸、ゼブラ） |
 | `flow` | `type: steps`（horizontal/vertical） | 角丸シェイプの連結＋番号バッジ（楕円）＋矢印オートシェイプ |
 | `flow` | timeline / cycle | steps と同様に描画（date があれば見出しに付与） |
-| `structure` | `type: matrix-2x2` | 2×2 の矩形セル（右上=accent 強調）＋ X/Y 軸ラベル |
-| `structure` | `type: tree` | 多階層のネイティブ箇条書き（root→children をインデント） |
-| `structure` | `type: pyramid` | 段ごとの台形/矩形を積層（下段ほど広い） |
-| `structure` | matrix-table / venn | tree 同様の箇条書きにフォールバック（簡略化） |
+| `structure` | `type: matrix-2x2` | 2×2 の矩形セル＋ X/Y 軸ラベル。`quadrants` は順序契約 `[右上, 左上, 右下, 左下]`（右上=最優先を accent 強調。契約は structure.md） |
+| `structure` | `type: tree` | root + 第1階層を角丸ボックス＋コネクタ線で接続（孫は子ボックス内に小さく列挙）。root/children が片方のみなら多階層箇条書き |
+| `structure` | `type: pyramid` | 段を積層（頂点=三角形・中段=台形・土台=矩形、下段ほど広い） |
+| `structure` | `type: venn` | 2集合の半透明な重なり円＋重なり部の overlap ラベル（`sets` が2未満なら tree にフォールバック） |
+| `structure` | matrix-table | tree 同様の箇条書きにフォールバック（汎用分類は rows/cols を持たないため） |
 | `emphasis` | `mode: big-number` | accent 面＋巨大数値＋単位＋ラベル（中央） |
 | `emphasis` | `mode: message` / `quote` | accent 面＋大きな1文（quote は引用符＋出典） |
 | `emphasis` | `mode: kpi` | KPI カードを横並び（数値＋増減＋ラベル） |
@@ -52,7 +53,7 @@ uv run --project scripts/deckgen -m deckgen claude-code-security --template bran
 
 ## 既知の割り切り（編集可能性を優先した結果）
 - アニメーション・スピーカーノート・高度チャート（Waterfall 等）は非対応（python-pptx の制約）。
-- 凝った図解（tree/venn 等）は HTML 版ほどの作り込みはせず、簡略なネイティブ表現にする。
+- 図解（matrix-2x2 / tree / pyramid / venn）はネイティブ図形で描く。tree はコネクタ線、venn は半透明の重なり円。深い階層や3集合以上など表現の限界を超えるものは箇条書きにフォールバックする。
 - 完全なブランド再現が必要なら `--template` でコーポレートテンプレを継承する運用。
 
 ## 構成
