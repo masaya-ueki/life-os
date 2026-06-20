@@ -1,6 +1,6 @@
 # english — 英語学習
 
-> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../docs/adr/0002-modular-monolith-bounded-context.md)
+> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../../docs/adr/0002-modular-monolith-bounded-context.md)
 
 英語学習で得た語彙・表現を蓄積し、再利用できるようにする Bounded Context。
 データ（学習メタ情報）が主役のため **アーキタイプB（薄い構成）** を採る。
@@ -29,7 +29,7 @@ tests/
 ## 学習スキル
 
 翻訳しながら語彙・表現を抽出して `data/` に蓄積する最初のスキルは
-[`.claude/skills/english-translate/`](../.claude/skills/english-translate/SKILL.md)。
+[`.claude/skills/english-translate/`](../../.claude/skills/english-translate/SKILL.md)。
 英語 or 日本語の文章を渡すと、もう一方の言語へ翻訳し、中学生以上の英単語・重要な表現を
 意味・用例つきで出力し、新規分を学習ログへ追記する。
 

@@ -10,15 +10,18 @@
 
 トップ階層に置けるのは **(1) 領域（Bounded Context）**・**(2) content 領域**・**(3) 支援ディレクトリ**・
 **(4) 許可されたルートファイル** の4種だけ。これ以外をルート直下に増やさない。
+領域（Bounded Context）は数が増えてもトップ階層を散らかさないよう **`domains/` コンテナ配下**にまとめる
+（`shared` は Shared Kernel = 領域非依存のため例外的にルート直下に置く）。根拠は [ADR-0008](../docs/adr/0008-group-domains-under-domains-dir.md)。
 
 ```
 life-os/
-├── shared/            # (1) Shared Kernel（領域非依存の最小基盤）※ workspace member
-├── task/              # (1) 領域: タスク管理（archetype A）          ※ workspace member
-├── content-sales/     # (1) 領域: 販売管理（archetype A）            ※ workspace member
-├── media/             # (1) 領域: 画像・動画管理（archetype B）       ※ workspace member
-├── travel/            # (1) 領域: 旅行の行先管理（archetype B）       ※ workspace member
-├── english/           # (1) 領域: 英語学習（archetype B）             ※ workspace member
+├── domains/           # 領域コンテナ: Bounded Context をまとめる親（直下は member だけ）
+│   ├── task/              # (1) 領域: タスク管理（archetype A）          ※ workspace member
+│   ├── content-sales/     # (1) 領域: 販売管理（archetype A）            ※ workspace member
+│   ├── media/             # (1) 領域: 画像・動画管理（archetype B）       ※ workspace member
+│   ├── travel/            # (1) 領域: 旅行の行先管理（archetype B）       ※ workspace member
+│   └── english/           # (1) 領域: 英語学習（archetype B）             ※ workspace member
+├── shared/            # (1) Shared Kernel（領域非依存の最小基盤）※ workspace member・ルート直下
 ├── presentation/      # (2) content 領域（コード無し）
 ├── docs/              # (2) content: 設計ドキュメント（adr/ など）
 ├── guides/            # (2) content: 開発運用の手順・ルール
@@ -41,7 +44,8 @@ life-os/
 
 | 種別 | 性質 | 内部構成の決まり |
 |---|---|---|
-| **領域（Bounded Context）** | Python コードを持つ。uv workspace member。 | archetype A or B（下記）。`public.py` が唯一の対外契約。 |
+| **領域コンテナ `domains/`** | (1) の領域をまとめる親ディレクトリ。それ自体はコードを持たない。 | 直下には領域（member）だけを置く。`scripts/check_structure.py` の C-DOMAIN で検査。 |
+| **領域（Bounded Context）** | Python コードを持つ。uv workspace member。`domains/<領域>/` に置く（`shared` のみルート直下）。 | archetype A or B（下記）。`public.py` が唯一の対外契約。 |
 | **content 領域** | コードを持たない成果物・資料。member でも BC でもない。 | 自由だが浅く・命名一貫。 |
 | **支援ディレクトリ** | ツール・設定。 | 各ツールの規約に従う。 |
 | **ルートファイル** | リポジトリ全体の入口・設定。 | 許可リスト（下記 root hygiene）のみ。 |
@@ -91,7 +95,7 @@ compose.yaml  .dockerignore   （← テスト実行環境 / ADR-0006）
 
 ## 領域・content 領域の追加
 
-- **新領域（BC）の追加**: トップレベル作成 → `pyproject.toml` の `members` 追加 → `.importlinter` のコントラクト更新 → `system: *` ラベル整備。**手順の正本は [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md)**（ここでは重複させない）。
+- **新領域（BC）の追加**: `domains/<領域>/` を作成 → `pyproject.toml` の `members` に `domains/<領域>` を追加 → `.importlinter` のコントラクト更新 → `system: *` ラベル整備。**手順の正本は [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md)**（配置先は [ADR-0008](../docs/adr/0008-group-domains-under-domains-dir.md)。ここでは重複させない）。
 - **新 content 領域の追加**: コードを持たないなら member/`.importlinter`/`public.py` は不要（[ADR-0003](../docs/adr/0003-presentation-system.md) の `presentation/` が前例）。
 
 > 関連: ドキュメントの置き方は [documentation.md](./documentation.md)、命名は [naming.md](./naming.md)。

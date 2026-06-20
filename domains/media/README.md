@@ -1,6 +1,6 @@
 # media — 画像・動画管理
 
-> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../docs/adr/0002-modular-monolith-bounded-context.md)
+> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../../docs/adr/0002-modular-monolith-bounded-context.md)
 
 写真・動画などのメディア資産の整理・管理を行う Bounded Context。
 データ（メタ情報）が主役のため **アーキタイプB（薄い構成）** を採る。

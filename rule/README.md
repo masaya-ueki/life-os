@@ -37,7 +37,7 @@
 
 調査した一般的ベストプラクティスのうち、life-os に効くものだけを採用する。
 
-1. **Screaming Architecture（叫ぶ構造）** — トップ階層は「何をやるか＝領域」を表す。技術レイヤ（`models/` `services/` 等）でトップを切らない。→ life-os の `task/` `travel/` `media/` `content-sales/` が体現。
+1. **Screaming Architecture（叫ぶ構造）** — 構造は「何をやるか＝領域」を表す。技術レイヤ（`models/` `services/` 等）でトップを切らない。→ life-os の `domains/`（`task/` `travel/` `media/` `content-sales/` `english/`）が体現。
 2. **単一責務（高凝集）** — 1 ディレクトリ＝1 つの変更理由、1 ファイル＝1 概念。関連物は近くにまとめる。
 3. **単一の真実（DRY for docs）** — 事実の正本は 1 箇所だけ。**他所では複製せずリンクする**（→ [documentation.md](./documentation.md)）。
 4. **規約優先（convention over configuration）** — 領域内は archetype ごとに同じ形を保ち、地図がなくても置き場所が推測できる状態にする。

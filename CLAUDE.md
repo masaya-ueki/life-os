@@ -21,8 +21,9 @@ life-os は個人のための「なんでも」環境（personal life operating 
 - 領域には 2 アーキタイプがある:
   - **アーキタイプA（動く領域）**: `task` / `content-sales` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
   - **アーキタイプB（データ領域）**: `media` / `travel` — 薄い構成（`models` / `index`）+ `data/`
+- 領域（Bounded Context）は `domains/` 配下にまとめる（`shared` は Shared Kernel として例外的にルート直下）。配置の根拠は [ADR-0008](./docs/adr/0008-group-domains-under-domains-dir.md)。
 - `presentation/`・`docs/`・`guides/` はコードを持たない content 領域（uv workspace member でも Bounded Context でもない）。
-- 新領域を追加するときは、トップレベルディレクトリ・uv workspace の `members`・`.importlinter` のコントラクト・`system: *` ラベルを併せて整備する（手順は [ADR-0002](./docs/adr/0002-modular-monolith-bounded-context.md)）。
+- 新領域を追加するときは、`domains/<領域>/` ディレクトリ・uv workspace の `members`（`domains/<領域>`）・`.importlinter` のコントラクト・`system: *` ラベルを併せて整備する（手順は [ADR-0002](./docs/adr/0002-modular-monolith-bounded-context.md)）。
 - 領域直下に `public.py` 以外の新規トップレベルモジュールを足したら、`.importlinter` にも追記すること。
 
 ## よく使うコマンド

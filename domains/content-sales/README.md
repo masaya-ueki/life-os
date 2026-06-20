@@ -1,6 +1,6 @@
 # content-sales — 販売管理
 
-> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../docs/adr/0002-modular-monolith-bounded-context.md)
+> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../../docs/adr/0002-modular-monolith-bounded-context.md)
 
 自作ツール等の販売に関する Bounded Context（今後展開予定）。
 売上・価格などのロジックが主役になるため **アーキタイプA（軽量ヘキサゴナル）** を採る。

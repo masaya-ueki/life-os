@@ -57,6 +57,10 @@ CONTENT_AND_SUPPORT_DIRS = {
     ".github",
 }
 
+# 領域コンテナ: Bounded Context（workspace member）をまとめる親ディレクトリ。
+# 直下には member（domains/<領域>）だけを置く。shared は Shared Kernel としてルート直下に残す。
+DOMAIN_CONTAINER = "domains"
+
 # 走査から除外（VCS 内部・生成物・ネストした worktree）
 SKIP_DIR_NAMES = {
     ".git",
@@ -153,7 +157,10 @@ def check_root_hygiene(findings: list[Finding]) -> None:
 
 def check_top_level_dirs(findings: list[Finding], members: list[str]) -> None:
     """C-TOPDIR: トップレベルが正典4種に収まる。"""
-    allowed = set(members) | CONTENT_AND_SUPPORT_DIRS
+    # member は domains/<領域> のようにネストし得るため、許可するのは先頭セグメント
+    # （shared / domains 等の実トップレベル名）。
+    member_tops = {m.split("/", 1)[0] for m in members}
+    allowed = member_tops | CONTENT_AND_SUPPORT_DIRS
     for child in REPO_ROOT.iterdir():
         if not child.is_dir() or child.name in SKIP_DIR_NAMES:
             continue
@@ -166,6 +173,36 @@ def check_top_level_dirs(findings: list[Finding], members: list[str]) -> None:
                     "warning",
                     child.name,
                     "未知のトップレベルディレクトリ。領域 / content領域 / 支援 のどれか確認し rule/ を更新する",
+                )
+            )
+
+
+def check_domains_container(findings: list[Finding], members: list[str]) -> None:
+    """C-DOMAIN: domains/ 直下は workspace member の領域だけ（雑多な混入を防ぐ）。"""
+    base = REPO_ROOT / DOMAIN_CONTAINER
+    if not base.exists():
+        return
+    member_paths = set(members)
+    for child in base.iterdir():
+        if child.name in SKIP_DIR_NAMES:
+            continue
+        rel = child.relative_to(REPO_ROOT).as_posix()
+        if child.is_file():
+            findings.append(
+                Finding(
+                    "C-DOMAIN",
+                    "warning",
+                    rel,
+                    f"{DOMAIN_CONTAINER}/ 直下にファイルがある。領域(member)以外を置かない: {child.name}",
+                )
+            )
+        elif rel not in member_paths:
+            findings.append(
+                Finding(
+                    "C-DOMAIN",
+                    "warning",
+                    rel,
+                    f"{DOMAIN_CONTAINER}/ 直下が workspace member でない。pyproject の members に追加するか移動する: {rel}",
                 )
             )
 
@@ -320,6 +357,7 @@ def run_checks() -> list[Finding]:
     members = _workspace_members()
     check_root_hygiene(findings)
     check_top_level_dirs(findings, members)
+    check_domains_container(findings, members)
     check_member_readme(findings, members)
     check_naming(findings)
     check_links(findings)
