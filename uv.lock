@@ -5,6 +5,7 @@ requires-python = ">=3.12"
 [manifest]
 members = [
     "content-sales",
+    "english",
     "life-os",
     "media",
     "shared",
@@ -37,6 +38,17 @@ wheels = [
 name = "content-sales"
 version = "0.0.0"
 source = { editable = "content-sales" }
+dependencies = [
+    { name = "shared" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "shared", editable = "shared" }]
+
+[[package]]
+name = "english"
+version = "0.0.0"
+source = { editable = "english" }
 dependencies = [
     { name = "shared" },
 ]
@@ -143,6 +155,7 @@ version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "content-sales" },
+    { name = "english" },
     { name = "media" },
     { name = "shared" },
     { name = "task" },
@@ -158,6 +171,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "content-sales", editable = "content-sales" },
+    { name = "english", editable = "english" },
     { name = "media", editable = "media" },
     { name = "shared", editable = "shared" },
     { name = "task", editable = "task" },

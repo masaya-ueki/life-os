@@ -31,6 +31,7 @@ COPY task/pyproject.toml task/
 COPY content-sales/pyproject.toml content-sales/
 COPY media/pyproject.toml media/
 COPY travel/pyproject.toml travel/
+COPY english/pyproject.toml english/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-workspace --dev
 
