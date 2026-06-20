@@ -54,6 +54,9 @@ PR番号
 5. **元PRはマージしない。** 修正PRは人/別エージェントのレビューを経て元PRに取り込まれる前提。報告する。
 
 ### ④b [must] が無い場合 → 検証付き自動マージ
+
+> **前提（スコープゲート）**: 自動マージは**スコープが auto と判定された PR に限る**。変更パスが方針・境界・契約（`**/public.py` / `.importlinter` / `pyproject.toml` / `docs/adr` / `guides` / `rule` / `.claude` / `.github` 等）・`shared/**`・領域横断（Bounded Context を2つ以上）のいずれかに該当する場合は **human**＝**マージせず**人間レビューに委ねる。判定の実体は [`review-and-merge-pr`](../skills/review-and-merge-pr/SKILL.md) スキル（[ADR-0008](../../docs/adr/0008-pr-auto-merge-scope-gate.md)）。
+
 1. `uv run pytest` を実行（全パスを確認）。
 2. `uv run lint-imports` を実行（境界に違反が無いことを確認）。
 3. **両方 pass かつ `[must]`=0** のときのみ `gh pr merge {N}`（リポジトリ既存運用の**マージコミット**方式。`Closes #N` で Issue 自動クローズ）。
