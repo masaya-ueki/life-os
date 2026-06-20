@@ -16,6 +16,7 @@ root_packages =
     content_sales
     media
     travel
+    english
 
 # --- shared は基盤。いかなる領域にも依存しない ---
 [importlinter:contract:shared-is-foundation]
@@ -28,6 +29,7 @@ forbidden_modules =
     content_sales
     media
     travel
+    english
 
 # --- task は他領域の内部を直接 import しない（public のみ許可） ---
 [importlinter:contract:task-uses-only-public]
@@ -43,6 +45,8 @@ forbidden_modules =
     media.index
     travel.models
     travel.index
+    english.models
+    english.index
 
 # --- content_sales は他領域の内部を直接 import しない ---
 [importlinter:contract:content-sales-uses-only-public]
@@ -58,6 +62,8 @@ forbidden_modules =
     media.index
     travel.models
     travel.index
+    english.models
+    english.index
 
 # --- media は他領域の内部を直接 import しない ---
 [importlinter:contract:media-uses-only-public]
@@ -74,6 +80,8 @@ forbidden_modules =
     content_sales.adapters
     travel.models
     travel.index
+    english.models
+    english.index
 
 # --- travel は他領域の内部を直接 import しない ---
 [importlinter:contract:travel-uses-only-public]
@@ -90,3 +98,23 @@ forbidden_modules =
     content_sales.adapters
     media.models
     media.index
+    english.models
+    english.index
+
+# --- english は他領域の内部を直接 import しない ---
+[importlinter:contract:english-uses-only-public]
+name = english は他領域を public 経由でのみ参照する
+type = forbidden
+source_modules =
+    english
+forbidden_modules =
+    task.domain
+    task.application
+    task.adapters
+    content_sales.domain
+    content_sales.application
+    content_sales.adapters
+    media.models
+    media.index
+    travel.models
+    travel.index

@@ -311,7 +311,7 @@ Issue の本質的な性質を表す。
 
 > ブランチ・コミット・ラベルですべて同じ識別子を使う。
 
-### system ラベル（6 件・コミット scope と一致）
+### system ラベル（7 件・コミット scope と一致）
 
 対象領域（システム = Bounded Context）を分類する。0〜複数件付与可。
 各領域の構成方針は [ADR-0002](../../docs/adr/0002-modular-monolith-bounded-context.md) を参照。
@@ -321,6 +321,7 @@ Issue の本質的な性質を表す。
 | `system: task` | タスク管理 |
 | `system: travel` | 旅行の行先管理 |
 | `system: media` | 画像・動画管理 |
+| `system: english` | 英語学習 |
 | `system: common` | 横断的・共通基盤 |
 | `system: content-sales` | 自作ツール等の販売管理 |
 | `system: deps` | 依存パッケージ |

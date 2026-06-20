@@ -73,6 +73,7 @@ description: GitHub Issue を対話形式で作成するスキル。ProductBackl
 | scope | 対象 | 対応する system ラベル |
 |-------|------|---------------------|
 | `task` | タスク管理 | `system: task` |
+| `english` | 英語学習 | `system: english` |
 | `common` | 横断的・共通基盤 | `system: common` |
 | `content-sales` | 自作ツール等の販売管理 | `system: content-sales` |
 | `deps` | 依存パッケージ | `system: deps` |
