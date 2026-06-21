@@ -242,7 +242,7 @@ git switch main && git pull
 ## ステップ7: スコープ外の派生 Issue 起票（任意）
 
 **タイミング**: 最終ステップ。レビュー中に見つけた「**今回の PR スコープと無関係な改修ポイント**」があれば、
-[`create-issue`](../create-issue/SKILL.md) スキルで起票する（今回 PR で直すべき指摘は対象外）。
+[`issue-memory`](../issue-memory/SKILL.md) スキルで起票する（今回 PR で直すべき指摘は対象外）。
 なければ「派生 Issue なし」と報告して終了。
 
 ---
