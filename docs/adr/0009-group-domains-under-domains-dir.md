@@ -1,4 +1,4 @@
-# ADR-0008: 領域（Bounded Context）を `domains/` コンテナ配下にまとめる
+# ADR-0009: 領域（Bounded Context）を `domains/` コンテナ配下にまとめる
 
 - **ステータス**: `承認済み`
 - **決定日**: 2026-06-20

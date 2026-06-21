@@ -11,7 +11,7 @@
 トップ階層に置けるのは **(1) 領域（Bounded Context）**・**(2) content 領域**・**(3) 支援ディレクトリ**・
 **(4) 許可されたルートファイル** の4種だけ。これ以外をルート直下に増やさない。
 領域（Bounded Context）は数が増えてもトップ階層を散らかさないよう **`domains/` コンテナ配下**にまとめる
-（`shared` は Shared Kernel = 領域非依存のため例外的にルート直下に置く）。根拠は [ADR-0008](../docs/adr/0008-group-domains-under-domains-dir.md)。
+（`shared` は Shared Kernel = 領域非依存のため例外的にルート直下に置く）。根拠は [ADR-0009](../docs/adr/0009-group-domains-under-domains-dir.md)。
 
 ```
 life-os/
@@ -95,7 +95,7 @@ compose.yaml  .dockerignore   （← テスト実行環境 / ADR-0006）
 
 ## 領域・content 領域の追加
 
-- **新領域（BC）の追加**: `domains/<領域>/` を作成 → `pyproject.toml` の `members` に `domains/<領域>` を追加 → `.importlinter` のコントラクト更新 → `system: *` ラベル整備。**手順の正本は [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md)**（配置先は [ADR-0008](../docs/adr/0008-group-domains-under-domains-dir.md)。ここでは重複させない）。
+- **新領域（BC）の追加**: `domains/<領域>/` を作成 → `pyproject.toml` の `members` に `domains/<領域>` を追加 → `.importlinter` のコントラクト更新 → `system: *` ラベル整備。**手順の正本は [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md)**（配置先は [ADR-0009](../docs/adr/0009-group-domains-under-domains-dir.md)。ここでは重複させない）。
 - **新 content 領域の追加**: コードを持たないなら member/`.importlinter`/`public.py` は不要（[ADR-0003](../docs/adr/0003-presentation-system.md) の `presentation/` が前例）。
 
 > 関連: ドキュメントの置き方は [documentation.md](./documentation.md)、命名は [naming.md](./naming.md)。

@@ -96,6 +96,19 @@ PR
 
 > GitHub Actions の CI は未設置のため、検証は**ローカル実行**（`uv run ...`）で行う。CI を導入したら、このゲートを CI の結果に置き換える（ADR-0004 のトレードオフ参照）。
 
+### スコープゲート（自動マージしてよい範囲の判定）
+
+検証ゲートを通る前に、**変更ファイルパスから「自動マージ（auto）/ 人間レビュー必須（human）」を決定的に判定する**。判定の実体（決定木・パス表）は [`review-and-merge-pr`](../../.claude/skills/review-and-merge-pr/SKILL.md) スキルが単一の真実。
+
+| 判定 | 条件（上から順に評価） | 扱い |
+|------|----------------------|------|
+| human | 方針・境界・契約パスを含む（`**/public.py` / `.importlinter` / `pyproject.toml` / `docs/adr` / `guides` / `rule` / `.claude` / `.github` / ルート `CLAUDE.md`・`README.md` 等） | マージしない |
+| human | `shared/**` を含む（基盤・全領域波及） | マージしない |
+| human | Bounded Context（`task`/`content-sales`/`media`/`travel`/`english`）を2つ以上含む（領域横断） | マージしない |
+| auto | 上記いずれにも非該当（単一領域内 or content のみ） | 検証ゲートへ |
+
+> **auto のみ**が上記の検証ゲートに進み、通過すれば無人マージされる。**human はマージせず人間レビューに委ねる**。設計根拠は [ADR-0008](../../docs/adr/0008-pr-auto-merge-scope-gate.md)。
+
 ---
 
 ## 6. レビューの大原則
@@ -113,6 +126,7 @@ PR
 
 - エージェント: [`.claude/agents/pr-reviewer.md`](../../.claude/agents/pr-reviewer.md)
 - スキル: [`code-review-general`](../../.claude/skills/code-review-general/SKILL.md) / [`code-review-python`](../../.claude/skills/code-review-python/SKILL.md) / [`code-review-architecture`](../../.claude/skills/code-review-architecture/SKILL.md)
+- スコープゲート（自動マージ判定）: [`review-and-merge-pr`](../../.claude/skills/review-and-merge-pr/SKILL.md) / [ADR-0008](../../docs/adr/0008-pr-auto-merge-scope-gate.md)
 - 領域早見表: [`domain-checklist.md`](../../.claude/skills/code-review-general/references/domain-checklist.md)
 - 接頭辞の定義: [`.github/pull_request_template.md`](../../.github/pull_request_template.md)
 - 設計決定: [ADR-0004](../../docs/adr/0004-pr-review-agent.md)
