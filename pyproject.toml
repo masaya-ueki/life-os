@@ -2,6 +2,7 @@
 # 設計根拠: docs/adr/0002-modular-monolith-bounded-context.md
 #
 # 各領域（Bounded Context）を workspace メンバーとして分割管理する。
+# 領域は domains/ 配下にまとめる（shared は Shared Kernel としてルート直下）。
 # 領域間の依存は各領域の public.py 経由のみ。境界は .importlinter で強制する。
 
 [project]
@@ -20,7 +21,7 @@ dependencies = [
 ]
 
 [tool.uv.workspace]
-members = ["shared", "task", "content-sales", "media", "travel", "english"]
+members = ["shared", "domains/task", "domains/content-sales", "domains/media", "domains/travel", "domains/english"]
 
 [tool.uv.sources]
 shared = { workspace = true }

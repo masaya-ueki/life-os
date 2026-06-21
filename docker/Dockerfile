@@ -27,11 +27,11 @@ WORKDIR /workspace
 #    （ソース変更ではこのレイヤを再実行しない）
 COPY pyproject.toml uv.lock ./
 COPY shared/pyproject.toml shared/
-COPY task/pyproject.toml task/
-COPY content-sales/pyproject.toml content-sales/
-COPY media/pyproject.toml media/
-COPY travel/pyproject.toml travel/
-COPY english/pyproject.toml english/
+COPY domains/task/pyproject.toml domains/task/
+COPY domains/content-sales/pyproject.toml domains/content-sales/
+COPY domains/media/pyproject.toml domains/media/
+COPY domains/travel/pyproject.toml domains/travel/
+COPY domains/english/pyproject.toml domains/english/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-workspace --dev
 

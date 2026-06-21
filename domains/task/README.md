@@ -1,6 +1,6 @@
 # task — タスク管理
 
-> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../docs/adr/0002-modular-monolith-bounded-context.md)
+> **構成根拠**: [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](../../docs/adr/0002-modular-monolith-bounded-context.md)
 
 日々のやること・プロジェクト・進捗を管理する Bounded Context。
 ロジックが主役のため **アーキタイプA（軽量ヘキサゴナル）** を採る。

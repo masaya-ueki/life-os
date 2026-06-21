@@ -9,7 +9,7 @@ description: 英語 or 日本語の文章を、もう一方の言語へ翻訳す
 **中学生以上の英単語（単語・イディオム）** と **重要な表現** を意味・用例つきで抽出する。
 抽出結果は `english` 領域の学習ログ（`english/data/`）に追記して蓄積する。
 
-領域の構成は [`english/README.md`](../../../english/README.md) を参照。
+領域の構成は [`english/README.md`](../../../domains/english/README.md) を参照。
 
 ---
 

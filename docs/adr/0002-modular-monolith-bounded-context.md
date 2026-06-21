@@ -86,6 +86,8 @@ life-os/
 
 縦切り（領域）が一段目、技術レイヤーは各領域の内側だけに閉じる。
 
+> **更新（[ADR-0009](./0009-group-domains-under-domains-dir.md)）**: 領域が増えてトップ階層の統制がしづらくなったため、領域（BC）は `domains/` コンテナ配下にまとめる構成へ変更した（`shared` は Shared Kernel として例外的にルート直下のまま）。Modular Monolith × Bounded Context の決定・境界強制の仕組み（`public.py` / `.importlinter`）は本 ADR のまま不変で、変わるのは物理配置と `members` パスのみ。上図の `task/` 等は現行では `domains/task/` を読み替える。
+
 ### 2 つのアーキタイプ
 
 | | アーキタイプA（動く領域） | アーキタイプB（データ領域） |
