@@ -53,6 +53,57 @@ uv run --project scripts/deckgen -m deckgen claude-code-security --template bran
 
 配色は `theme.py`（`presentation/templates/theme-tokens.yml` を単一ソースとして読み、`deck.theme` で `default`/`dark`）。HTML スライドと同じトークンを共有する。`--template` 指定時はマスター背景・配色を優先するため自前の背景塗りは行わない。
 
+## ブランドテンプレートの運用（`--template`）
+
+### サンプルテンプレートで即試す
+
+リポジトリには `scripts/deckgen/templates/sample-brand.pptx` が同梱されている。
+`presentation/templates/theme-tokens.yml` の `default` テーマカラーをマスターに設定した最小テンプレート。
+
+```bash
+# サンプルテンプレートでブランド継承を確認
+uv run --project scripts/deckgen -m deckgen claude-code-security \
+    --template scripts/deckgen/templates/sample-brand.pptx
+```
+
+### 背景塗りの抑止（重要）
+
+`--template` を指定すると、deckgen はスライドごとの **背景塗りを自動で省略**する（`builder.py` の `use_bg = template_path is None`）。テンプレートのスライドマスターに設定した背景がそのまま使われる。テンプレートなしで生成した場合は `theme-tokens.yml` の `bg` カラーを自前で塗る。
+
+### カスタムブランドテンプレートの作成
+
+#### 方法A: スクリプトで生成（python-pptx ベース）
+
+```bash
+# サンプルテンプレートを再生成（コードでカスタマイズ後に実行）
+uv run --project scripts/deckgen \
+    python scripts/deckgen/tools/make_brand_template.py
+# → scripts/deckgen/templates/sample-brand.pptx を更新
+```
+
+`scripts/deckgen/tools/make_brand_template.py` の `BRAND_*` 定数を自社カラーに書き換えてから実行する。
+
+#### 方法B: PowerPoint で作成（推奨）
+
+1. PowerPoint で既存の `.pptx` または空のプレゼンを開く
+2. 「表示」→「スライドマスター」でマスターの背景・フォント・配色を設定
+3. 「ファイル」→「名前を付けて保存」→「PowerPoint テンプレート（.potx）」で保存
+4. 保存した `.potx` を `--template` に指定
+
+```bash
+uv run --project scripts/deckgen -m deckgen <slug> --template path/to/brand.potx
+```
+
+#### テンプレートに含めるべき内容
+
+| 設定項目 | 場所 | deckgen への影響 |
+|---------|------|----------------|
+| スライドマスター背景色 | スライドマスター | `--template` 時の背景として使われる |
+| フォント（テーマフォント） | テーマ設定 | deckgen は直接フォント名を指定するため影響小 |
+| カラースキーム | テーマ設定 | deckgen は RGB を直接指定するため影響小 |
+
+> **注意**: テンプレートファイル内に実際のスライドを含めないこと。`Presentation(template_path)` はテンプレートのスライドをそのまま引き継ぐため、テンプレートにスライドが含まれると生成物に混入する。
+
 ## 既知の割り切り（編集可能性を優先した結果）
 - アニメーション・スピーカーノート・高度チャート（Waterfall 等）は非対応（python-pptx の制約）。
 - 図解（matrix-2x2 / tree / pyramid / venn）はネイティブ図形で描く。tree はコネクタ線、venn は半透明の重なり円。深い階層や3集合以上など表現の限界を超えるものは箇条書きにフォールバックする。
@@ -70,5 +121,9 @@ scripts/deckgen/
     layout.py             # 寸法・色・テキストボックス・図形・表の共通ヘルパ
     builder.py            # Presentation 組み立て（ヘッダ＋expression dispatch）
     expressions/          # title / bullet / comparison / flow / structure / emphasis / chart
+  templates/
+    sample-brand.pptx     # サンプルブランドテンプレート（--template に直接渡せる）
+  tools/
+    make_brand_template.py  # sample-brand.pptx を再生成するユーティリティ
   tests/test_builder.py
 ```
