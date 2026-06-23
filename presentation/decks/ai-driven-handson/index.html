@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI駆動で、業務をやる</title>
+<style>
+  /* === CSS 変数: theme-tokens.yml → default === */
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a2e;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent2: #7e57c2;
+    --good: #16a34a;
+    --bad: #dc2626;
+    --line: #e5e7eb;
+    --card: #f8fafc;
+    --on-accent: #ffffff;
+  }
+  [data-theme="dark"] {
+    --bg: #0f172a; --fg: #f1f5f9; --muted: #94a3b8; --accent: #60a5fa;
+    --accent2: #7e57c2; --good: #16a34a; --bad: #dc2626;
+    --line: #334155; --card: #1e293b; --on-accent: #0f172a;
+  }
+
+  /* === リセット & 基礎 === */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #33373f;
+    color: var(--fg);
+    font-family: system-ui, -apple-system, "Hiragino Sans", "Hiragana Sans", "Yu Gothic", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === スライド共通 === */
+  .slide {
+    position: relative;
+    width: 1280px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 24px auto;
+    padding: 56px 72px;
+    background: var(--bg);
+    box-shadow: 0 4px 24px rgba(0,0,0,.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide h2 {
+    font-size: 44px;
+    color: var(--accent);
+    border-bottom: 3px solid var(--line);
+    padding-bottom: 12px;
+    flex: 0 0 auto;
+  }
+  .slide .lead {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 16px 0 12px;
+    line-height: 1.5;
+    flex: 0 0 auto;
+    color: var(--fg);
+  }
+  .slide ul {
+    font-size: 25px;
+    line-height: 1.75;
+    padding-left: 1.4em;
+  }
+  .slide ul li { margin: 6px 0; }
+  .slide__body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  /* ============================================================
+     1. TITLE スライド
+  ============================================================ */
+  .slide[data-variant="title"] {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #1a237e 0%, #1e3a8a 40%, #2563eb 75%, #7e57c2 100%);
+    color: #fff;
+  }
+  .slide[data-variant="title"] h1 {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1.2;
+    max-width: 20ch;
+  }
+  .slide[data-variant="title"] .subtitle {
+    font-size: 28px;
+    margin-top: 28px;
+    opacity: .92;
+    max-width: 34ch;
+    line-height: 1.6;
+  }
+  .slide[data-variant="title"] .meta {
+    margin-top: 44px;
+    font-size: 22px;
+    line-height: 2;
+    opacity: .88;
+  }
+  .slide[data-variant="title"] .date {
+    position: absolute;
+    bottom: 40px;
+    right: 60px;
+    font-size: 20px;
+    opacity: .8;
+  }
+
+  /* ============================================================
+     2. EMPHASIS: message
+  ============================================================ */
+  .slide[data-variant="emphasis"] {
+    background: var(--accent);
+    color: var(--on-accent);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide[data-variant="emphasis"] .emph-eyebrow {
+    font-size: 26px;
+    font-weight: 700;
+    opacity: .85;
+    letter-spacing: .06em;
+  }
+  .slide[data-variant="emphasis"] .emph-msg {
+    font-size: 60px;
+    font-weight: 900;
+    line-height: 1.3;
+    margin: 28px 0;
+    max-width: 22ch;
+  }
+  .slide[data-variant="emphasis"] .emph-sub {
+    font-size: 25px;
+    opacity: .9;
+    max-width: 44ch;
+    line-height: 1.65;
+  }
+
+  /* EMPHASIS: quote */
+  .slide[data-variant="quote"] {
+    background: #1a1a2e;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide[data-variant="quote"] blockquote {
+    position: relative;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.55;
+    max-width: 30ch;
+    padding: 20px 48px;
+    color: #fff;
+  }
+  .slide[data-variant="quote"] blockquote::before {
+    content: "\201C";
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 120px;
+    color: var(--accent);
+    font-family: Georgia, serif;
+    line-height: 1;
+    opacity: .7;
+  }
+  .slide[data-variant="quote"] .quote-cite {
+    margin-top: 24px;
+    font-size: 22px;
+    opacity: .7;
+    font-style: italic;
+  }
+  .slide[data-variant="quote"] .emph-sub {
+    margin-top: 20px;
+    font-size: 21px;
+    opacity: .7;
+    max-width: 52ch;
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     3. COMPARISON: two-column
+  ============================================================ */
+  .cmp--two {
+    display: grid;
+    grid-template-columns: 1fr 56px 1fr;
+    gap: 8px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .cmp__col {
+    border-radius: 14px;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cmp__col--left {
+    background: #f0f4ff;
+    border: 2px solid var(--accent2);
+  }
+  .cmp__col--right {
+    background: #eff6ff;
+    border: 2px solid var(--accent);
+  }
+  .cmp__col h3 { font-size: 27px; margin-bottom: 8px; }
+  .cmp__col--left h3 { color: var(--accent2); }
+  .cmp__col--right h3 { color: var(--accent); }
+  .cmp__col ul { font-size: 22px; line-height: 1.55; }
+  .cmp__col ul li { margin: 8px 0; }
+  .cmp__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--accent);
+  }
+
+  /* ============================================================
+     4. FLOW: steps horizontal
+  ============================================================ */
+  .flow--steps-h {
+    list-style: none;
+    display: flex;
+    align-items: stretch;
+    padding: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 0;
+  }
+  .flow--steps-h .flow__step {
+    flex: 1;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-top: 6px solid var(--accent);
+    border-radius: 14px;
+    padding: 22px 18px;
+    margin: 0 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .flow--steps-h .flow__step + .flow__step::before {
+    content: "→";
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .flow__no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+  .flow__step h3 { font-size: 25px; font-weight: 700; color: var(--fg); }
+  .flow__step p { font-size: 21px; color: var(--muted); line-height: 1.4; }
+
+  /* FLOW: steps vertical */
+  .flow--steps-v {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    flex: 1 1 auto;
+    gap: 0;
+    justify-content: center;
+  }
+  .flow--steps-v .flow__step {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 14px 22px;
+    position: relative;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-left: 6px solid var(--accent);
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .flow--steps-v .flow__step + .flow__step::before {
+    content: "↓";
+    position: absolute;
+    top: -22px;
+    left: 26px;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .flow--steps-v .flow__step h3 { font-size: 23px; font-weight: 700; }
+  .flow--steps-v .flow__step p { font-size: 19px; color: var(--muted); margin-top: 3px; }
+
+  /* FLOW: cycle (2x2 grid) */
+  .flow--cycle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 24px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .flow__cycle-step {
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .flow__cycle-step:nth-child(1) { border-top: 6px solid var(--accent); }
+  .flow__cycle-step:nth-child(2) { border-top: 6px solid var(--accent2); }
+  .flow__cycle-step:nth-child(3) { border-top: 6px solid var(--accent); }
+  .flow__cycle-step:nth-child(4) { border-top: 6px solid var(--accent2); }
+  .flow__cycle-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+  .flow__cycle-step:nth-child(2) .flow__cycle-no,
+  .flow__cycle-step:nth-child(4) .flow__cycle-no { background: var(--accent2); }
+  .flow__cycle-step h3 { font-size: 26px; font-weight: 700; }
+  .flow__cycle-step p { font-size: 21px; color: var(--muted); line-height: 1.35; }
+
+  /* ============================================================
+     5. STRUCTURE: pyramid
+  ============================================================ */
+  .pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex: 1 1 auto;
+    padding: 4px 0 8px;
+  }
+  /* layers[2] = 頂点 → 最上段 (index 1 in HTML reversed) */
+  .pyramid__layer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.3;
+    color: #fff;
+  }
+  .pyramid__apex {
+    width: 38%;
+    min-height: 110px;
+    font-size: 22px;
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    padding: 30px 10px 14px;
+  }
+  .pyramid__mid {
+    width: 64%;
+    min-height: 90px;
+    font-size: 24px;
+    background: var(--accent2);
+    clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
+    padding: 20px 32px;
+  }
+  .pyramid__base {
+    width: 90%;
+    min-height: 90px;
+    font-size: 24px;
+    background: #1e3a8a;
+    clip-path: polygon(4% 0%, 96% 0%, 100% 100%, 0% 100%);
+    padding: 20px 48px;
+  }
+
+  /* ============================================================
+     6. STRUCTURE: tree
+  ============================================================ */
+  .tree-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    justify-content: flex-start;
+    padding-top: 4px;
+  }
+  .tree__root {
+    background: var(--accent);
+    color: #fff;
+    font-size: 25px;
+    font-weight: 700;
+    padding: 12px 32px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+  }
+  .tree__connector { width: 2px; height: 14px; background: var(--line); flex: 0 0 auto; }
+  .tree__branches {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .tree__node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    min-width: 0;
+  }
+  .tree__parent {
+    background: var(--card);
+    border: 2px solid var(--accent2);
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--fg);
+    text-align: center;
+    width: 100%;
+  }
+  .tree__node-connector { width: 2px; height: 12px; background: var(--line); }
+  .tree__children {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+  }
+  .tree__leaf {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent2);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 17px;
+    line-height: 1.3;
+    color: var(--fg);
+  }
+
+  /* ============================================================
+     ページャー
+  ============================================================ */
+  .pager {
+    position: fixed;
+    right: 16px;
+    bottom: 12px;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* ============================================================
+     印刷 / PDF
+  ============================================================ */
+  @media print {
+    body { background: #fff; }
+    .controls, .pager { display: none !important; }
+    .slide { margin: 0; box-shadow: none; page-break-after: always; width: 100%; }
+    @page { size: 1280px 720px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     1. 表紙 (title)
+============================================================ -->
+<section class="slide" data-variant="title">
+  <h1>AI駆動で、業務をやる</h1>
+  <p class="subtitle">「開発」を超えて、すべての業務をAI駆動に<br>— Agent / Skill / Rule / Hook ハンズオン</p>
+  <div class="meta">
+    テーマ: AI駆動開発ハンズオン &amp; 講座<br>
+    対象: ClaudeCode / GitHub Copilot 利用者（Microsoft Copilot 利用者は座学パートまで）<br>
+    ゴール: 「課題整理 → AI生成 → デモ → 改善issue」の loop を一周回す
+  </div>
+  <div class="date">2026-06-23</div>
+</section>
+
+<!-- ============================================================
+     2. 本日の目的 (emphasis: message)
+============================================================ -->
+<section class="slide" data-variant="emphasis">
+  <p class="emph-eyebrow">本日の目的</p>
+  <p class="emph-msg">自分は、AIを含む作業フローの「一部」である。</p>
+  <p class="emph-sub">AIで業務をする。開発に閉じず、繰り返し作業はAIへ。<br>自分はAIを含む作業フローの「一部」になる。</p>
+</section>
+
+<!-- ============================================================
+     3. 対象者と3つのレーン (comparison: two-column)
+============================================================ -->
+<section class="slide">
+  <h2>対象者と3つのレーン</h2>
+  <p class="lead">使えるAIツールで到達点が変わる。座学は全員共通、実践はコーディングエージェント保有者が手を動かす。</p>
+  <div class="slide__body">
+    <div class="cmp--two">
+      <div class="cmp__col cmp__col--left">
+        <h3>座学編（全員共通）</h3>
+        <ul>
+          <li>AI駆動開発の方向性と思想</li>
+          <li>効率化の仕組み: Agent / Skill / Rule / Hook</li>
+          <li>コーディングエージェント最強論</li>
+        </ul>
+      </div>
+      <div class="cmp__arrow">→</div>
+      <div class="cmp__col cmp__col--right">
+        <h3>実践編（Claude Code / Copilot）</h3>
+        <ul>
+          <li>課題整理 → AIで一括生成</li>
+          <li>デモ実行 → 改善 issue 起票</li>
+          <li>loop を一周回す</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. 本日のアジェンダ (bullet)
+============================================================ -->
+<section class="slide">
+  <h2>本日のアジェンダ</h2>
+  <p class="lead">座学で「なぜ・何を」を揃え、実践で「どうやって」を一周する。</p>
+  <div class="slide__body">
+    <ul>
+      <li>座学1-2: AI駆動開発のこれからと、開発スタイルの変遷</li>
+      <li>座学3: 「3回やったらAI化」— 繰り返し作業の棚卸し</li>
+      <li>座学4-6: 仕組み（ディレクトリ構成）・コーディングエージェント最強論・リポジトリ構成</li>
+      <li>実践1-6: 棚卸し → リポジトリ用意 → 課題整理エージェント → AI生成 → デモ → 改善 issue</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. AI駆動開発のこれから (bullet)
+============================================================ -->
+<section class="slide">
+  <h2>AI駆動開発のこれから</h2>
+  <p class="lead">「AIにコードを書かせる」段階は終わり、「AIに仕事を任せる」段階へ。対象は開発から全業務に広がる。</p>
+  <div class="slide__body">
+    <ul>
+      <li>コード生成は当たり前 → AIが「タスクを完遂」する時代へ</li>
+      <li>適用範囲が開発から、調査・資料作成・運用・定型業務へ拡大</li>
+      <li>人の役割は「実装者」から「AIに任せる設計者・レビュアー」へシフト</li>
+      <li>勝ち筋は「仕組み化」: 一度作れば何度でも効く資産を積む</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     6. 開発スタイルの変遷 (flow: steps horizontal)
+============================================================ -->
+<section class="slide">
+  <h2>開発スタイルの変遷</h2>
+  <p class="lead">手書き → 補完 → エージェント駆動 → loop 駆動。人の関与は「1行ずつ書く」から「流れを設計する」へ移る。</p>
+  <div class="slide__body">
+    <ol class="flow flow--steps-h">
+      <li class="flow__step">
+        <span class="flow__no">1</span>
+        <h3>手書き</h3>
+        <p>人が全部書く</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">2</span>
+        <h3>補完</h3>
+        <p>AIが部分提案・人が主役</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">3</span>
+        <h3>エージェント駆動</h3>
+        <p>AIがタスクを実行・人はレビュー</p>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">4</span>
+        <h3>loop 駆動</h3>
+        <p>AIが輪を回す・人は輪を設計</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. 3回やったら、AI化 (emphasis: message)
+============================================================ -->
+<section class="slide" data-variant="emphasis">
+  <p class="emph-eyebrow">座学3 — 3回やったらAI化</p>
+  <p class="emph-msg">同じ作業を3回やったら、AI化しよう。</p>
+  <p class="emph-sub">手動で繰り返している作業はないか？を常に問う。<br>「面倒」を感じた瞬間が、AI化のシグナル。</p>
+</section>
+
+<!-- ============================================================
+     8. 自分は、作業フローの一部 (structure: pyramid)
+============================================================ -->
+<section class="slide">
+  <h2>自分は、作業フローの一部</h2>
+  <p class="lead">ほぼすべての作業はAIで自動化できる。ただしスキル・ルールの充実があって初めて成立する。</p>
+  <div class="slide__body">
+    <div class="pyramid">
+      <!-- 頂点 (layers[2]) -->
+      <div class="pyramid__layer pyramid__apex">人はフロー設計とレビューに専念</div>
+      <!-- 中段 (layers[1]) -->
+      <div class="pyramid__layer pyramid__mid">エージェントがタスクを自律実行</div>
+      <!-- 土台 (layers[0]) -->
+      <div class="pyramid__layer pyramid__base">土台: ルール / スキル / フックの蓄積</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     9. 効率化の仕組み = ディレクトリ構成 (structure: tree)
+============================================================ -->
+<section class="slide">
+  <h2>効率化の仕組み = ディレクトリ構成</h2>
+  <p class="lead">AIを効率的に使う鍵は、リポジトリ直下に置く「4点セット」。Agent / Skill / Rule / Hook。</p>
+  <div class="slide__body">
+    <div class="tree-wrap">
+      <div class="tree__root">.claude/（AIの設定一式）</div>
+      <div class="tree__connector"></div>
+      <div class="tree__branches">
+        <div class="tree__node">
+          <div class="tree__parent">agents/</div>
+          <div class="tree__node-connector"></div>
+          <div class="tree__children">
+            <div class="tree__leaf">役割特化エージェント</div>
+          </div>
+        </div>
+        <div class="tree__node">
+          <div class="tree__parent">skills/</div>
+          <div class="tree__node-connector"></div>
+          <div class="tree__children">
+            <div class="tree__leaf">再利用ワークフロー（SKILL.md）</div>
+          </div>
+        </div>
+        <div class="tree__node">
+          <div class="tree__parent">rules/</div>
+          <div class="tree__node-connector"></div>
+          <div class="tree__children">
+            <div class="tree__leaf">常時適用ルール</div>
+          </div>
+        </div>
+        <div class="tree__node">
+          <div class="tree__parent">hooks/ + settings</div>
+          <div class="tree__node-connector"></div>
+          <div class="tree__children">
+            <div class="tree__leaf">自動ブロック・自動整形</div>
+          </div>
+        </div>
+        <div class="tree__node">
+          <div class="tree__parent">commands/</div>
+          <div class="tree__node-connector"></div>
+          <div class="tree__children">
+            <div class="tree__leaf">/learn・/evolve 等</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     10. 4点セットの役割と実例 (comparison: two-column)
+============================================================ -->
+<section class="slide">
+  <h2>4点セットの役割と実例</h2>
+  <p class="lead">それぞれが「いつ効くか」を実物で押さえる。組み合わせでAIの精度と安全性が決まる。</p>
+  <div class="slide__body">
+    <div class="cmp--two">
+      <div class="cmp__col cmp__col--left">
+        <h3>守り（Rule / Hook）</h3>
+        <ul>
+          <li>Rule: main保護・命名規約・セキュリティ方針</li>
+          <li>Hook: terraform destroy / force-push をブロック</li>
+          <li>Hook: .env 書き込み・秘密情報を検出</li>
+        </ul>
+      </div>
+      <div class="cmp__arrow">×</div>
+      <div class="cmp__col cmp__col--right">
+        <h3>攻め（Agent / Skill / Command）</h3>
+        <ul>
+          <li>Agent: 設計 / 実行 / レビューを分業</li>
+          <li>Skill: issue 作成・dbt テスト等の定型手順</li>
+          <li>Command: /learn → /evolve で資産を育てる</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     11. 何に向くサービスか？ (bullet)
+============================================================ -->
+<section class="slide">
+  <h2>何に向くサービスか？</h2>
+  <p class="lead">結論、ほとんどの業務はコーディングエージェントで実現できる。4の考え方はツールを問わず共通。</p>
+  <div class="slide__body">
+    <ul>
+      <li>資料作成・調査・データ処理・運用 — 多くは「ファイルとコマンド」に落ちる</li>
+      <li>ファイルとコマンドを扱えるコーディングエージェントは、適用範囲が最も広い</li>
+      <li>Agent / Skill / Rule / Hook の考え方は Claude Code でも Copilot でも共通</li>
+      <li>→ まずコーディングエージェントを「最強の基盤」として押さえるべき</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     12. コーディングエージェントが、実質最強 (emphasis: quote)
+============================================================ -->
+<section class="slide" data-variant="quote">
+  <blockquote>
+    エンジニアは、コードを1行ずつ書く個人ではなく<br>「エージェントのテックリード」として考えるべきだ。
+  </blockquote>
+  <p class="quote-cite">— Sridhar Ramaswamy（Snowflake CEO）</p>
+  <p class="emph-sub">コーディングエージェントを使いこなす人材（uber programmers）は1年前比 50〜100倍の生産性。<br>鍵はモデルの大きさではなく「システム設計」— まさに4点セットの話。</p>
+</section>
+
+<!-- ============================================================
+     13. リポジトリ構成: .claude と .github のミラー (comparison: two-column)
+============================================================ -->
+<section class="slide">
+  <h2>リポジトリ構成: .claude と .github のミラー</h2>
+  <p class="lead">同じ思想を、Claude Code は .claude/、GitHub Copilot は .github/ で表現する。片方を学べば両方に効く。</p>
+  <div class="slide__body">
+    <div class="cmp--two">
+      <div class="cmp__col cmp__col--left">
+        <h3>.claude/（Claude Code）</h3>
+        <ul>
+          <li>agents/ — 役割特化エージェント</li>
+          <li>skills/ — SKILL.md</li>
+          <li>rules/ — 常時適用ルール</li>
+          <li>hooks/ + settings.json — 自動チェック</li>
+          <li>commands/ — /learn・/evolve</li>
+        </ul>
+      </div>
+      <div class="cmp__arrow">≒</div>
+      <div class="cmp__col cmp__col--right">
+        <h3>.github/（GitHub Copilot）</h3>
+        <ul>
+          <li>agents/ — *.agent.md</li>
+          <li>skills/ — 同名スキルをミラー</li>
+          <li>instructions/ — *.instructions.md（≒rules）</li>
+          <li>copilot-instructions.md — 全体方針</li>
+          <li>ISSUE_TEMPLATE/ — issue 雛形</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     14. ここまでが全員共通 (bullet)
+============================================================ -->
+<section class="slide">
+  <h2>ここまでが全員共通</h2>
+  <p class="lead">座学のゴールは「仕組みで効率化する」思想の共有。ここからは手を動かすレーンに分かれる。</p>
+  <div class="slide__body">
+    <ul>
+      <li>押さえたこと: 3回やったらAI化 / 4点セット / コーディングエージェント最強 / ミラー構成</li>
+      <li>Microsoft Copilot 勢: ここまでの思想を、まず手元の業務の棚卸しに活かす</li>
+      <li>Claude Code / Copilot 勢: ここから実践編 — loop を一周回す</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     15. 実践編の進め方 (flow: cycle)
+============================================================ -->
+<section class="slide">
+  <h2>実践編の進め方</h2>
+  <p class="lead">3〜6（課題整理→生成→デモ→改善 issue）を一周できたらゴール。レーンごとに使うツールが違うだけ。</p>
+  <div class="slide__body">
+    <div class="flow--cycle">
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">1</span>
+        <h3>課題整理</h3>
+        <p>対話でまとめる</p>
+      </div>
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">2</span>
+        <h3>AI生成</h3>
+        <p>skill / rule / agent / hook を作る</p>
+      </div>
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">3</span>
+        <h3>デモ</h3>
+        <p>実際に動かす</p>
+      </div>
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">4</span>
+        <h3>改善 issue</h3>
+        <p>次の一周へ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     16. 実践1: 複数回やっている作業・課題を書き出す (bullet)
+============================================================ -->
+<section class="slide">
+  <h2>複数回やっている作業・課題を書き出す</h2>
+  <p class="lead">loop の燃料は「自分の繰り返し作業」。まず手で書き出して、AI化候補を見つける。</p>
+  <div class="slide__body">
+    <ul>
+      <li>直近で3回以上やった作業をリストアップ</li>
+      <li>各作業の「手順・入力・出力・つまずき」を一言で添える</li>
+      <li>「面倒・毎回ググる・コピペ」が多いものほど良い候補</li>
+      <li>1つ選ぶ — 本日はこれをAI化する</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     17. 実践2: リポジトリをクローン (comparison: two-column)
+============================================================ -->
+<section class="slide">
+  <h2>リポジトリをクローン（or fork してpush）</h2>
+  <p class="lead">コピー済みハンズオン用リポジトリを手元に。今後を見据え「各自リポジトリを持つ」かはAIと相談。</p>
+  <div class="slide__body">
+    <div class="cmp--two">
+      <div class="cmp__col cmp__col--left">
+        <h3>Claude Code レーン</h3>
+        <ul>
+          <li>git clone でハンズオン用リポジトリを取得</li>
+          <li>.claude/ の agents・skills・rules・hooks を確認</li>
+          <li>worktree で作業（git.md ルールに従う）</li>
+        </ul>
+      </div>
+      <div class="cmp__arrow">→</div>
+      <div class="cmp__col cmp__col--right">
+        <h3>GitHub Copilot レーン</h3>
+        <ul>
+          <li>fork → clone（自分のリポジトリで進める）</li>
+          <li>.github/ の instructions・agents・skills を確認</li>
+          <li>copilot-instructions.md で全体方針を把握</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     18. 実践3: 課題整理エージェントで対話 → md化 (flow: steps vertical)
+============================================================ -->
+<section class="slide">
+  <h2>課題整理エージェントで対話 → md 化</h2>
+  <p class="lead">（今後作る）課題整理エージェントと対話し、自分の作業を skill / rule / agent / hook のベースとして md に起こす。</p>
+  <div class="slide__body">
+    <ol class="flow flow--steps-v">
+      <li class="flow__step">
+        <span class="flow__no">1</span>
+        <div>
+          <h3>説明</h3>
+          <p>選んだ作業をエージェントに話す</p>
+        </div>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">2</span>
+        <div>
+          <h3>深掘り</h3>
+          <p>手順・前提・禁止事項を質問で引き出す</p>
+        </div>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">3</span>
+        <div>
+          <h3>分類</h3>
+          <p>skill / rule / agent / hook のどれかに割り振る</p>
+        </div>
+      </li>
+      <li class="flow__step">
+        <span class="flow__no">4</span>
+        <div>
+          <h3>md 化</h3>
+          <p>各ベースを Markdown で出力</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================
+     19. 実践4: AIですべて作成 (comparison: two-column)
+============================================================ -->
+<section class="slide">
+  <h2>AIですべて作成</h2>
+  <p class="lead">たたき台 md を渡し、AIに skill / rule / agent / hook の本体を一括生成させる。レーンで置き場所が変わるだけ。</p>
+  <div class="slide__body">
+    <div class="cmp--two">
+      <div class="cmp__col cmp__col--left">
+        <h3>Claude Code が生成</h3>
+        <ul>
+          <li>skills/&lt;name&gt;/SKILL.md</li>
+          <li>rules/&lt;topic&gt;.md</li>
+          <li>agents/&lt;role&gt;.md</li>
+          <li>hooks/*.sh + settings.json</li>
+        </ul>
+      </div>
+      <div class="cmp__arrow">≒</div>
+      <div class="cmp__col cmp__col--right">
+        <h3>GitHub Copilot が生成</h3>
+        <ul>
+          <li>skills/&lt;name&gt;/（ミラー）</li>
+          <li>instructions/&lt;topic&gt;.instructions.md</li>
+          <li>agents/&lt;role&gt;.agent.md</li>
+          <li>copilot-instructions.md 追記</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     20. 実践5: デモを実行 (bullet)
+============================================================ -->
+<section class="slide">
+  <h2>デモを実行</h2>
+  <p class="lead">作った仕組みを実際に動かす。狙った作業がAIで完遂できるかを、その場で確かめる。</p>
+  <div class="slide__body">
+    <ul>
+      <li>生成したスキル / エージェントを実際に起動して作業させる</li>
+      <li>Hook が意図通りに危険操作をブロックするか確認</li>
+      <li>Rule が守られているか（main で作業していない等）を確認</li>
+      <li>うまくいった点・崩れた点をメモ</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     21. 実践6: 改善点を洗い出して issue 起票 (bullet)
+============================================================ -->
+<section class="slide">
+  <h2>改善点を洗い出して issue 起票</h2>
+  <p class="lead">デモで見えた粗さを issue にする。これが次の一周の入力になり、精度が上がっていく。</p>
+  <div class="slide__body">
+    <ul>
+      <li>デモで崩れた点・あと一歩だった点を具体的に書き出す</li>
+      <li>create-issue スキル / gh issue create でテンプレ起票</li>
+      <li>issue が次の「課題整理（実践3）」の入力になる</li>
+      <li>→ 3〜6 が閉じて、loop が回り始める</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     22. まとめ: 3→6のloopが、ゴール (flow: cycle)
+============================================================ -->
+<section class="slide">
+  <h2>3→6 の loop が、ゴール</h2>
+  <p class="lead">課題整理→生成→デモ→改善 issue を繰り返すほど、精度の高い充実した資産になる。</p>
+  <div class="slide__body">
+    <div class="flow--cycle">
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">③</span>
+        <h3>課題整理</h3>
+        <p>対話でまとめる</p>
+      </div>
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">④</span>
+        <h3>AI生成</h3>
+        <p>一括で作る</p>
+      </div>
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">⑤</span>
+        <h3>デモ</h3>
+        <p>動かして確かめる</p>
+      </div>
+      <div class="flow__cycle-step">
+        <span class="flow__cycle-no">⑥</span>
+        <h3>改善 issue</h3>
+        <p>次の一周へ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     23. loopを"書ける"ようになる (emphasis: message)
+============================================================ -->
+<section class="slide" data-variant="emphasis">
+  <p class="emph-eyebrow">Next Step</p>
+  <p class="emph-msg">loop を設計できたら、晴れて「loop プロンプト」が書ける。</p>
+  <p class="emph-sub">loop を一周回せた = 自動化の型が身についた。<br>型を言語化できれば、AIに回させる「loop プロンプト」が書ける。<br>Next Action: 持ち帰って自分のリポジトリで回し続ける。</p>
+</section>
+
+<!-- ページャー -->
+<div class="pager" id="pager">1 / 23</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const pager = document.getElementById('pager');
+  let i = 0;
+  function go() {
+    slides[i]?.scrollIntoView({ behavior: 'smooth' });
+    pager.textContent = (i + 1) + ' / ' + slides.length;
+  }
+  addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { i = Math.min(i + 1, slides.length - 1); go(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   { i = Math.max(i - 1, 0); go(); }
+  });
+</script>
+</body>
+</html>
