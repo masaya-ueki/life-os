@@ -1,0 +1,393 @@
+deck:
+  title: "AI駆動で、業務をやる"
+  subtitle: "「開発」を超えて、すべての業務をAI駆動に — Agent / Skill / Rule / Hook ハンズオン"
+  theme: default
+  date: "2026-06-23"
+
+chapters:
+  - chapter: "表紙"
+    slides:
+      - title: "AI駆動で、業務をやる"
+        summary: "目指すのはAI駆動“開発”にとどまらない。あらゆる業務をAIに委譲する「AI駆動チーム」への一歩を、手を動かして掴む。"
+        content:
+          - "テーマ: AI駆動開発ハンズオン＆講座"
+          - "対象: ClaudeCode / GitHub Copilot 利用者（Microsoft Copilot 利用者は座学パートまで）"
+          - "ゴール: 「課題整理 → AI生成 → デモ → 改善issue」のloopを一周回す"
+        expression: title
+        data: {}
+
+  - chapter: "前提・本日の進め方"
+    slides:
+      - title: "本日の目的"
+        summary: "AIで業務をする。開発に閉じず、繰り返し作業はAIへ。自分はAIを含む作業フローの“一部”になる。"
+        content:
+          - "AIを使って業務をしたい — “開発”にとどまらず、すべての業務をAI駆動に"
+          - "理想像は「AI駆動チーム」: 人とAIが1つの作業フローを構成する"
+          - "自分はフローの一部にすぎず、ほぼすべての作業はAIで自動化できる"
+          - "ただし一足飛びではない — スキル・ルールの充実を積み上げて初めて到達する"
+        expression: emphasis
+        data:
+          mode: message
+          text: "自分は、AIを含む作業フローの“一部”である。"
+
+      - title: "対象者と3つのレーン"
+        summary: "使えるAIツールで到達点が変わる。座学は全員共通、実践はコーディングエージェント保有者が手を動かす。"
+        content:
+          - "Claude Code 勢（少数）: 実践フルコース。エージェント/スキル/フックまで自作"
+          - "GitHub Copilot 勢（半数）: 実践フルコース。.github 側のミラー構成で同じことを実現"
+          - "Microsoft Copilot 勢: 座学パートまで（コーディングエージェント未使用のため）"
+          - "→ 座学は“考え方”の共有、実践は“手を動かす”時間"
+        expression: comparison
+        data:
+          mode: two-column
+          left:
+            label: "座学編（全員共通）"
+            items:
+              - "AI駆動開発の方向性と思想"
+              - "効率化の仕組み: Agent/Skill/Rule/Hook"
+              - "コーディングエージェント最強論"
+          right:
+            label: "実践編（Claude Code / Copilot）"
+            items:
+              - "課題整理 → AIで一括生成"
+              - "デモ実行 → 改善issue起票"
+              - "loopを一周回す"
+
+      - title: "本日のアジェンダ"
+        summary: "座学で“なぜ・何を”を揃え、実践で“どうやって”を一周する。"
+        content:
+          - "座学1-2: AI駆動開発のこれからと、開発スタイルの変遷"
+          - "座学3: 「3回やったらAI化」— 繰り返し作業の棚卸し"
+          - "座学4-6: 仕組み（ディレクトリ構成）・コーディングエージェント最強論・リポジトリ構成"
+          - "実践1-6: 棚卸し → リポジトリ用意 → 課題整理エージェント → AI生成 → デモ → 改善issue"
+        expression: bullet
+        data: {}
+
+  - chapter: "座学1: AI駆動開発のこれから"
+    slides:
+      - title: "AI駆動開発のこれから"
+        summary: "「AIにコードを書かせる」段階は終わり、「AIに仕事を任せる」段階へ。対象は開発から全業務に広がる。"
+        content:
+          - "コード生成は当たり前 → AIが“タスクを完遂”する時代へ"
+          - "適用範囲が開発から、調査・資料作成・運用・定型業務へ拡大"
+          - "人の役割は「実装者」から「AIに任せる設計者・レビュアー」へシフト"
+          - "勝ち筋は“仕組み化”: 一度作れば何度でも効く資産を積む"
+        expression: bullet
+        data: {}
+
+  - chapter: "座学2: 開発スタイルの変遷"
+    slides:
+      - title: "開発スタイルの変遷"
+        summary: "手書き → 補完 → エージェント駆動 → loop駆動。人の関与は“1行ずつ書く”から“流れを設計する”へ移る。"
+        content:
+          - "手書き: 人が全部書く"
+          - "補完: AIが部分提案（Copilot補完）。人が主役"
+          - "エージェント駆動: AIがタスク単位で実行。人はレビュー"
+          - "loop駆動: 課題→生成→検証→改善の輪をAIが回す。人は輪を設計する"
+        expression: flow
+        data:
+          type: steps
+          orientation: horizontal
+          steps:
+            - { label: "手書き", desc: "人が全部書く" }
+            - { label: "補完", desc: "AIが部分提案・人が主役" }
+            - { label: "エージェント駆動", desc: "AIがタスクを実行・人はレビュー" }
+            - { label: "loop駆動", desc: "AIが輪を回す・人は輪を設計" }
+
+  - chapter: "座学3: 3回やったらAI化"
+    slides:
+      - title: "3回やったら、AI化"
+        summary: "同じ作業を3回以上やったら、それはAIに渡す合図。手作業の棚卸しから始まる。"
+        content:
+          - "手動で繰り返している作業はないか？を常に問う"
+          - "3回以上やったなら、手順は十分に固まっている = 仕組み化できる"
+          - "「面倒」を感じた瞬間が、AI化のシグナル"
+        expression: emphasis
+        data:
+          mode: message
+          text: "同じ作業を3回やったら、AI化しよう。"
+
+      - title: "自分は、作業フローの一部"
+        summary: "ほぼすべての作業はAIで自動化できる。ただしスキル・ルールの充実があって初めて成立する。"
+        content:
+          - "前提: 自分の作業の大半は、手順化すればAIが代行できる"
+          - "現実: いきなり全自動にはならない — スキル/ルール/エージェントの蓄積が必要"
+          - "だから“積み上げ”が効く: 作るほどAIの守備範囲が広がる"
+          - "人の仕事は「手を動かす」から「フローを設計し、任せ、確かめる」へ"
+        expression: structure
+        data:
+          type: pyramid
+          layers:
+            - "土台: ルール/スキル/フックの蓄積"
+            - "中: エージェントがタスクを自律実行"
+            - "頂点: 人はフロー設計とレビューに専念"
+
+  - chapter: "座学4: 効率化の仕組み（ディレクトリ構成）"
+    slides:
+      - title: "効率化の仕組み = ディレクトリ構成"
+        summary: "AIを効率的に使う鍵は、リポジトリ直下に置く“4点セット”。Agent / Skill / Rule / Hook。"
+        content:
+          - "Agent: 役割特化のサブエージェント（設計/実行/レビュー等）"
+          - "Skill: 再利用可能なワークフロー手順（SKILL.md）"
+          - "Rule: 常に適用される規約・ガードレール（rules/*.md）"
+          - "Hook: ツール実行前後の自動チェック・ブロック（settings.json + hooks/*.sh）"
+        expression: structure
+        data:
+          type: tree
+          root: ".claude/（AIの設定一式）"
+          children:
+            - name: "agents/"
+              children:
+                - name: "役割特化エージェント（designer/executor/reviewer）"
+            - name: "skills/"
+              children:
+                - name: "再利用ワークフロー（SKILL.md）"
+            - name: "rules/"
+              children:
+                - name: "常時適用ルール（git.md / security.md）"
+            - name: "hooks/ + settings.json"
+              children:
+                - name: "自動ブロック・自動整形"
+            - name: "commands/"
+              children:
+                - name: "スラッシュコマンド（/learn・/evolve）"
+
+      - title: "4点セットの役割と実例"
+        summary: "それぞれが「いつ効くか」を実物で押さえる。組み合わせでAIの精度と安全性が決まる。"
+        content:
+          - "Agent: terraform設計→実行→レビューを別エージェントに分業させ品質を上げる"
+          - "Skill: 「Issueを作成して」で create-issue スキルが対話的にテンプレ起票"
+          - "Rule: git.md が『mainで直接作業禁止・worktreeで作業』を常時強制"
+          - "Hook: block-force-push / check-secrets が危険操作と秘密情報の流出を自動ブロック"
+          - "Command: /learn で気づきを蓄積し /evolve で skill/rule へ昇華（継続的学習）"
+        expression: comparison
+        data:
+          mode: two-column
+          left:
+            label: "守り（Rule / Hook）"
+            items:
+              - "Rule: main保護・命名規約・セキュリティ方針"
+              - "Hook: terraform destroy/force-push をブロック"
+              - "Hook: .env書き込み・秘密情報を検出"
+          right:
+            label: "攻め（Agent / Skill / Command）"
+            items:
+              - "Agent: 設計/実行/レビューを分業"
+              - "Skill: issue作成・dbtテスト等の定型手順"
+              - "Command: /learn → /evolve で資産を育てる"
+
+  - chapter: "座学5: コーディングエージェント最強論"
+    slides:
+      - title: "何に向くサービスか？"
+        summary: "結論、ほとんどの業務はコーディングエージェントで実現できる。4の考え方はツールを問わず共通。"
+        content:
+          - "資料作成・調査・データ処理・運用 — 多くは“ファイルとコマンド”に落ちる"
+          - "ファイルとコマンドを扱えるコーディングエージェントは、適用範囲が最も広い"
+          - "Agent/Skill/Rule/Hook の考え方は Claude Code でも Copilot でも共通"
+          - "→ まずコーディングエージェントを“最強の基盤”として押さえるべき"
+        expression: bullet
+        data: {}
+
+      - title: "コーディングエージェントが、実質最強"
+        summary: "Snowflake CEO も、コーディングエージェントを使いこなす人材を“桁違いに生産的”と語る。"
+        content:
+          - "コーディングエージェント = 「抽象化エージェント」: やりたいことを伝えれば実現してくれる"
+          - "使いこなす人材（uber programmers）は1年前比 50〜100倍の生産性"
+          - "鍵はモデルの大きさではなく『システム設計』 — まさに4点セットの話"
+        expression: emphasis
+        data:
+          mode: quote
+          text: "エンジニアは、コードを1行ずつ書く個人ではなく『エージェントのテックリード』として考えるべきだ。"
+          cite: "— Sridhar Ramaswamy（Snowflake CEO）"
+
+  - chapter: "座学6: 具体的なリポジトリ構成"
+    slides:
+      - title: "リポジトリ構成: .claude と .github のミラー"
+        summary: "同じ思想を、Claude Code は .claude/、GitHub Copilot は .github/ で表現する。片方を学べば両方に効く。"
+        content:
+          - "Claude Code: .claude/ に agents・skills・rules・hooks・commands"
+          - "GitHub Copilot: .github/ に agents(*.agent.md)・skills・instructions・copilot-instructions.md"
+          - "Rule ↔ instructions、Agent ↔ *.agent.md と概念が一対一で対応"
+          - "ハンズオン用リポジトリは、この両方をコピー済み — clone してすぐ動かせる"
+        expression: comparison
+        data:
+          mode: two-column
+          left:
+            label: ".claude/（Claude Code）"
+            items:
+              - "agents/ — 役割特化エージェント"
+              - "skills/ — SKILL.md"
+              - "rules/ — 常時適用ルール"
+              - "hooks/ + settings.json — 自動チェック"
+              - "commands/ — /learn・/evolve"
+          right:
+            label: ".github/（GitHub Copilot）"
+            items:
+              - "agents/ — *.agent.md"
+              - "skills/ — 同名スキルをミラー"
+              - "instructions/ — *.instructions.md（≒rules）"
+              - "copilot-instructions.md — 全体方針"
+              - "ISSUE_TEMPLATE/ — issue雛形"
+
+      - title: "ここまでが全員共通"
+        summary: "座学のゴールは「仕組みで効率化する」思想の共有。ここからは手を動かすレーンに分かれる。"
+        content:
+          - "押さえたこと: 3回やったらAI化／4点セット／コーディングエージェント最強／ミラー構成"
+          - "Microsoft Copilot 勢: ここまでの思想を、まず手元の業務の棚卸しに活かす"
+          - "Claude Code / Copilot 勢: ここから実践編 — loopを一周回す"
+        expression: bullet
+        data: {}
+
+  - chapter: "実践0: 進め方"
+    slides:
+      - title: "実践編の進め方"
+        summary: "3〜6（課題整理→生成→デモ→改善issue）を一周できたらゴール。レーンごとに使うツールが違うだけ。"
+        content:
+          - "ゴール: 「課題整理エージェント → AI生成 → デモ → 改善issue」を一周"
+          - "繰り返すほど精度が上がる — loopそのものを資産にする"
+          - "Claude Code 勢と Copilot 勢で“道具”は違うが、流れは完全に同じ"
+          - "本日は1周。持ち帰って各自のリポジトリで回し続けるのが本番"
+        expression: flow
+        data:
+          type: cycle
+          steps:
+            - { label: "課題整理", desc: "対話でまとめる" }
+            - { label: "AI生成", desc: "skill/rule/agent/hook を作る" }
+            - { label: "デモ", desc: "実際に動かす" }
+            - { label: "改善issue", desc: "次の一周へ" }
+
+  - chapter: "実践1: 棚卸し"
+    slides:
+      - title: "複数回やっている作業・課題を書き出す"
+        summary: "loopの燃料は“自分の繰り返し作業”。まず手で書き出して、AI化候補を見つける。"
+        content:
+          - "直近で3回以上やった作業をリストアップ"
+          - "各作業の「手順・入力・出力・つまずき」を一言で添える"
+          - "“面倒・毎回ググる・コピペ”が多いものほど良い候補"
+          - "1つ選ぶ — 本日はこれをAI化する"
+        expression: bullet
+        data: {}
+
+  - chapter: "実践2: リポジトリを用意"
+    slides:
+      - title: "リポジトリをクローン（or fork してpush）"
+        summary: "コピー済みハンズオン用リポジトリを手元に。今後を見据え「各自リポジトリを持つ」かはAIと相談。"
+        content:
+          - "ハンズオン用リポジトリ（.claude/.github コピー済み）を clone"
+          - "自分用に進めるなら fork → push でもOK"
+          - "論点: 今後AI駆動で進めるなら、各自が自分のリポジトリを持つ手もある"
+          - "→ この判断自体、AIと相談して決めてよい（壁打ち相手にする）"
+        expression: comparison
+        data:
+          mode: two-column
+          left:
+            label: "Claude Code レーン"
+            items:
+              - "git clone でハンズオン用リポジトリを取得"
+              - ".claude/ の agents・skills・rules・hooks を確認"
+              - "worktreeで作業（git.md ルールに従う）"
+          right:
+            label: "GitHub Copilot レーン"
+            items:
+              - "fork → clone（自分のリポジトリで進める）"
+              - ".github/ の instructions・agents・skills を確認"
+              - "copilot-instructions.md で全体方針を把握"
+
+  - chapter: "実践3: 課題整理エージェント"
+    slides:
+      - title: "課題整理エージェントで対話 → md化"
+        summary: "（今後作る）課題整理エージェントと対話し、自分の作業を skill/rule/agent/hook のベースとして md に起こす。"
+        content:
+          - "棚卸しで選んだ作業を、エージェントに対話ベースで説明する"
+          - "エージェントが手順・前提・禁止事項・自動化ポイントを質問で引き出す"
+          - "アウトプット: skill / rule / agent / hook の“たたき台md”一式"
+          - "※この課題整理エージェント自体も、今後ハンズオンで作っていく対象"
+        expression: flow
+        data:
+          type: steps
+          orientation: vertical
+          steps:
+            - { label: "説明", desc: "選んだ作業をエージェントに話す" }
+            - { label: "深掘り", desc: "手順・前提・禁止事項を質問で引き出す" }
+            - { label: "分類", desc: "skill/rule/agent/hook のどれかに割り振る" }
+            - { label: "md化", desc: "各ベースを Markdown で出力" }
+
+  - chapter: "実践4: AIで一括生成"
+    slides:
+      - title: "AIですべて作成"
+        summary: "たたき台mdを渡し、AIに skill/rule/agent/hook の本体を一括生成させる。レーンで置き場所が変わるだけ。"
+        content:
+          - "たたき台mdを入力に、AIが実体ファイルを生成"
+          - "Claude Code: .claude/ 配下（SKILL.md / rules / agents / hooks）"
+          - "GitHub Copilot: .github/ 配下（skills / instructions / *.agent.md）"
+          - "生成後すぐ中身をレビュー — 任せきりにしない"
+        expression: comparison
+        data:
+          mode: two-column
+          left:
+            label: "Claude Code が生成"
+            items:
+              - "skills/<name>/SKILL.md"
+              - "rules/<topic>.md"
+              - "agents/<role>.md"
+              - "hooks/*.sh + settings.json"
+          right:
+            label: "GitHub Copilot が生成"
+            items:
+              - "skills/<name>/（ミラー）"
+              - "instructions/<topic>.instructions.md"
+              - "agents/<role>.agent.md"
+              - "copilot-instructions.md 追記"
+
+  - chapter: "実践5: デモを実行"
+    slides:
+      - title: "デモを実行"
+        summary: "作った仕組みを実際に動かす。狙った作業がAIで完遂できるかを、その場で確かめる。"
+        content:
+          - "生成したスキル/エージェントを実際に起動して作業させる"
+          - "Hook が意図通りに危険操作をブロックするか確認"
+          - "Rule が守られているか（mainで作業していない等）を確認"
+          - "うまくいった点・崩れた点をメモ"
+        expression: bullet
+        data: {}
+
+  - chapter: "実践6: 改善issueを起票"
+    slides:
+      - title: "改善点を洗い出して issue 起票"
+        summary: "デモで見えた粗さを issue にする。これが次の一周の入力になり、精度が上がっていく。"
+        content:
+          - "デモで崩れた点・あと一歩だった点を具体的に書き出す"
+          - "create-issue スキル / gh issue create でテンプレ起票"
+          - "issueが次の「課題整理（実践3）」の入力になる"
+          - "→ 3〜6が閉じて、loopが回り始める"
+        expression: bullet
+        data: {}
+
+  - chapter: "まとめ"
+    slides:
+      - title: "3→6のloopが、ゴール"
+        summary: "課題整理→生成→デモ→改善issueを繰り返すほど、精度の高い充実した資産になる。"
+        content:
+          - "1周でも「自分の作業をAI化する型」が手に入る"
+          - "繰り返すほど skill/rule/agent/hook が充実し、AIの守備範囲が広がる"
+          - "やがてこのloopを“設計”できるようになる"
+        expression: flow
+        data:
+          type: cycle
+          steps:
+            - { label: "③課題整理", desc: "対話でまとめる" }
+            - { label: "④AI生成", desc: "一括で作る" }
+            - { label: "⑤デモ", desc: "動かして確かめる" }
+            - { label: "⑥改善issue", desc: "次の一周へ" }
+
+      - title: "loopを“書ける”ようになる"
+        summary: "このloopを設計できたら、それは“loopプロンプト”が書けるということ。フェーズ3「loopを書く」の入り口。"
+        content:
+          - "loopを一周回せた = 自動化の型が身についた"
+          - "型を言語化できれば、AIに回させる“loopプロンプト”が書ける"
+          - "それは、ある一部分でフェーズ3「loopを書く」が実現できた状態"
+          - "Next Action: 持ち帰って自分のリポジトリで回し続ける"
+        expression: emphasis
+        data:
+          mode: message
+          text: "loopを設計できたら、晴れて“loopプロンプト”が書ける。"
