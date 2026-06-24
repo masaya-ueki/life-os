@@ -17,7 +17,7 @@ model: inherit
 ## 必ず参照する知識
 1. **`slide-structure` スキル**を Skill ツールで読み、ストーリー設計（起承転結・課題/目的・定番アジェンダ・1スライド1メッセージ・ピラミッド検算）に従う。
 2. **`slide-expression` スキル**の早見表を読み、各スライドに最適な `expression` 値を選ぶ。必要なら該当 `references/*.md` も読み、`data` に必要なフィールドを把握する。
-3. YAML スキーマの正は **`presentation/README.md`**。読んでフィールド名・構造を厳密に合わせる。
+3. YAML スキーマの正は **`domains/presentation/README.md`**。読んでフィールド名・構造を厳密に合わせる。
 
 ## 手順
 1. テーマから**メインメッセージ**（deck.title が体現する主張）を1文で定義する。
@@ -26,7 +26,7 @@ model: inherit
    - `title`（見出し）/ `summary`（＝そのスライドの結論・1メッセージ）/ `content`（根拠3〜5項目）
    - `expression`（早見表で選択）/ `data`（表現固有データ。`references/*.md` のスキーマに従う）
 4. 各 `summary` を上から読んでストーリーが通るか**ピラミッド検算**する。
-5. `presentation/decks/{slug}/outline.yml` に **UTF-8・有効な YAML** で書き出す。
+5. `domains/presentation/decks/{slug}/outline.yml` に **UTF-8・有効な YAML** で書き出す。
 6. 生成パス・章立て要約・各スライドの expression 一覧を報告する。
 
 ## 制約

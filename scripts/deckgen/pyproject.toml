@@ -1,7 +1,7 @@
 # deckgen — outline.yml → 編集可能ネイティブ pptx 生成ツール
 # 設計根拠: docs/adr/0007-pptx-output.md
 #
-# 重要: これは uv workspace member ではない（presentation/ content 領域専用のビルドツール）。
+# 重要: これは uv workspace member ではない（domains/presentation/ 専用のビルドツール）。
 # ルートの pyproject / .importlinter / public.py の管理対象外。独自の依存をここで宣言する。
 # 実行例: uv run --project scripts/deckgen -m deckgen <slug>
 

@@ -80,7 +80,7 @@
 
 - **配置**: `scripts/deckgen/`（`pyproject.toml` + `src/deckgen/` + `tests/`）。uv member 外・`.importlinter` 対象外。実行は `uv run --project scripts/deckgen -m deckgen <slug>`。
 - **Python バージョン**: リポジトリ標準（ルート / 各領域）の `requires-python = ">=3.12"` に統一する。deckgen は uv member 外で独自に `requires-python` を宣言するが、検証環境を揃え方針の一貫性を保つため標準に合わせる（導入初期の暫定 `>=3.10` 差異は解消済み。コードは `from __future__ import annotations` と `X | None` 記法のみで 3.10 固有の回避策は無く、除去対象は無い）。
-- **単一の真実**: `outline.yml`（[presentation/README.md](../../presentation/README.md)）は不変。HTML と pptx は同じ契約を読む別レンダラ。
+- **単一の真実**: `outline.yml`（[domains/presentation/README.md](../../domains/presentation/README.md)）は不変。HTML と pptx は同じ契約を読む別レンダラ。
 - **マッピング仕様**: expression→ネイティブ pptx の対応は [scripts/deckgen/README.md](../../scripts/deckgen/README.md) に定義。索引スキル `.claude/skills/slide-pptx/` からも参照する。
 - **生成物**: 出力 `.pptx` はビルド成果物として `.gitignore` で除外する（[R-STRUCT-4](../../rule/directory-structure.md)）。deck はコマンドで都度再生成する。
 - **割り切り**: アニメ・スピーカーノート・高度チャート非対応。完全ブランド再現は `--template` 運用。図解（matrix-2x2 / tree / pyramid / venn）はネイティブ図形で描き（#32 で tree のコネクタ線・venn の重なり円を作り込み）、表現の限界を超えるものは箇条書きにフォールバックする。`matrix-2x2` の `quadrants` は `[右上, 左上, 右下, 左下]` の順序契約（[structure.md](../../.claude/skills/slide-expression/references/structure.md)）に従い、HTML・pptx で一致させる。
@@ -89,7 +89,7 @@
 ## 関連ドキュメント・リンク
 
 - [scripts/deckgen/README.md](../../scripts/deckgen/README.md) — expression→pptx マッピング・使い方
-- [presentation/README.md](../../presentation/README.md) — システム概要・YAML スキーマ
+- [domains/presentation/README.md](../../domains/presentation/README.md) — システム概要・YAML スキーマ
 - [ADR-0003](./0003-presentation-system.md) — プレゼン作成システム（HTML パイプライン）
 - [ADR-0005](./0005-directory-governance-daily-keeper.md) — ディレクトリ統治（配置の根拠）
 - [ADR-0002](./0002-modular-monolith-bounded-context.md) — Bounded Context（deckgen を BC 非該当とする根拠）

@@ -6,16 +6,16 @@
 
 - プレゼン作成システム（[ADR-0003](../../docs/adr/0003-presentation-system.md)）の **pptx 出力ターゲット**。`outline.yml` スキーマは HTML パイプラインと共有・不変。
 - 出力は **python-pptx** によるネイティブ要素（テキストボックス／表／オートシェイプ／ネイティブチャート）。画像貼り付けは行わない＝後から PowerPoint で編集可能。
-- 配置は `scripts/`（支援ディレクトリ＝ツール置き場）。`presentation/` は [rule/directory-structure.md](../../rule/directory-structure.md) で「コード無しの content 領域」と定められているため、コードは `scripts/deckgen/` に置く。uv workspace member ではなく、依存は本ディレクトリの `pyproject.toml` に閉じる。
+- 配置は `scripts/`（支援ディレクトリ＝ツール置き場）。コードは `scripts/deckgen/` に置く。uv workspace member ではなく、依存は本ディレクトリの `pyproject.toml` に閉じる。
 
 ## 使い方
 
 > 前提: Python **3.12 以上**（リポジトリ標準 `requires-python = ">=3.12"` に統一。根拠は [ADR-0007](../../docs/adr/0007-pptx-output.md)）。
 
 ```bash
-# slug 指定（presentation/decks/{slug}/outline.yml を読む）
+# slug 指定（domains/presentation/decks/{slug}/outline.yml を読む）
 uv run --project scripts/deckgen -m deckgen claude-code-security
-#   → presentation/decks/claude-code-security/claude-code-security.pptx
+#   → domains/presentation/decks/claude-code-security/claude-code-security.pptx
 
 # outline.yml を直接指定 + 出力先指定
 uv run --project scripts/deckgen -m deckgen path/to/outline.yml --out deck.pptx
@@ -51,14 +51,14 @@ uv run --project scripts/deckgen -m deckgen claude-code-security --template bran
 | `chart` | `type: bar/line/pie/stacked` | **ネイティブ PowerPoint チャート**（編集可能。データ不足時は本文の箇条書きにフォールバック） |
 | 未知/欠落 | — | `bullet` にフォールバックし、警告を出力 |
 
-配色は `theme.py`（`presentation/templates/theme-tokens.yml` を単一ソースとして読み、`deck.theme` で `default`/`dark`）。HTML スライドと同じトークンを共有する。`--template` 指定時はマスター背景・配色を優先するため自前の背景塗りは行わない。
+配色は `theme.py`（`domains/presentation/templates/theme-tokens.yml` を単一ソースとして読み、`deck.theme` で `default`/`dark`）。HTML スライドと同じトークンを共有する。`--template` 指定時はマスター背景・配色を優先するため自前の背景塗りは行わない。
 
 ## ブランドテンプレートの運用（`--template`）
 
 ### サンプルテンプレートで即試す
 
 リポジトリには `scripts/deckgen/templates/sample-brand.pptx` が同梱されている。
-`presentation/templates/theme-tokens.yml` の `default` テーマカラーをマスターに設定した最小テンプレート。
+`domains/presentation/templates/theme-tokens.yml` の `default` テーマカラーをマスターに設定した最小テンプレート。
 
 ```bash
 # サンプルテンプレートでブランド継承を確認

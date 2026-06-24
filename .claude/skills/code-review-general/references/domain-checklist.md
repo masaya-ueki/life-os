@@ -62,7 +62,7 @@
 - [ ] **テンプレ準拠**: Issue/PR/ADR のテンプレート・命名規則に沿っているか
 - [ ] **日本語**: ドキュメント・スキル・エージェントの説明は日本語で統一されているか
 - [ ] **スキル/エージェント記法**（`.claude/`）: frontmatter（`name`/`description`/`Triggers on`、必要に応じ `tools`/`model`）が既存（`slide-*`・`issue-memory`）と整合しているか
-- [ ] **presentation 固有**: 生成 HTML が自己完結（外部URL/依存なし・16:9・印刷対応）か（[presentation/README.md](../../../../presentation/README.md)）
+- [ ] **presentation 固有**: 生成 HTML が自己完結（外部URL/依存なし・16:9・印刷対応）か（[domains/presentation/README.md](../../../../domains/presentation/README.md)）
 
 ---
 

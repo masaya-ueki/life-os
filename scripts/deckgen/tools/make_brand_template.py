@@ -23,7 +23,7 @@ from pptx.util import Inches
 SLIDE_W = Inches(13.333)
 SLIDE_H = Inches(7.5)
 
-# ブランドカラー（presentation/templates/theme-tokens.yml の default テーマと一致）
+# ブランドカラー（domains/presentation/templates/theme-tokens.yml の default テーマと一致）
 BRAND_ACCENT = RGBColor(0x25, 0x63, 0xEB)   # #2563eb — 強調・アクセント
 BRAND_BG     = RGBColor(0xFF, 0xFF, 0xFF)   # #ffffff — スライド背景
 BRAND_FG     = RGBColor(0x1A, 0x1A, 0x2E)   # #1a1a2e — 本文

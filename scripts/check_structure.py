@@ -47,7 +47,6 @@ ROOT_ALLOWED_FILES = {
 
 # content 領域 + 支援ディレクトリ（領域=workspace members は pyproject から動的に取得）
 CONTENT_AND_SUPPORT_DIRS = {
-    "presentation",
     "docs",
     "guides",
     "rule",

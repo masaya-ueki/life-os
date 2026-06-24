@@ -12,7 +12,7 @@ model: inherit
 > 設計根拠: [ADR-0007](../../docs/adr/0007-pptx-output.md) / 仕様: [scripts/deckgen/README.md](../../scripts/deckgen/README.md)
 
 ## 入力
-- deck の slug、または `presentation/decks/{slug}/outline.yml` のパス
+- deck の slug、または `domains/presentation/decks/{slug}/outline.yml` のパス
 - 任意: 継承するテンプレ `.potx/.pptx` のパス
 
 ## 手順
@@ -30,7 +30,7 @@ model: inherit
 4. **報告**: 生成 pptx のパス、スライド枚数、テンプレ適用の有無、警告、PowerPoint で開けば編集可能である旨を伝える。
 
 ## 運用ルール
-- 出力先は既定で `presentation/decks/{slug}/{slug}.pptx`。既存を上書きする場合は事前に知らせる。
+- 出力先は既定で `domains/presentation/decks/{slug}/{slug}.pptx`。既存を上書きする場合は事前に知らせる。
 - 生成 pptx は `.gitignore` 対象の成果物（コミットしない。必要時に再生成）。
 - 図解の再現は HTML より簡略になりうる（`structure`/`flow` 等）。完全なブランド再現が要るときは `--template` を案内する。
 - ツールが失敗したら、エラー出力から原因（YAML 構造不正・依存未導入など）を切り分けて報告する。自分で pptx を手作りしない。

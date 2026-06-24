@@ -134,7 +134,7 @@ gh pr diff <N> --name-only
 
 - **単一 Bounded Context の内部のみ**: `{領域}/src/**` / `{領域}/tests/**` / `{領域}/data/**` / `{領域}/README.md`
   （`{領域}/src/**/public.py` と `{領域}/pyproject.toml` は①で human に倒れる点に注意）
-- **content / ツールのみ**: `presentation/**` / `scripts/**`
+- **content / ツールのみ**: `domains/presentation/**` / `scripts/**`
   （`docs/adr` / `guides` / `rule` は①で human）
 
 > auto と判定されても、最終マージは**ステップ6の検証ゲート通過が条件**。

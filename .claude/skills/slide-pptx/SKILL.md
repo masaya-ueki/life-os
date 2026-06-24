@@ -18,7 +18,7 @@ description: outline.yml を編集可能なネイティブ PowerPoint(.pptx) に
 1. `outline.yml` を用意（無ければ slide-content-planner で作る）。
 2. 生成: `uv run --project scripts/deckgen -m deckgen <slug>`（テンプレ継承は `--template <path.potx>`）。
    - 実際の起動・検証は **`slide-pptx-builder` エージェント**に委譲してよい。
-3. `presentation/decks/{slug}/{slug}.pptx` を PowerPoint で開いて編集。
+3. `domains/presentation/decks/{slug}/{slug}.pptx` を PowerPoint で開いて編集。
 
 ## expression がどう pptx になるか
 各 expression → ネイティブ pptx 要素の**対応表（単一の真実）は [scripts/deckgen/README.md](../../../scripts/deckgen/README.md)** を参照する（ここでは重複させない）。各スライドは共通で「タイトル＋下線＋リード」のヘッダを持ち、`title` は全面表紙、`emphasis` は accent 面、`chart` はネイティブチャート、未知 expression は `bullet` にフォールバックする。
@@ -26,4 +26,4 @@ description: outline.yml を編集可能なネイティブ PowerPoint(.pptx) に
 ## 関連
 - 生成ツール: [scripts/deckgen/README.md](../../../scripts/deckgen/README.md)
 - 出力エージェント: `.claude/agents/slide-pptx-builder.md`
-- 配色トークン（単一ソース）: [presentation/templates/theme-tokens.yml](../../../presentation/templates/theme-tokens.yml)
+- 配色トークン（単一ソース）: [domains/presentation/templates/theme-tokens.yml](../../../domains/presentation/templates/theme-tokens.yml)
