@@ -1,6 +1,6 @@
 """theme.py のスモークテスト。
 
-配色トークンが単一ソース presentation/templates/theme-tokens.yml から読まれ、
+配色トークンが単一ソース domains/presentation/templates/theme-tokens.yml から読まれ、
 pptx 用の正規化（先頭 # 除去・大文字 16 進）が効いていることを確認する。
 """
 

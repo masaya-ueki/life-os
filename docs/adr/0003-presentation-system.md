@@ -70,14 +70,14 @@ Python コードを持たないため **content 領域**とする（`docs/`・`g
 ## 結果・トレードオフ
 
 - **配置**: `.claude/agents/{slide-deck-builder,slide-content-planner,slide-html-renderer}.md`、`.claude/skills/{slide-structure,slide-expression}/`。`slide-expression` は親 SKILL.md ＋ `references/{comparison,chart,flow,structure,emphasis}.md`（progressive disclosure、`pptx` スキルに倣う）。
-- **YAML スキーマの単一の真実**は [`presentation/README.md`](../../presentation/README.md)。planner と renderer はこれを契約として参照する。
+- **YAML スキーマの単一の真実**は [`domains/presentation/README.md`](../../domains/presentation/README.md)。planner と renderer はこれを契約として参照する。
 - **不整合**: `create-issue`（`.github/skills/`）と新規スキル（`.claude/skills/`）の配置が割れる。配置規約の統一は今後の課題として残す。
 - **注意点**: ネイティブ自動認識はエージェント定義・スキルが `main` にマージされ各環境で読み込まれて初めて有効。サブエージェント機能の仕様変更に追従が必要。
 - **拡張**: 必要になれば `.claude-plugin/plugin.json` で agents/skills をプラグインへ束ね直せる（選択肢C への移行余地）。
 
 ## 関連ドキュメント・リンク
 
-- [presentation/README.md](../../presentation/README.md) — システム概要・YAMLスキーマ・HTML規約
+- [domains/presentation/README.md](../../domains/presentation/README.md) — システム概要・YAMLスキーマ・HTML規約
 - [ADR-0002](./0002-modular-monolith-bounded-context.md) — Modular Monolith × Bounded Context（`presentation/` を BC 非該当とする根拠）
 - [ADR-0001](./0001-claude-code-native-multi-session.md) — Claude Code ネイティブ機能への移行方針
 - Anthropic Agent Skills（`anthropics/skills` の `pptx` 構成）/ Claude Code サブエージェント・スキル仕様（#3 調査）

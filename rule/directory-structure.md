@@ -20,9 +20,9 @@ life-os/
 │   ├── content-sales/     # (1) 領域: 販売管理（archetype A）            ※ workspace member
 │   ├── media/             # (1) 領域: 画像・動画管理（archetype B）       ※ workspace member
 │   ├── travel/            # (1) 領域: 旅行の行先管理（archetype B）       ※ workspace member
-│   └── english/           # (1) 領域: 英語学習（archetype B）             ※ workspace member
+│   ├── english/           # (1) 領域: 英語学習（archetype B）             ※ workspace member
+│   └── presentation/      # 領域: プレゼン作成（コード非依存）
 ├── shared/            # (1) Shared Kernel（領域非依存の最小基盤）※ workspace member・ルート直下
-├── presentation/      # (2) content 領域（コード無し）
 ├── docs/              # (2) content: 設計ドキュメント（adr/ など）
 ├── guides/            # (2) content: 開発運用の手順・ルール
 ├── rule/              # (2) content: 構造ガバナンスルール（このディレクトリ）

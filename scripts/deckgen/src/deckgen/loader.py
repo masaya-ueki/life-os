@@ -1,6 +1,6 @@
 """outline.yml の読込と最低限の構造検証。
 
-スキーマの単一の真実は presentation/README.md。ここでは pptx 生成に必要な
+スキーマの単一の真実は domains/presentation/README.md。ここでは pptx 生成に必要な
 構造（deck / chapters / slides）が揃っているかだけを確認する。
 """
 
@@ -12,16 +12,16 @@ import yaml
 
 
 def _find_decks_dir() -> Path:
-    """配置場所に依存せず presentation/decks を探す。
+    """配置場所に依存せず domains/presentation/decks を探す。
 
     deckgen は支援ツール（scripts/deckgen）。このファイルから上方向に
-    `presentation/decks` を持つリポジトリルートを探索する。
+    `domains/presentation/decks` を持つリポジトリルートを探索する。
     """
     for parent in Path(__file__).resolve().parents:
-        candidate = parent / "presentation" / "decks"
+        candidate = parent / "domains" / "presentation" / "decks"
         if candidate.is_dir():
             return candidate
-    return Path.cwd() / "presentation" / "decks"
+    return Path.cwd() / "domains" / "presentation" / "decks"
 
 
 DECKS_DIR = _find_decks_dir()
@@ -36,7 +36,7 @@ def resolve_outline_path(slug_or_path: str) -> Path:
 
     - 既存ファイルパス（.yml/.yaml）ならそのまま
     - ディレクトリなら そのディレクトリ/outline.yml
-    - それ以外は slug とみなし presentation/decks/{slug}/outline.yml
+    - それ以外は slug とみなし domains/presentation/decks/{slug}/outline.yml
     """
     p = Path(slug_or_path)
     if p.is_file():

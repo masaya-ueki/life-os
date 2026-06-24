@@ -47,7 +47,7 @@
 |---|---|---|
 | how-to（手順） | 作業を遂行する | [`guides/`](../guides/) |
 | explanation（なぜ） | 背景・意思決定を理解する | [`docs/adr/`](../docs/adr/) |
-| reference（仕様） | 事実を引く | 各領域 README / `presentation/README.md` 等 |
+| reference（仕様） | 事実を引く | 各領域 README / `domains/presentation/README.md` 等 |
 | structure rule（規約） | あるべき構造を定める | [`rule/`](./README.md) |
 
 ---

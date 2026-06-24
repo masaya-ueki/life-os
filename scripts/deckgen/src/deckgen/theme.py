@@ -1,4 +1,4 @@
-"""配色トークン。presentation/templates/theme-tokens.yml を単一ソースとして読む。
+"""配色トークン。domains/presentation/templates/theme-tokens.yml を単一ソースとして読む。
 
 HTML スライド（slide-html-renderer）と pptx でブランドを一致させるための共有パレット。
 deck.theme（default / dark / ...）で切り替える。色は内部的に "RRGGBB"（先頭 # なし）。
@@ -12,17 +12,17 @@ import yaml
 
 
 def _find_tokens_file() -> Path:
-    """配置場所に依存せず presentation/templates/theme-tokens.yml を探す。
+    """配置場所に依存せず domains/presentation/templates/theme-tokens.yml を探す。
 
     deckgen は支援ツール（scripts/deckgen）。loader._find_decks_dir と同様に、
     このファイルから上方向にリポジトリルートを辿って単一ソースを解決する。
     """
     for parent in Path(__file__).resolve().parents:
-        candidate = parent / "presentation" / "templates" / "theme-tokens.yml"
+        candidate = parent / "domains" / "presentation" / "templates" / "theme-tokens.yml"
         if candidate.is_file():
             return candidate
     raise FileNotFoundError(
-        "theme-tokens.yml が見つかりません（presentation/templates/）"
+        "theme-tokens.yml が見つかりません（domains/presentation/templates/）"
     )
 
 

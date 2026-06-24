@@ -59,7 +59,7 @@
 │    ├─ 「なぜ」の意思決定 → docs/adr/
 │    ├─ 人向けの手順・運用ルール（how-to） → guides/
 │    ├─ 構造ルール（どうあるべきか） → rule/（ここ）
-│    └─ その他の content 領域（例: presentation/） → 専用トップレベル
+│    └─ その他の content 領域（例: docs/, guides/） → 専用トップレベル
 ├─ 開発/運用を補助するスクリプトか？ → scripts/
 ├─ Claude Code のエージェント/スキルか？ → .claude/agents · .claude/skills
 ├─ GitHub の設定（Issue/PR/workflow）か？ → .github/

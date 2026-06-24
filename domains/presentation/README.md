@@ -2,9 +2,7 @@
 
 テーマを与えると、Claude Code のサブエージェントとスキルが連携して**自己完結 HTML スライド**を生成する基盤。
 
-> **設計根拠**: [ADR-0003 プレゼン作成システムをネイティブ Claude Code 構成で導入する](../docs/adr/0003-presentation-system.md)
-
-この `presentation/` は Python コードを持たない **content 領域**（`docs/`・`guides/` と同類）。uv workspace member でも Bounded Context でもなく、`public.py` / `.importlinter` の管理対象外。
+> **設計根拠**: [ADR-0003 プレゼン作成システムをネイティブ Claude Code 構成で導入する](../../docs/adr/0003-presentation-system.md)
 
 ---
 
@@ -19,7 +17,7 @@
 | エージェント `slide-deck-builder` | `.claude/agents/` | 上記2つを統括するオーケストレーター |
 | エージェント `slide-pptx-builder` | `.claude/agents/` | `outline.yml` → 編集可能 `.pptx`（pptx 出力） |
 | スキル `slide-pptx` | `.claude/skills/slide-pptx/` | expression → ネイティブ pptx マッピングの索引 |
-| ツール `deckgen` | `scripts/deckgen/` | `outline.yml` → `.pptx` を生成する python-pptx 製ツール（[ADR-0007](../docs/adr/0007-pptx-output.md)） |
+| ツール `deckgen` | `scripts/deckgen/` | `outline.yml` → `.pptx` を生成する python-pptx 製ツール（[ADR-0007](../../docs/adr/0007-pptx-output.md)） |
 | 生成物 | `presentation/decks/{slug}/` | `outline.yml` ＋ `index.html` ＋ `{slug}.pptx` |
 | 配色トークン | `presentation/templates/theme-tokens.yml` | 配色の単一ソース（HTML/pptx 共有） |
 | CSS 方針 | `presentation/templates/base.css.md` | 16:9・レイアウト・印刷の実装指針 |
@@ -43,7 +41,7 @@
 生成後:
 - **HTML 閲覧**: `presentation/decks/{slug}/index.html` をブラウザで開く。
 - **HTML→PDF化**: ブラウザの印刷 → 用紙 landscape・余白なし・背景画像ON で PDF 保存（`@media print` 対応済み）。
-- **PowerPoint**: `uv run --project scripts/deckgen -m deckgen {slug}` で `{slug}.pptx` を生成。文字・表・図形は**ネイティブ＝編集可能**。詳細は [scripts/deckgen/README.md](../scripts/deckgen/README.md)。
+- **PowerPoint**: `uv run --project scripts/deckgen -m deckgen {slug}` で `{slug}.pptx` を生成。文字・表・図形は**ネイティブ＝編集可能**。詳細は [scripts/deckgen/README.md](../../scripts/deckgen/README.md)。
 
 ---
 
