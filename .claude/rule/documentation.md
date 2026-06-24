@@ -13,18 +13,18 @@
 （ユーザー要望の「基本的に README.md に重複した記載は禁止」はこのルール。）
 
 - ❌ ブランチ命名規約を README と guides の両方に本文で書く
-- ✅ 正本は [guides/development-policy/issue-operation-rules.md](../guides/development-policy/issue-operation-rules.md)。README からはリンクのみ
+- ✅ 正本は [guides/development-policy/issue-operation-rules.md](../../guides/development-policy/issue-operation-rules.md)。README からはリンクのみ
 - 判定: 同じ段落・コードブロックが 2 つ以上の Markdown に**逐語で**現れたら違反（`scripts/check_structure.py` が検出）
 
 「どこが正本か」の目安：
 
 | 種類の事実 | 正本 |
 |---|---|
-| なぜその設計か | [`docs/adr/`](../docs/adr/) の該当 ADR |
-| 構造・配置はどうあるべきか | [`rule/`](./README.md) |
-| 人の作業手順・運用ルール | [`guides/`](../guides/) |
+| なぜその設計か | [`docs/adr/`](../../docs/adr/) の該当 ADR |
+| 構造・配置はどうあるべきか | [`.claude/rule/`](./README.md) |
+| 人の作業手順・運用ルール | [`guides/`](../../guides/) |
 | ある領域の内部仕様 | その領域の `README.md` / コード |
-| リポジトリ全体の地図 | ルート [`README.md`](../README.md) |
+| リポジトリ全体の地図 | ルート [`README.md`](../../README.md) |
 
 ---
 
@@ -45,17 +45,17 @@
 
 | 種類 | 目的 | 置き場所 |
 |---|---|---|
-| how-to（手順） | 作業を遂行する | [`guides/`](../guides/) |
-| explanation（なぜ） | 背景・意思決定を理解する | [`docs/adr/`](../docs/adr/) |
+| how-to（手順） | 作業を遂行する | [`guides/`](../../guides/) |
+| explanation（なぜ） | 背景・意思決定を理解する | [`docs/adr/`](../../docs/adr/) |
 | reference（仕様） | 事実を引く | 各領域 README / `presentation/README.md` 等 |
-| structure rule（規約） | あるべき構造を定める | [`rule/`](./README.md) |
+| structure rule（規約） | あるべき構造を定める | [`.claude/rule/`](./README.md) |
 
 ---
 
 ## R-DOC-4: ADR と設計のリンクを必須にする
 
 ADR に対応する設計・ルールがあるなら、設計側から ADR へ必ずリンクを張る。
-手順とステータス運用の正本は [docs/adr/README.md](../docs/adr/README.md)（ここでは重複させない）。
+手順とステータス運用の正本は [docs/adr/README.md](../../docs/adr/README.md)（ここでは重複させない）。
 
 ---
 

@@ -161,8 +161,8 @@ jobs:
 
 ## 関連ドキュメント・リンク
 
-- [rule/README.md](../../rule/README.md) — 構成論ルールの正本
-- [rule/maintenance.md](../../rule/maintenance.md) — 監査チェックリスト（keeper との契約）
+- [.claude/rule/README.md](../../.claude/rule/README.md) — 構成論ルールの正本
+- [.claude/rule/maintenance.md](../../.claude/rule/maintenance.md) — 監査チェックリスト（keeper との契約）
 - [.claude/skills/directory-keeper/SKILL.md](../../.claude/skills/directory-keeper/SKILL.md) — 監査手順
 - [ADR-0002](./0002-modular-monolith-bounded-context.md) — Modular Monolith × Bounded Context（領域の構成根拠）
 - [ADR-0003](./0003-presentation-system.md) — ネイティブ `.claude/` 配置の方針

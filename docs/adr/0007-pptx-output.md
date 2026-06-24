@@ -21,7 +21,7 @@
 
 1. **pptx 生成の出力形式**: 編集可能なネイティブ要素か、見た目を完全再現する画像貼り付けか。
 2. **実装技術**: python-pptx / PptxGenJS / Pandoc / HTML→画像変換 のいずれか。
-3. **コードの配置**: [rule/directory-structure.md](../../rule/directory-structure.md)（[ADR-0005](./0005-directory-governance-daily-keeper.md)）は `presentation/` を「コードを持たない content 領域」と定める。pptx 生成は Python コードであり、置き場所を決める必要がある。
+3. **コードの配置**: [.claude/rule/directory-structure.md](../../.claude/rule/directory-structure.md)（[ADR-0005](./0005-directory-governance-daily-keeper.md)）は `presentation/` を「コードを持たない content 領域」と定める。pptx 生成は Python コードであり、置き場所を決める必要がある。
 
 前提として Anthropic 公式・主要 OSS を調査した。Anthropic 公式 `anthropics/skills` の `pptx` スキルは **PptxGenJS(JS)** ベースで、既存ファイルを読まずゼロから生成する設計。Claude のファイル作成機能も裏で pptx を生成する。python-pptx 1.0 はネイティブ編集可能 pptx・テンプレ(.potx)継承・基本チャート（column/bar/line/pie）に対応し、アニメ・高度チャートは非対応。
 
@@ -82,7 +82,7 @@
 - **Python バージョン**: リポジトリ標準（ルート / 各領域）の `requires-python = ">=3.12"` に統一する。deckgen は uv member 外で独自に `requires-python` を宣言するが、検証環境を揃え方針の一貫性を保つため標準に合わせる（導入初期の暫定 `>=3.10` 差異は解消済み。コードは `from __future__ import annotations` と `X | None` 記法のみで 3.10 固有の回避策は無く、除去対象は無い）。
 - **単一の真実**: `outline.yml`（[presentation/README.md](../../presentation/README.md)）は不変。HTML と pptx は同じ契約を読む別レンダラ。
 - **マッピング仕様**: expression→ネイティブ pptx の対応は [scripts/deckgen/README.md](../../scripts/deckgen/README.md) に定義。索引スキル `.claude/skills/slide-pptx/` からも参照する。
-- **生成物**: 出力 `.pptx` はビルド成果物として `.gitignore` で除外する（[R-STRUCT-4](../../rule/directory-structure.md)）。deck はコマンドで都度再生成する。
+- **生成物**: 出力 `.pptx` はビルド成果物として `.gitignore` で除外する（[R-STRUCT-4](../../.claude/rule/directory-structure.md)）。deck はコマンドで都度再生成する。
 - **割り切り**: アニメ・スピーカーノート・高度チャート非対応。完全ブランド再現は `--template` 運用。図解（matrix-2x2 / tree / pyramid / venn）はネイティブ図形で描き（#32 で tree のコネクタ線・venn の重なり円を作り込み）、表現の限界を超えるものは箇条書きにフォールバックする。`matrix-2x2` の `quadrants` は `[右上, 左上, 右下, 左下]` の順序契約（[structure.md](../../.claude/skills/slide-expression/references/structure.md)）に従い、HTML・pptx で一致させる。
 - **ADR-0003 との関係**: ADR-0003 の HTML パイプラインは無改変で併存。本 ADR は出力ターゲットを追加するのみ。`presentation/` の「コード無し content 領域」という位置づけも維持する（コードは `scripts/` 側に置くため）。
 

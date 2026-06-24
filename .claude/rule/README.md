@@ -4,9 +4,9 @@
 
 このディレクトリは「life-os の**リポジトリはどうあるべきか**」を定めるルール集です。
 時間が経っても構造が崩れないよう、判断基準を明文化し、`scripts/check_structure.py` と
-日次の [directory-keeper](../.claude/skills/directory-keeper/SKILL.md) で機械的に検査します。
+日次の [directory-keeper](../skills/directory-keeper/SKILL.md) で機械的に検査します。
 
-> **設計根拠**: [ADR-0005 ディレクトリ統治と日次 directory-keeper](../docs/adr/0005-directory-governance-daily-keeper.md)
+> **設計根拠**: [ADR-0005 ディレクトリ統治と日次 directory-keeper](../../docs/adr/0005-directory-governance-daily-keeper.md)
 
 ---
 
@@ -16,9 +16,9 @@
 
 | | 問い | 例 |
 |---|---|---|
-| **`rule/`（ここ）** | リポジトリは**どうあるべきか**（構造ガバナンス） | 配置・命名・ドキュメント重複禁止 |
-| [`guides/`](../guides/) | 人は**どう働くか**（プロセス） | Issue 運用・ブランチ/コミット規約 |
-| [`docs/adr/`](../docs/adr/) | **なぜ**その設計か（意思決定の記録） | 構成の採用理由 |
+| **`.claude/rule/`（ここ）** | リポジトリは**どうあるべきか**（構造ガバナンス） | 配置・命名・ドキュメント重複禁止 |
+| [`guides/`](../../guides/) | 人は**どう働くか**（プロセス） | Issue 運用・ブランチ/コミット規約 |
+| [`docs/adr/`](../../docs/adr/) | **なぜ**その設計か（意思決定の記録） | 構成の採用理由 |
 
 ---
 
@@ -41,7 +41,7 @@
 2. **単一責務（高凝集）** — 1 ディレクトリ＝1 つの変更理由、1 ファイル＝1 概念。関連物は近くにまとめる。
 3. **単一の真実（DRY for docs）** — 事実の正本は 1 箇所だけ。**他所では複製せずリンクする**（→ [documentation.md](./documentation.md)）。
 4. **規約優先（convention over configuration）** — 領域内は archetype ごとに同じ形を保ち、地図がなくても置き場所が推測できる状態にする。
-5. **腐らせない（fitness functions）** — ルールは文章だけにせず、`scripts/check_structure.py`・[`.importlinter`](../.importlinter)・日次 keeper で検査して破綻を防ぐ。
+5. **腐らせない（fitness functions）** — ルールは文章だけにせず、`scripts/check_structure.py`・[`.importlinter`](../../.importlinter)・日次 keeper で検査して破綻を防ぐ。
 
 > 個人知識管理（PARA / Johnny.Decimal / Zettelkasten）からは“原則だけ”輸入する：
 > 不要物は消すよりまず**アーカイブ**・**深さは浅く一定に**・**1ファイル1概念**・**リンクで繋ぐ**。
@@ -58,7 +58,7 @@
 ├─ コードを持たない成果物・資料か？
 │    ├─ 「なぜ」の意思決定 → docs/adr/
 │    ├─ 人向けの手順・運用ルール（how-to） → guides/
-│    ├─ 構造ルール（どうあるべきか） → rule/（ここ）
+│    ├─ 構造ルール（どうあるべきか） → .claude/rule/（ここ）
 │    └─ その他の content 領域（例: presentation/） → 専用トップレベル
 ├─ 開発/運用を補助するスクリプトか？ → scripts/
 ├─ Claude Code のエージェント/スキルか？ → .claude/agents · .claude/skills
@@ -67,4 +67,4 @@
      → 原則禁止。置き場所が無いなら設計を見直す（root hygiene: directory-structure.md）
 ```
 
-新しい**領域（Bounded Context）** を足す手順は [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md) に従う（ここでは重複させない）。
+新しい**領域（Bounded Context）** を足す手順は [ADR-0002](../../docs/adr/0002-modular-monolith-bounded-context.md) に従う（ここでは重複させない）。

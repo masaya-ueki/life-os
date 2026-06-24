@@ -6,7 +6,7 @@
 
 - プレゼン作成システム（[ADR-0003](../../docs/adr/0003-presentation-system.md)）の **pptx 出力ターゲット**。`outline.yml` スキーマは HTML パイプラインと共有・不変。
 - 出力は **python-pptx** によるネイティブ要素（テキストボックス／表／オートシェイプ／ネイティブチャート）。画像貼り付けは行わない＝後から PowerPoint で編集可能。
-- 配置は `scripts/`（支援ディレクトリ＝ツール置き場）。`presentation/` は [rule/directory-structure.md](../../rule/directory-structure.md) で「コード無しの content 領域」と定められているため、コードは `scripts/deckgen/` に置く。uv workspace member ではなく、依存は本ディレクトリの `pyproject.toml` に閉じる。
+- 配置は `scripts/`（支援ディレクトリ＝ツール置き場）。`presentation/` は [.claude/rule/directory-structure.md](../../.claude/rule/directory-structure.md) で「コード無しの content 領域」と定められているため、コードは `scripts/deckgen/` に置く。uv workspace member ではなく、依存は本ディレクトリの `pyproject.toml` に閉じる。
 
 ## 使い方
 

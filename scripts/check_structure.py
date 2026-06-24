@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """life-os ディレクトリ構成の決定的チェック（fitness function）。
 
-`rule/` で定めた構造ルールのうち、機械的に判定できるものを検査する。
+`.claude/rule/` で定めた構造ルールのうち、機械的に判定できるものを検査する。
 判断を要する項目（archetype 逸脱・ドキュメント配置の妥当性など）はここでは扱わず、
 directory-keeper（.claude/skills/directory-keeper/SKILL.md）が内容を読んで判断する。
 
@@ -12,7 +12,7 @@ directory-keeper（.claude/skills/directory-keeper/SKILL.md）が内容を読ん
 
 終了コード: error が 1 件以上なら 1。--strict なら warning でも 1。なければ 0。
 
-設計根拠: rule/maintenance.md（監査チェックリスト）/ docs/adr/0004-...md
+設計根拠: .claude/rule/maintenance.md（監査チェックリスト）/ docs/adr/0004-...md
 依存: 標準ライブラリのみ（Python 3.12+）。
 """
 
@@ -29,7 +29,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-# --- 正典の許可リスト（rule/directory-structure.md の正本に対応） ---
+# --- 正典の許可リスト（.claude/rule/directory-structure.md の正本に対応） ---
 
 ROOT_ALLOWED_FILES = {
     "README.md",
@@ -50,7 +50,6 @@ CONTENT_AND_SUPPORT_DIRS = {
     "presentation",
     "docs",
     "guides",
-    "rule",
     "scripts",
     "docker",  # 支援: テスト実行用 Dockerfile（docs/adr/0006）
     ".claude",
@@ -76,7 +75,7 @@ SKIP_DIR_NAMES = {
 }
 
 # 命名 kebab を強制するドキュメント領域（README.md / LICENSE は慣習的に除外）
-KEBAB_DOC_DIRS = {"docs", "guides", "rule"}
+KEBAB_DOC_DIRS = {"docs", "guides", ".claude/rule"}
 KEBAB_EXEMPT_STEMS = {"README", "LICENSE"}
 KEBAB_RE = re.compile(r"^[a-z0-9]+(?:[-.][a-z0-9]+)*$")
 
@@ -150,7 +149,7 @@ def check_root_hygiene(findings: list[Finding]) -> None:
                     "C-ROOT",
                     "error",
                     child.name,
-                    f"ルート直下の許可外ファイル。rule/directory-structure.md の許可リストに無い: {child.name}",
+                    f"ルート直下の許可外ファイル。.claude/rule/directory-structure.md の許可リストに無い: {child.name}",
                 )
             )
 
@@ -172,7 +171,7 @@ def check_top_level_dirs(findings: list[Finding], members: list[str]) -> None:
                     "C-TOPDIR",
                     "warning",
                     child.name,
-                    "未知のトップレベルディレクトリ。領域 / content領域 / 支援 のどれか確認し rule/ を更新する",
+                    "未知のトップレベルディレクトリ。領域 / content領域 / 支援 のどれか確認し .claude/rule/ を更新する",
                 )
             )
 
@@ -222,7 +221,7 @@ def check_member_readme(findings: list[Finding], members: list[str]) -> None:
 
 
 def check_naming(findings: list[Finding]) -> None:
-    """C-NAME-KEBAB: トップディレクトリと docs/guides/rule の md 名が kebab-case（R-NAME-1）。"""
+    """C-NAME-KEBAB: トップディレクトリと docs/guides/.claude/rule の md 名が kebab-case（R-NAME-1）。"""
     for child in REPO_ROOT.iterdir():
         if child.is_dir() and not child.name.startswith(".") and child.name not in SKIP_DIR_NAMES:
             if not KEBAB_RE.match(child.name):

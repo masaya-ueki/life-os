@@ -27,7 +27,7 @@
 ### 選択肢B: 英語以外の名前（`領域/`）を使う（不採用）
 
 - **メリット**: リポジトリの語彙「領域」と完全一致。
-- **不採用理由**: ディレクトリ名は kebab-case 英語（[R-NAME-1](../../rule/naming.md)）に揃える方針。非 ASCII 名はツール・パスの扱いで不確実性が残る。
+- **不採用理由**: ディレクトリ名は kebab-case 英語（[R-NAME-1](../../.claude/rule/naming.md)）に揃える方針。非 ASCII 名はツール・パスの扱いで不確実性が残る。
 
 ### 選択肢C: `contexts/` / `bounded-contexts/` を使う（不採用）
 
@@ -48,5 +48,5 @@
 ## 関連ドキュメント・リンク
 
 - [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](./0002-modular-monolith-bounded-context.md)（本 ADR が物理配置を更新する元の決定）
-- [rule/directory-structure.md](../../rule/directory-structure.md)（正典トップレベル構成）
-- [rule/naming.md](../../rule/naming.md)（R-NAME-1: kebab-case 英語）
+- [.claude/rule/directory-structure.md](../../.claude/rule/directory-structure.md)（正典トップレベル構成）
+- [.claude/rule/naming.md](../../.claude/rule/naming.md)（R-NAME-1: kebab-case 英語）

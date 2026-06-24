@@ -2,7 +2,7 @@
 
 > **親**: [rule/README.md](./README.md)
 
-「きれいなディレクトリ」の定義と、[directory-keeper](../.claude/skills/directory-keeper/SKILL.md) が
+「きれいなディレクトリ」の定義と、[directory-keeper](../skills/directory-keeper/SKILL.md) が
 日次で回す監査チェックリスト。**このファイルが「ルール」と「エージェント」の契約**。
 
 ---
@@ -31,7 +31,7 @@
 | C-TOPDIR | トップレベルが正典4種に収まる（未知のトップディレクトリが無い） | auto | report |
 | C-MEMBER-README | 各 workspace member に `README.md` がある（[R-DOC-2](./documentation.md)） | auto | fix（雛形を作成）|
 | C-DOC-DUP | README/ドキュメント間に逐語の重複段落が無い（[R-DOC-1](./documentation.md)） | auto | report |
-| C-NAME-KEBAB | docs/guides/rule のファイル名・トップディレクトリが kebab-case（[R-NAME-1](./naming.md)） | auto | fix（改名＋参照更新）|
+| C-NAME-KEBAB | docs/guides/.claude/rule のファイル名・トップディレクトリが kebab-case（[R-NAME-1](./naming.md)） | auto | fix（改名＋参照更新）|
 | C-LINK | ドキュメントの相対リンク・ADR リンクが切れていない（[R-DOC-5](./documentation.md)） | auto | fix（リンク修正）|
 | C-GENERATED | 生成物がコミットされていない（[R-STRUCT-4](./directory-structure.md)） | auto | report |
 | C-ARCHETYPE | 領域内構成が archetype A/B に沿う（[R-STRUCT-1](./directory-structure.md)） | judge | report |
@@ -44,7 +44,7 @@
 
 ## 対応方針（自律度 = レポート＋PR）
 
-[ADR-0005](../docs/adr/0005-directory-governance-daily-keeper.md) のとおり、keeper は次の境界を守る。
+[ADR-0005](../../docs/adr/0005-directory-governance-daily-keeper.md) のとおり、keeper は次の境界を守る。
 
 - **fix（PR 化してよい）**: 機械的で安全・可逆な修正のみ。雛形 README の追加、kebab-case への改名と参照更新、
   明確なリンク切れの修正など。**1 回の実行＝1 PR**。本文に検出内容と根拠ルールを記す。
