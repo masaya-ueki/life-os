@@ -8,6 +8,7 @@ members = [
     "english",
     "life-os",
     "media",
+    "presentation",
     "shared",
     "task",
     "travel",
@@ -157,6 +158,7 @@ dependencies = [
     { name = "content-sales" },
     { name = "english" },
     { name = "media" },
+    { name = "presentation" },
     { name = "shared" },
     { name = "task" },
     { name = "travel" },
@@ -173,6 +175,7 @@ requires-dist = [
     { name = "content-sales", editable = "domains/content-sales" },
     { name = "english", editable = "domains/english" },
     { name = "media", editable = "domains/media" },
+    { name = "presentation", editable = "domains/presentation" },
     { name = "shared", editable = "shared" },
     { name = "task", editable = "domains/task" },
     { name = "travel", editable = "domains/travel" },
@@ -233,6 +236,17 @@ sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
 ]
+
+[[package]]
+name = "presentation"
+version = "0.0.0"
+source = { editable = "domains/presentation" }
+dependencies = [
+    { name = "shared" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "shared", editable = "shared" }]
 
 [[package]]
 name = "pygments"
