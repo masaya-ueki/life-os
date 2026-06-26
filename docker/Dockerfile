@@ -32,6 +32,8 @@ COPY domains/content-sales/pyproject.toml domains/content-sales/
 COPY domains/media/pyproject.toml domains/media/
 COPY domains/travel/pyproject.toml domains/travel/
 COPY domains/english/pyproject.toml domains/english/
+COPY domains/presentation/pyproject.toml domains/presentation/
+COPY domains/tools/pyproject.toml domains/tools/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-workspace --dev
 
