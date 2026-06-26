@@ -68,13 +68,14 @@ LABELS=(
   "type: ci|1d76db|CI/CD 設定"
   "type: perf|a4f2a4|パフォーマンス改善"
 
-  # === system ラベル（7 件、Conventional Commits の scope と一致） ===
+  # === system ラベル（8 件、Conventional Commits の scope と一致） ===
   "system: task|7e57c2|タスク管理"
   "system: travel|7e57c2|旅行の行先管理"
   "system: media|7e57c2|画像・動画管理"
   "system: english|7e57c2|英語学習"
   "system: common|7e57c2|横断的・共通基盤"
   "system: content-sales|7e57c2|自作ツール等の販売管理"
+  "system: tools|7e57c2|ユーティリティスクリプト集"
   "system: deps|7e57c2|依存パッケージ"
 
   # === priority ラベル（3 件、派生課題・改善 Issue の緊急度） ===

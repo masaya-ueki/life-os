@@ -11,6 +11,7 @@ members = [
     "presentation",
     "shared",
     "task",
+    "tools",
     "travel",
 ]
 
@@ -161,6 +162,7 @@ dependencies = [
     { name = "presentation" },
     { name = "shared" },
     { name = "task" },
+    { name = "tools" },
     { name = "travel" },
 ]
 
@@ -178,6 +180,7 @@ requires-dist = [
     { name = "presentation", editable = "domains/presentation" },
     { name = "shared", editable = "shared" },
     { name = "task", editable = "domains/task" },
+    { name = "tools", editable = "domains/tools" },
     { name = "travel", editable = "domains/travel" },
 ]
 
@@ -301,6 +304,13 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [{ name = "shared", editable = "shared" }]
+
+[[package]]
+name = "tools"
+version = "0.0.0"
+source = { editable = "domains/tools" }
+
+[package.metadata]
 
 [[package]]
 name = "travel"

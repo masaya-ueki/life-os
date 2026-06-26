@@ -18,6 +18,7 @@ root_packages =
     travel
     english
     presentation
+    tools
 
 # --- shared は基盤。いかなる領域にも依存しない ---
 [importlinter:contract:shared-is-foundation]
@@ -32,6 +33,7 @@ forbidden_modules =
     travel
     english
     presentation
+    tools
 
 # --- task は他領域の内部を直接 import しない（public のみ許可） ---
 [importlinter:contract:task-uses-only-public]
@@ -51,6 +53,7 @@ forbidden_modules =
     english.index
     presentation.models
     presentation.index
+    tools.csv_splitter
 
 # --- content_sales は他領域の内部を直接 import しない ---
 [importlinter:contract:content-sales-uses-only-public]
@@ -70,6 +73,7 @@ forbidden_modules =
     english.index
     presentation.models
     presentation.index
+    tools.csv_splitter
 
 # --- media は他領域の内部を直接 import しない ---
 [importlinter:contract:media-uses-only-public]
@@ -90,6 +94,7 @@ forbidden_modules =
     english.index
     presentation.models
     presentation.index
+    tools.csv_splitter
 
 # --- travel は他領域の内部を直接 import しない ---
 [importlinter:contract:travel-uses-only-public]
@@ -110,6 +115,7 @@ forbidden_modules =
     english.index
     presentation.models
     presentation.index
+    tools.csv_splitter
 
 # --- english は他領域の内部を直接 import しない ---
 [importlinter:contract:english-uses-only-public]
@@ -130,6 +136,7 @@ forbidden_modules =
     travel.index
     presentation.models
     presentation.index
+    tools.csv_splitter
 
 # --- presentation は他領域の内部を直接 import しない ---
 [importlinter:contract:presentation-uses-only-public]
@@ -150,3 +157,26 @@ forbidden_modules =
     travel.index
     english.models
     english.index
+    tools.csv_splitter
+
+# --- tools は他領域の内部を直接 import しない ---
+[importlinter:contract:tools-uses-only-public]
+name = tools は他領域を public 経由でのみ参照する
+type = forbidden
+source_modules =
+    tools
+forbidden_modules =
+    task.domain
+    task.application
+    task.adapters
+    content_sales.domain
+    content_sales.application
+    content_sales.adapters
+    media.models
+    media.index
+    travel.models
+    travel.index
+    english.models
+    english.index
+    presentation.models
+    presentation.index

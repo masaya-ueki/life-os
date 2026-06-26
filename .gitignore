@@ -19,3 +19,6 @@ presentation/decks/**/*.pptx
 
 # OS / エディタ
 .DS_Store
+
+# csv_splitter 実行時出力（タイムスタンプ付きサブディレクトリは生成物）
+domains/tools/data/csv_splitter/output/*/
