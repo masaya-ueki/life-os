@@ -252,6 +252,13 @@ def _venn(pslide, theme, data, region):
         )
 
 
+def _color_luminance(hex_color: str) -> float:
+    """0–255 の相対輝度を返す（高いほど明るい）。"""
+    h = hex_color.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return 0.299 * r + 0.587 * g + 0.114 * b
+
+
 def _pyramid(pslide, theme, data, region):
     left, top, width, height = region
     layers = [str(x) for x in (data.get("layers") or [])]
@@ -278,7 +285,9 @@ def _pyramid(pslide, theme, data, region):
         box = layout.add_box_shape(
             pslide, x, y, w, row_h, fill=fill, line=None, shape=shape,
         )
-        _centered_text(box, layer, 16, theme["on_accent"])
+        # 塗り色の輝度で文字色を切り替え（薄い背景には濃い文字）
+        text_color = theme["fg"] if _color_luminance(fill) > 160 else theme["on_accent"]
+        _centered_text(box, layer, 16, text_color)
 
 
 def _matrix_table(pslide, theme, data, region):

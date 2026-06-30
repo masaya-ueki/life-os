@@ -235,6 +235,31 @@ def add_connector(slide, x1, y1, x2, y2, color="6B7280", weight=1.5):
     return conn
 
 
+def add_gradient_fill(shape, color1: str, color2: str, angle: float = 135.0) -> None:
+    """ソリッド塗りをリニアグラデーションに変換する（python-pptx 1.0+）。
+    color1 が始点、color2 が終点。angle=135 で左上→右下方向。
+    """
+    fill = shape.fill
+    fill.gradient()
+    fill.gradient_angle = angle
+    stops = fill.gradient_stops
+    stops[0].position = 0.0
+    stops[0].color.rgb = rgb(color1)
+    stops[1].position = 1.0
+    stops[1].color.rgb = rgb(color2)
+
+
+def add_accent_bar(slide, left, top, height, color: str, width: float = None) -> None:
+    """カード左端に細いアクセントバーを追加してデプス感を出す。"""
+    bar_w = width if width is not None else Inches(0.07)
+    sp = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, bar_w, height)
+    sp.fill.solid()
+    sp.fill.fore_color.rgb = rgb(color)
+    sp.line.fill.background()
+    sp.shadow.inherit = False
+    return sp
+
+
 def set_fill_alpha(shape, pct: float) -> None:
     """ソリッド塗りの不透明度を pct%（0–100）に設定する。
 
@@ -287,7 +312,7 @@ def add_header(slide, theme, title, summary):
         CONTENT_WIDTH,
         TITLE_HEIGHT,
         title,
-        size=32,
+        size=36,
         color=theme["accent"],
         bold=True,
         anchor=MSO_ANCHOR.BOTTOM,

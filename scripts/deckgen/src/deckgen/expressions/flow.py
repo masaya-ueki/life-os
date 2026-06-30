@@ -35,6 +35,10 @@ def _step_texts(step):
 def _horizontal(pslide, theme, steps, region):
     left, top, width, height = region
     n = len(steps)
+    # n≥5 では横幅が不足するため縦レイアウトに自動切替
+    if n >= 5:
+        _vertical(pslide, theme, steps, region)
+        return
     gap = layout.FLOW_ARROW_W + layout.FLOW_H_GAP_PAD
     box_w = (width - gap * (n - 1)) // n
     box_h = min(Inches(2.4), height)
@@ -47,16 +51,17 @@ def _horizontal(pslide, theme, steps, region):
             fill=theme["card"], line=theme["accent"], line_width=layout.DIAG_LINE_BOLD,
         )
         _badge(pslide, x, box_top, theme, i + 1)
+        # バッジ下端(top+0.10+0.45=top+0.55)との重なりを避けラベルを下にずらす
         layout.add_textbox(
-            pslide, x + layout.FLOW_LABEL_PAD, box_top + Inches(0.45),
-            box_w - layout.FLOW_LABEL_PAD * 2, Inches(0.7),
+            pslide, x + layout.FLOW_LABEL_PAD, box_top + Inches(0.60),
+            box_w - layout.FLOW_LABEL_PAD * 2, Inches(0.65),
             label, size=layout.FLOW_LABEL_FONT, color=theme["accent"], bold=True,
             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
         )
         if desc:
             layout.add_textbox(
-                pslide, x + layout.DIAG_PAD, box_top + Inches(1.15),
-                box_w - layout.DIAG_PAD * 2, box_h - Inches(1.3),
+                pslide, x + layout.DIAG_PAD, box_top + Inches(1.30),
+                box_w - layout.DIAG_PAD * 2, box_h - Inches(1.45),
                 desc, size=layout.FLOW_DESC_FONT, color=theme["fg"],
                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.TOP,
             )
