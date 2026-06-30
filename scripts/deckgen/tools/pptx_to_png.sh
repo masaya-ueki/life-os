@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PPTX → PNG 変換スクリプト（LibreOffice headless + pdftoppm 使用）
+# PPTX → PNG 変換スクリプト（Docker pptx-convert サービス経由）
 #
 # Usage:
 #   bash scripts/deckgen/tools/pptx_to_png.sh <slug_or_pptx_path> [output_dir] [--dpi N]
@@ -7,11 +7,8 @@
 # 出力: output_dir/ に slide-01.png, slide-02.png, ... を生成。
 # 既存ファイルは上書きする（再生成のたびに最新状態になる）。
 #
-# 実行方法（優先順位順）:
-#   1. ローカルに libreoffice + pdftoppm があればそのまま使う
-#   2. なければ Docker（pptx-convert サービス）経由で実行する
-#      → docker compose build pptx-convert  ← 初回のみ
-#      → docker compose run --rm pptx-convert bash scripts/deckgen/tools/pptx_to_png.sh <slug>
+# 前提: docker compose build pptx-convert（初回のみ、数分）
+# 実行環境を問わず Docker で統一する（ローカル直接実行は非対応）。
 
 set -euo pipefail
 
@@ -57,29 +54,32 @@ if [[ -z "$OUTDIR" ]]; then
 fi
 mkdir -p "$OUTDIR"
 
-# --- 依存チェック: ローカル or Docker ---
-_has() { command -v "$1" &>/dev/null; }
-
-if ! _has soffice || ! _has pdftoppm; then
-  # Docker フォールバック
-  if _has docker && docker compose config --services 2>/dev/null | grep -q "^pptx-convert$"; then
-    echo "[pptx_to_png] LibreOffice がローカルにないため Docker (pptx-convert) を使用します"
-    # 引数を再構築して Docker 内で自分自身を呼び出す
-    exec docker compose run --rm pptx-convert \
-      bash scripts/deckgen/tools/pptx_to_png.sh \
-      "$PPTX" "$OUTDIR" --dpi "$DPI"
-  else
-    echo "ERROR: LibreOffice と pdftoppm が見つかりません。" >&2
-    echo "" >&2
-    echo "選択肢 A — Docker を使う（推奨・ローカル環境を汚さない）:" >&2
-    echo "  docker compose build pptx-convert  # 初回のみ（数分かかります）" >&2
-    echo "  docker compose run --rm pptx-convert bash scripts/deckgen/tools/pptx_to_png.sh $TARGET" >&2
-    echo "" >&2
-    echo "選択肢 B — ローカルにインストールする:" >&2
-    echo "  sudo apt-get install -y libreoffice poppler-utils" >&2
-    exit 1
-  fi
+# --- Docker 確認 ---
+if ! command -v docker &>/dev/null; then
+  echo "ERROR: Docker が見つかりません。Docker Desktop をインストールしてください。" >&2
+  exit 1
 fi
+
+# pptx-convert イメージが存在するか確認（未ビルドなら案内して停止）
+if ! docker image inspect life-os-pptx-convert:local &>/dev/null; then
+  echo "ERROR: pptx-convert イメージが未ビルドです。以下を実行してください:" >&2
+  echo "  docker compose build pptx-convert" >&2
+  exit 1
+fi
+
+# --- Docker コンテナ内で変換実行 ---
+# このスクリプト自体がホストで動いているとき: コンテナに処理を委譲する。
+# コンテナ内で動いているとき（PPTX_CONVERT_IN_DOCKER=1）: 実際に変換する。
+if [[ "${PPTX_CONVERT_IN_DOCKER:-}" != "1" ]]; then
+  echo "[pptx_to_png] Docker (pptx-convert) で変換を実行します..."
+  exec docker compose run --rm \
+    -e PPTX_CONVERT_IN_DOCKER=1 \
+    pptx-convert \
+    bash scripts/deckgen/tools/pptx_to_png.sh \
+    "$PPTX" "$OUTDIR" --dpi "$DPI"
+fi
+
+# --- 以下はコンテナ内でのみ実行される ---
 
 # --- 変換: PPTX → PDF ---
 TMPDIR_CONV="$(mktemp -d)"
@@ -92,7 +92,7 @@ PDF_NAME="$(basename "${PPTX%.pptx}.pdf")"
 PDF_PATH="$TMPDIR_CONV/$PDF_NAME"
 
 if [[ ! -f "$PDF_PATH" ]]; then
-  echo "ERROR: PDF 変換に失敗しました。LibreOffice のログを確認してください。" >&2
+  echo "ERROR: PDF 変換に失敗しました。" >&2
   exit 1
 fi
 
@@ -102,7 +102,7 @@ rm -f "$OUTDIR"/slide-*.png
 
 pdftoppm -r "$DPI" -png "$PDF_PATH" "$OUTDIR/slide"
 
-# slide-1.png, slide-2.png, ... → slide-01.png, slide-02.png, ... に零埋め
+# slide-1.png → slide-01.png に零埋め
 for f in "$OUTDIR"/slide-*.png; do
   [[ -f "$f" ]] || continue
   base="$(basename "$f")"

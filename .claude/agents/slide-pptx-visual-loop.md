@@ -33,24 +33,19 @@ Skill: slide-visual-qa
 
 チェックリスト・分類方針・ループ終了条件を把握してから実行する。
 
-### 2. 依存ツールの確認
+### 2. Docker イメージの確認
+
+PNG 変換は Docker (pptx-convert) 経由で実行する。環境差異をなくすため**ローカル直接実行はしない**。
 
 ```bash
-soffice --version 2>/dev/null && echo "OK: LibreOffice" || echo "MISSING"
-pdftoppm -v 2>/dev/null && echo "OK: pdftoppm" || echo "MISSING"
+docker image inspect life-os-pptx-convert:local &>/dev/null && echo "OK" || echo "MISSING"
 ```
 
-いずれかが `MISSING` の場合:
+`MISSING` の場合はユーザーに伝えて停止する:
 ```
-ユーザーへ報告:
-  PPTX の視覚確認ループには LibreOffice と poppler-utils が必要です。
-  以下をインストールしてから再実行してください:
-
-    sudo apt-get install -y libreoffice poppler-utils
-
-  インストール後に再度 slide-pptx-visual-loop を呼び出してください。
+pptx-convert イメージが未ビルドです。以下を実行してください（初回のみ、数分かかります）:
+  docker compose build pptx-convert
 ```
-→ ここで停止する（インストールを勝手に実行しない）。
 
 ### 3. outline.yml の存在確認
 

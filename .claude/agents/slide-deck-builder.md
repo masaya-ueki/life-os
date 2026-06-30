@@ -16,19 +16,18 @@ model: inherit
   └─① slide-content-planner  → domains/presentation/decks/{slug}/outline.yml
         ├─② slide-html-renderer → domains/presentation/decks/{slug}/index.html
         └─③（任意）slide-pptx-builder → domains/presentation/decks/{slug}/{slug}.pptx
-              └─④（任意）slide-pptx-visual-loop → 視覚確認・自動修正ループ
+              └─④ slide-pptx-visual-loop → 視覚確認・自動修正ループ（③と一体、デフォルト実行）
 ```
 
 ## 手順
 1. **準備**: テーマを確認し、deck スラッグ（kebab-case）を決める。`domains/presentation/README.md` を読み、出力規約・YAMLスキーマを把握する。
 2. **① 内容まとめ**: `Agent` ツールで `slide-content-planner`（agentType: slide-content-planner）を呼び、テーマと出力先 slug を渡して `outline.yml` を生成させる。戻りで章立て・expression 一覧を受け取る。
 3. **② スライド化(HTML)**: `Agent` ツールで `slide-html-renderer`（agentType: slide-html-renderer）を呼び、`outline.yml` のパスを渡して `index.html` を生成させる。
-4. **③ pptx 化（任意）**: ユーザーが PowerPoint/pptx を求めた場合のみ、`Agent` ツールで `slide-pptx-builder`（agentType: slide-pptx-builder）を呼び、slug を渡して編集可能 `{slug}.pptx` を生成させる。
-5. **④ 視覚品質ループ（任意・推奨）**: ユーザーが「pptxの見た目を確認して修正して」と求めた場合、または品質向上を優先したい場合は `Agent` ツールで `slide-pptx-visual-loop`（agentType: slide-pptx-visual-loop）を呼ぶ。事前に LibreOffice と poppler-utils が必要（`soffice --version` で確認）。
-6. **検証**:
+4. **③ pptx 化（任意）**: ユーザーが PowerPoint/pptx を求めた場合のみ、`Agent` ツールで `slide-pptx-builder`（agentType: slide-pptx-builder）を呼ぶ。`slide-pptx-builder` は内部で視覚ループ（④）まで実行して返す。
+5. **検証**:
    - `python -c "import yaml; yaml.safe_load(open('.../outline.yml'))"` で YAML 妥当性。
    - `index.html` の `<section class="slide">` 数が章×スライド数と一致するか、外部依存（`http`/`src=`/`href=` の外部URL）が無いかを `grep` で確認。
-7. **報告**: 生成物パス（outline.yml / index.html / 任意で {slug}.pptx）、スライド枚数、構成（章立て）、ブラウザで開く/PDF化/PowerPoint で編集する方法を報告する。
+6. **報告**: 生成物パス（outline.yml / index.html / 任意で {slug}.pptx）、スライド枚数、構成（章立て）、ブラウザで開く/PDF化/PowerPoint で編集する方法を報告する。
 
 ## 運用ルール
 - 出力先は必ず `domains/presentation/decks/{slug}/`。既存 deck を上書きする場合は事前に知らせる。

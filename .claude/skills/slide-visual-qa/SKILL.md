@@ -11,21 +11,24 @@ name: slide-visual-qa
 
 ## 前提条件の確認
 
-```bash
-# LibreOffice 確認
-soffice --version 2>/dev/null || echo "MISSING: sudo apt-get install -y libreoffice"
+PNG 変換は Docker (pptx-convert) 経由で統一する。環境差異をなくすため**ローカル直接実行はしない**。
 
-# pdftoppm (poppler-utils) 確認
-pdftoppm -v 2>/dev/null || echo "MISSING: sudo apt-get install -y poppler-utils"
+```bash
+# pptx-convert イメージの確認
+docker image inspect life-os-pptx-convert:local &>/dev/null && echo "OK" || echo "MISSING"
 ```
 
-いずれかが欠けている場合は先にインストールする。
+`MISSING` の場合は初回ビルドが必要（数分）:
+```bash
+docker compose build pptx-convert
+```
 
 ---
 
 ## Step 1: PPTX → PNG 変換
 
 ```bash
+# スクリプトが Docker に自動委譲する（ローカル直接実行不要）
 bash scripts/deckgen/tools/pptx_to_png.sh <slug> [output_dir] [--dpi 150]
 ```
 
