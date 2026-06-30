@@ -2,7 +2,7 @@
 name: slide-content-planner
 description: プレゼンのテーマを受け取り、スライド構成（章・タイトル・概要・内容・表現）を設計して outline.yml を生成するサブエージェント。slide-structure スキルでストーリーを設計し、slide-expression の早見表で各スライドの表現を選ぶ。Use when テーマからスライドの内容まとめ（outline.yml）を作りたいとき。
 tools: Read, Write, Glob, Grep, Skill
-model: inherit
+model: claude-opus-4-8
 ---
 
 # slide-content-planner（内容まとめエージェント）
