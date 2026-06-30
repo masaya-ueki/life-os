@@ -32,3 +32,20 @@ services:
     volumes:
       - .:/workspace
     command: ["uv", "run", "--no-sync", "lint-imports"]
+
+  # PPTX → PNG 変換（LibreOffice + pdftoppm）
+  # テストイメージと分離して管理（LibreOffice は ~400MB と大きいため）
+  #
+  # 使い方:
+  #   docker compose run --rm pptx-convert bash scripts/deckgen/tools/pptx_to_png.sh <slug>
+  #
+  # 初回は build が必要（時間がかかる）:
+  #   docker compose build pptx-convert
+  pptx-convert:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pptx-convert
+    image: life-os-pptx-convert:local
+    volumes:
+      - .:/workspace
+    working_dir: /workspace

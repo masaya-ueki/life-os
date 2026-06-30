@@ -1,0 +1,32 @@
+# PPTX → PNG 変換用イメージ（LibreOffice + poppler-utils）
+#
+# テスト用イメージ（docker/Dockerfile）とは分離して管理する。
+# LibreOffice は ~400MB と大きいため、テストイメージを肥大化させない。
+#
+# 使い方（compose 経由）:
+#   docker compose run --rm pptx-convert bash scripts/deckgen/tools/pptx_to_png.sh <slug>
+#
+# ビルド:
+#   docker compose build pptx-convert
+
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+ENV UV_LINK_MODE=copy \
+    UV_PROJECT_ENVIRONMENT=/opt/venv \
+    PYTHONUNBUFFERED=1 \
+    # LibreOffice が HOME を必要とする
+    HOME=/root
+
+WORKDIR /workspace
+
+# LibreOffice と PDF→PNG 変換ツール (pdftoppm) を導入
+# --no-install-recommends で余分なパッケージを省き、キャッシュ削除でレイヤを軽量化
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+       libreoffice \
+       poppler-utils \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# 変換時のみ使うので uv 同期は不要。ソースは compose volume でマウントする。
+CMD ["bash"]

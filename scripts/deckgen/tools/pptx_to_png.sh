@@ -7,9 +7,11 @@
 # 出力: output_dir/ に slide-01.png, slide-02.png, ... を生成。
 # 既存ファイルは上書きする（再生成のたびに最新状態になる）。
 #
-# 依存:
-#   libreoffice (soffice)  … sudo apt-get install -y libreoffice
-#   poppler-utils          … sudo apt-get install -y poppler-utils
+# 実行方法（優先順位順）:
+#   1. ローカルに libreoffice + pdftoppm があればそのまま使う
+#   2. なければ Docker（pptx-convert サービス）経由で実行する
+#      → docker compose build pptx-convert  ← 初回のみ
+#      → docker compose run --rm pptx-convert bash scripts/deckgen/tools/pptx_to_png.sh <slug>
 
 set -euo pipefail
 
@@ -34,7 +36,6 @@ done
 if [[ "$TARGET" == *.pptx ]]; then
   PPTX="$TARGET"
 else
-  # slug として domains/presentation/decks/{slug}/{slug}.pptx を探す
   SLUG="$TARGET"
   PPTX="domains/presentation/decks/${SLUG}/${SLUG}.pptx"
   if [[ ! -f "$PPTX" ]]; then
@@ -56,19 +57,29 @@ if [[ -z "$OUTDIR" ]]; then
 fi
 mkdir -p "$OUTDIR"
 
-# --- 依存ツール確認 ---
-_check_tool() {
-  if ! command -v "$1" &>/dev/null; then
-    echo "ERROR: '$1' が見つかりません。" >&2
-    echo "インストール: $2" >&2
+# --- 依存チェック: ローカル or Docker ---
+_has() { command -v "$1" &>/dev/null; }
+
+if ! _has soffice || ! _has pdftoppm; then
+  # Docker フォールバック
+  if _has docker && docker compose config --services 2>/dev/null | grep -q "^pptx-convert$"; then
+    echo "[pptx_to_png] LibreOffice がローカルにないため Docker (pptx-convert) を使用します"
+    # 引数を再構築して Docker 内で自分自身を呼び出す
+    exec docker compose run --rm pptx-convert \
+      bash scripts/deckgen/tools/pptx_to_png.sh \
+      "$PPTX" "$OUTDIR" --dpi "$DPI"
+  else
+    echo "ERROR: LibreOffice と pdftoppm が見つかりません。" >&2
     echo "" >&2
-    echo "必要なパッケージをまとめてインストールするには:" >&2
+    echo "選択肢 A — Docker を使う（推奨・ローカル環境を汚さない）:" >&2
+    echo "  docker compose build pptx-convert  # 初回のみ（数分かかります）" >&2
+    echo "  docker compose run --rm pptx-convert bash scripts/deckgen/tools/pptx_to_png.sh $TARGET" >&2
+    echo "" >&2
+    echo "選択肢 B — ローカルにインストールする:" >&2
     echo "  sudo apt-get install -y libreoffice poppler-utils" >&2
     exit 1
   fi
-}
-_check_tool soffice  "sudo apt-get install -y libreoffice"
-_check_tool pdftoppm "sudo apt-get install -y poppler-utils"
+fi
 
 # --- 変換: PPTX → PDF ---
 TMPDIR_CONV="$(mktemp -d)"
@@ -87,7 +98,6 @@ fi
 
 # --- 変換: PDF → PNG ---
 echo "[pptx_to_png] PDF → PNG 変換中 (${DPI}dpi): $PDF_PATH"
-# 既存の preview PNG を削除して新しいものに置き換え
 rm -f "$OUTDIR"/slide-*.png
 
 pdftoppm -r "$DPI" -png "$PDF_PATH" "$OUTDIR/slide"
@@ -96,7 +106,6 @@ pdftoppm -r "$DPI" -png "$PDF_PATH" "$OUTDIR/slide"
 for f in "$OUTDIR"/slide-*.png; do
   [[ -f "$f" ]] || continue
   base="$(basename "$f")"
-  # slide-1.png → 数字部を抽出
   num="${base#slide-}"
   num="${num%.png}"
   if [[ ${#num} -lt 2 ]]; then
