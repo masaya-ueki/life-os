@@ -53,6 +53,11 @@ FLOW_ARROW_W = Inches(0.50)  # 水平矢印幅
 FLOW_ARROW_H = Inches(0.35)  # 垂直矢印高さ
 FLOW_LABEL_FONT = 18         # ステップラベルフォントサイズ
 FLOW_DESC_FONT = 13          # ステップ説明フォントサイズ
+FLOW_H_GAP_PAD = Inches(0.10)      # 水平フロー: gap の内訳（FLOW_ARROW_W + これ = 合計 gap）
+FLOW_LABEL_PAD = Inches(0.10)      # 水平フロー: ラベルテキストボックス左右余白
+FLOW_ARROW_OFFSET_H = Inches(0.05) # 水平フロー: ボックス→矢印 x オフセット
+FLOW_ARROW_OFFSET_V = Inches(0.02) # 垂直フロー: ボックス→矢印 y オフセット
+BADGE_Y_OFFSET = Inches(0.10)      # バッジ y オフセット（バッジ x は DIAG_PAD_SM と異なる値）
 
 # ツリー図
 TREE_ROOT_W = Inches(4.2)    # ルートボックス最大幅
