@@ -31,7 +31,7 @@
 - `horizontal`: **3〜5 ステップ**（6以上は文字が小さくなり読めない）
 - `vertical`: **3〜6 ステップ**（縦は多めに詰められる）
 
-## outline.yml の data — 具体サンプル
+## outline.yml の data
 
 ### 横フロー（horizontal / steps）
 ```yaml
