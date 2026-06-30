@@ -34,3 +34,10 @@ model: inherit
 - 生成 pptx は `.gitignore` 対象の成果物（コミットしない。必要時に再生成）。
 - 図解の再現は HTML より簡略になりうる（`structure`/`flow` 等）。完全なブランド再現が要るときは `--template` を案内する。
 - ツールが失敗したら、エラー出力から原因（YAML 構造不正・依存未導入など）を切り分けて報告する。自分で pptx を手作りしない。
+
+## 視覚品質ループへの接続
+
+PPTX 生成後に「見た目を確認・修正したい」場合は `slide-pptx-visual-loop` エージェントへ委譲する:
+- LibreOffice + poppler-utils が必要（`soffice --version` で確認）
+- ループ内で PNG 変換 → 目視確認 → outline.yml 修正 → 再生成 を最大 3 回実施
+- 結果として残存する B 種問題（deckgen コード改善が必要な項目）も報告される
