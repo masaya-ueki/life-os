@@ -106,24 +106,24 @@ def _tree_native(pslide, theme, root, children, region):
     n = len(children)
 
     # root ボックス(上部中央)
-    root_w = min(width, Inches(4.2))
-    root_h = Inches(0.75)
+    root_w = min(width, layout.TREE_ROOT_W)
+    root_h = layout.TREE_ROOT_H
     root_x = left + (width - root_w) // 2
     root_box = layout.add_box_shape(
         pslide, root_x, top, root_w, root_h,
         fill=theme["accent"], line=None, shape=MSO_SHAPE.ROUNDED_RECTANGLE,
     )
-    _centered_text(root_box, root, 18, theme["on_accent"])
+    _centered_text(root_box, root, layout.TREE_ROOT_FONT, theme["on_accent"])
 
     # 子ボックスを下段に横並び
-    gap = Inches(0.25)
-    child_top = top + root_h + Inches(0.85)
+    gap = layout.TREE_NODE_GAP
+    child_top = top + root_h + layout.TREE_VERT_SPAN
     child_h = max(Inches(0.7), top + height - child_top)
     cell_w = (width - gap * (n - 1)) // n if n else width
-    child_w = min(cell_w, Inches(3.4))
+    child_w = min(cell_w, layout.TREE_CHILD_W)
     root_cx = root_x + root_w // 2
     root_bottom = top + root_h
-    bus_y = root_bottom + Inches(0.42)
+    bus_y = root_bottom + layout.TREE_BUS_OFFSET
 
     centers = []
     for i, node in enumerate(children):
@@ -163,7 +163,7 @@ def _fill_child(box, theme, node):
     p.alignment = PP_ALIGN.CENTER
     r = p.add_run()
     r.text = name
-    r.font.size = Pt(16)
+    r.font.size = Pt(layout.TREE_CHILD_FONT)
     r.font.bold = True
     r.font.name = layout.FONT
     r.font.color.rgb = layout.rgb(theme["fg"])
@@ -172,7 +172,7 @@ def _fill_child(box, theme, node):
         gp.alignment = PP_ALIGN.CENTER
         gr = gp.add_run()
         gr.text = f"・{g}"
-        gr.font.size = Pt(12)
+        gr.font.size = Pt(layout.TREE_GC_FONT)
         gr.font.name = layout.FONT
         gr.font.color.rgb = layout.rgb(theme["muted"])
 

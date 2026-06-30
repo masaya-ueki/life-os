@@ -34,6 +34,37 @@ BODY_HEIGHT = SLIDE_H - BODY_TOP - BODY_BOTTOM_MARGIN
 # Region = (left, top, width, height)（すべて EMU int）
 Region = tuple
 
+# --- 図解共通定数（flow / structure / comparison が参照する共有値） ---
+# 枠線太さ（ポイント）
+DIAG_LINE_W = 1.0          # 通常ボックス枠線（structure / comparison）
+DIAG_LINE_BOLD = 1.5        # 強調ボックス枠線（flow ステップ）
+
+# ボックス内余白
+DIAG_PAD_XS = Inches(0.08)  # 極小余白（矢印-ボックス間）
+DIAG_PAD_SM = Inches(0.12)  # 小余白（バッジオフセット）
+DIAG_PAD = Inches(0.15)     # 標準余白（テキスト左右）
+
+# ステップバッジ（flow の番号円）
+BADGE_D = Inches(0.45)      # バッジ直径
+BADGE_FONT = 16             # バッジ数字フォントサイズ
+
+# フロー矢印
+FLOW_ARROW_W = Inches(0.50)  # 水平矢印幅
+FLOW_ARROW_H = Inches(0.35)  # 垂直矢印高さ
+FLOW_LABEL_FONT = 18         # ステップラベルフォントサイズ
+FLOW_DESC_FONT = 13          # ステップ説明フォントサイズ
+
+# ツリー図
+TREE_ROOT_W = Inches(4.2)    # ルートボックス最大幅
+TREE_ROOT_H = Inches(0.75)   # ルートボックス高さ
+TREE_CHILD_W = Inches(3.4)   # 子ボックス最大幅
+TREE_NODE_GAP = Inches(0.25) # 子ノード間ギャップ
+TREE_VERT_SPAN = Inches(0.85) # ルート下端→子ボックス上端の距離
+TREE_BUS_OFFSET = Inches(0.42) # バスラインのルート下端からのオフセット
+TREE_ROOT_FONT = 18          # ルートノードフォントサイズ
+TREE_CHILD_FONT = 16         # 子ノードフォントサイズ
+TREE_GC_FONT = 12            # 孫ノードフォントサイズ
+
 
 def rgb(hexcolor: str) -> RGBColor:
     return RGBColor.from_string(hexcolor)
