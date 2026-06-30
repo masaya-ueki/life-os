@@ -35,7 +35,7 @@ def _step_texts(step):
 def _horizontal(pslide, theme, steps, region):
     left, top, width, height = region
     n = len(steps)
-    gap = layout.FLOW_ARROW_W + layout.DIAG_PAD_XS
+    gap = layout.FLOW_ARROW_W + layout.FLOW_H_GAP_PAD
     box_w = (width - gap * (n - 1)) // n
     box_h = min(Inches(2.4), height)
     box_top = top + (height - box_h) // 2
@@ -48,8 +48,8 @@ def _horizontal(pslide, theme, steps, region):
         )
         _badge(pslide, x, box_top, theme, i + 1)
         layout.add_textbox(
-            pslide, x + layout.DIAG_PAD_SM, box_top + Inches(0.45),
-            box_w - layout.DIAG_PAD_SM * 2, Inches(0.7),
+            pslide, x + layout.FLOW_LABEL_PAD, box_top + Inches(0.45),
+            box_w - layout.FLOW_LABEL_PAD * 2, Inches(0.7),
             label, size=layout.FLOW_LABEL_FONT, color=theme["accent"], bold=True,
             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
         )
@@ -63,7 +63,7 @@ def _horizontal(pslide, theme, steps, region):
         # 矢印（最後以外）
         if i < n - 1:
             layout.add_arrow(
-                pslide, x + box_w + layout.DIAG_PAD_XS,
+                pslide, x + box_w + layout.FLOW_ARROW_OFFSET_H,
                 box_top + box_h // 2 - Inches(0.2),
                 layout.FLOW_ARROW_W, Inches(0.4), color=theme["muted"],
             )
@@ -91,7 +91,7 @@ def _vertical(pslide, theme, steps, region):
         if i < n - 1:
             layout.add_down_arrow(
                 pslide, left + width // 2 - Inches(0.2),
-                y + box_h + layout.DIAG_PAD_XS,
+                y + box_h + layout.FLOW_ARROW_OFFSET_V,
                 Inches(0.4), layout.FLOW_ARROW_H, color=theme["muted"],
             )
 
@@ -101,7 +101,7 @@ def _badge(pslide, x, y, theme, num):
     sp = pslide.shapes.add_shape(
         MSO_SHAPE.OVAL,
         x + layout.DIAG_PAD_SM,
-        y + layout.DIAG_PAD_SM,
+        y + layout.BADGE_Y_OFFSET,
         layout.BADGE_D,
         layout.BADGE_D,
     )
