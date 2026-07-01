@@ -40,18 +40,20 @@ def _two_column(pslide, theme, data, region, mode):
             fill=theme["card"], line=theme["line"], line_width=1.0,
         )
         card.shadow.inherit = False
-        # ラベル見出し
+        # 左端アクセントバーでカードに深みを与える（GenSpark 水準）
+        layout.add_accent_bar(pslide, x, top, body_h, head_color)
+        # ラベル見出し（バー分だけ左余白を追加）
         layout.add_textbox(
-            pslide, x + Inches(0.2), top + Inches(0.15),
-            col_w - Inches(0.4), Inches(0.55),
+            pslide, x + Inches(0.22), top + Inches(0.15),
+            col_w - Inches(0.38), Inches(0.55),
             col.get("label", ""), size=22, color=head_color, bold=True,
         )
         # 項目
         items = [str(v) for v in (col.get("items") or [])]
         if items:
             layout.add_bullets(
-                pslide, x + Inches(0.25), top + Inches(0.85),
-                col_w - Inches(0.5), body_h - Inches(1.0), items,
+                pslide, x + Inches(0.27), top + Inches(0.85),
+                col_w - Inches(0.52), body_h - Inches(1.0), items,
                 size=18, color=theme["fg"], line_spacing=1.25, space_after=6,
             )
     if note:

@@ -26,10 +26,17 @@ def render(pslide, theme, slide, region):
 
 
 def _accent_card(pslide, theme, region):
+    """アクセント色のグラデーションカード（GenSpark 水準の depth 表現）。"""
     left, top, width, height = region
     card = layout.add_box_shape(
         pslide, left, top, width, height, fill=theme["accent"], line=None,
     )
+    # accent → accent2 のグラデーションで奥行き感を演出
+    accent2 = theme.get("accent2", theme["accent"])
+    try:
+        layout.add_gradient_fill(card, theme["accent"], accent2, angle=135.0)
+    except Exception:
+        pass  # グラデーション未対応環境では solid fill にフォールバック
     return card
 
 
