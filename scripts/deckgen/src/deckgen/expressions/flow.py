@@ -35,8 +35,9 @@ def _step_texts(step):
 def _horizontal(pslide, theme, steps, region):
     left, top, width, height = region
     n = len(steps)
-    # n≥5 では横幅が不足するため縦レイアウトに自動切替
-    if n >= 5:
+    # 横フローは 3〜5 ステップまで（flow.md 準拠）。6 以上は横幅が不足するため
+    # 縦レイアウトに自動切替する。
+    if n >= 6:
         _vertical(pslide, theme, steps, region)
         return
     gap = layout.FLOW_ARROW_W + layout.FLOW_H_GAP_PAD

@@ -15,7 +15,10 @@ dist/
 .ruff_cache/
 
 # 生成プレゼン（deckgen の出力。outline.yml から都度生成する成果物）
-presentation/decks/**/*.pptx
+# ルート直下の gitignore なのでパスは domains/ から始める（**/ でも可）。
+domains/presentation/decks/**/*.pptx
+# 視覚ループが生成する PNG プレビュー（pptx_to_png.sh の出力）
+domains/presentation/decks/**/preview/
 
 # OS / エディタ
 .DS_Store

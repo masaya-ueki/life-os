@@ -54,23 +54,22 @@ if [[ -z "$OUTDIR" ]]; then
 fi
 mkdir -p "$OUTDIR"
 
-# --- Docker 確認 ---
-if ! command -v docker &>/dev/null; then
-  echo "ERROR: Docker が見つかりません。Docker Desktop をインストールしてください。" >&2
-  exit 1
-fi
-
-# pptx-convert イメージが存在するか確認（未ビルドなら案内して停止）
-if ! docker image inspect life-os-pptx-convert:local &>/dev/null; then
-  echo "ERROR: pptx-convert イメージが未ビルドです。以下を実行してください:" >&2
-  echo "  docker compose build pptx-convert" >&2
-  exit 1
-fi
-
-# --- Docker コンテナ内で変換実行 ---
-# このスクリプト自体がホストで動いているとき: コンテナに処理を委譲する。
-# コンテナ内で動いているとき（PPTX_CONVERT_IN_DOCKER=1）: 実際に変換する。
+# --- ホスト → コンテナ委譲 ---
+# コンテナ内で動いているとき（PPTX_CONVERT_IN_DOCKER=1）は、docker チェックを
+# 通さず直接 soffice 変換へ進む（コンテナ内に docker バイナリは無いため）。
+# ホストで動いているときのみ docker の存在確認とコンテナ委譲を行う。
 if [[ "${PPTX_CONVERT_IN_DOCKER:-}" != "1" ]]; then
+  # --- Docker 確認（ホストのみ）---
+  if ! command -v docker &>/dev/null; then
+    echo "ERROR: Docker が見つかりません。Docker Desktop をインストールしてください。" >&2
+    exit 1
+  fi
+  # pptx-convert イメージが存在するか確認（未ビルドなら案内して停止）
+  if ! docker image inspect life-os-pptx-convert:local &>/dev/null; then
+    echo "ERROR: pptx-convert イメージが未ビルドです。以下を実行してください:" >&2
+    echo "  docker compose build pptx-convert" >&2
+    exit 1
+  fi
   echo "[pptx_to_png] Docker (pptx-convert) で変換を実行します..."
   exec docker compose run --rm \
     -e PPTX_CONVERT_IN_DOCKER=1 \

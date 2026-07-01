@@ -19,12 +19,16 @@ ENV UV_LINK_MODE=copy \
 
 WORKDIR /workspace
 
-# LibreOffice と PDF→PNG 変換ツール (pdftoppm) を導入
+# LibreOffice と PDF→PNG 変換ツール (pdftoppm)、日本語フォントを導入。
+# fonts-noto-cjk が無いと日本語が豆腐(□)化する。Yu Gothic は Microsoft 製で
+# 再配布不可のため、LibreOffice は Noto Sans CJK JP で代替表示する
+# （プレビューは近似。PowerPoint 上の Yu Gothic とは字形・字幅が僅かに異なる）。
 # --no-install-recommends で余分なパッケージを省き、キャッシュ削除でレイヤを軽量化
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
        libreoffice \
        poppler-utils \
+       fonts-noto-cjk \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
