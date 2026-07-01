@@ -228,10 +228,12 @@ def add_rule(slide, left, top, width, color, weight=2.5):
 
 
 def add_connector(slide, x1, y1, x2, y2, color="6B7280", weight=1.5):
-    """任意の2点を結ぶ直線コネクタ（ツリーの枝など）。"""
+    """任意の2点を結ぶ直線コネクタ（ツリーの枝・見出し下線など）。"""
     conn = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, x1, y1, x2, y2)
     conn.line.color.rgb = rgb(color)
     conn.line.width = Pt(weight)
+    # 既定のテーマ影を無効化（下線・枝に不要なドロップシャドウが乗るのを防ぐ）
+    conn.shadow.inherit = False
     return conn
 
 
