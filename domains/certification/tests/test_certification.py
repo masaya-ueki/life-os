@@ -182,3 +182,28 @@ def test_quiz_start_and_bank_filters_with_real_data():
         content, attempts, email=email, certification_id=CERT_ID, answered=False
     )
     assert first.id not in {it.question_id for it in unanswered}
+
+
+# ---- DynamoDB リポジトリ（boto3 を注入テーブルで回避） -----------------------
+
+
+def test_dynamo_repository_record_maps_item():
+    """record() が AttemptRecord を DynamoDB Item に正しく写像する（boto3 不要）。"""
+    from certification.adapters.dynamo_repository import DynamoAttemptRepository
+    from certification.domain.models import AttemptRecord
+
+    captured = {}
+
+    class FakeTable:
+        def put_item(self, Item):
+            captured.update(Item)
+
+    repo = DynamoAttemptRepository(table=FakeTable())
+    repo.record(AttemptRecord(email="me@example.com", question_id="arch-001",
+                              is_correct=True, answered_at_ms=1700000000000))
+    assert captured == {
+        "email": "me@example.com",
+        "question_id": "arch-001",
+        "is_correct": True,
+        "answered_at_ms": 1700000000000,
+    }

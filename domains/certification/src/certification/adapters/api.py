@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import os
 import secrets
 import time
 
@@ -35,10 +36,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 単一プロセス内の依存（MVP）。P5 で DynamoDB 実装へ差し替える。
+# 依存の組み立て。出題履歴は環境変数 ATTEMPTS_TABLE があれば DynamoDB、無ければインメモリ。
+# （ローカルは既定でインメモリ、Lambda では ATTEMPTS_TABLE 経由で DynamoDB）
 _content = JsonContentRepository()
-_attempts = InMemoryAttemptRepository()
 _users = EnvUserRepository()
+
+
+def _build_attempts():
+    if os.environ.get("ATTEMPTS_TABLE"):
+        from .dynamo_repository import DynamoAttemptRepository
+
+        return DynamoAttemptRepository()
+    return InMemoryAttemptRepository()
+
+
+_attempts = _build_attempts()
 _sessions: dict[str, str] = {}  # token -> email
 
 
