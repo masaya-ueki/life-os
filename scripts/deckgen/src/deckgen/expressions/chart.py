@@ -44,7 +44,7 @@ def render(pslide, theme, slide, region):
     if note:
         layout.add_textbox(
             pslide, left, top + chart_h + Inches(0.05), width, note_h,
-            str(note), size=12, color=theme["muted"],
+            str(note), size=layout.FONT_CAPTION, color=theme["muted"],
         )
 
 

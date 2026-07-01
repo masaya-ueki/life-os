@@ -16,8 +16,8 @@ def render(pslide, theme, slide, region):
     pts = slide.get("content") or []
     if not pts:
         return
-    # 件数に応じて文字サイズを調整（詰め込みすぎ防止）
-    size = 24 if len(pts) <= 4 else 20
+    # 件数に応じて型スケール内で文字サイズを調整（詰め込みすぎ防止）
+    size = layout.FONT_LEAD if len(pts) <= 4 else layout.FONT_BODY
     layout.add_bullets(
         pslide, left, top, width, height, [str(x) for x in pts],
         size=size, color=theme["fg"], line_spacing=1.35, space_after=10,

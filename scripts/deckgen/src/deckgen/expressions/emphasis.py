@@ -52,13 +52,13 @@ def _big_number(pslide, theme, data, region):
     tf.vertical_anchor = MSO_ANCHOR.MIDDLE
     p = tf.paragraphs[0]
     p.alignment = PP_ALIGN.CENTER
-    _run(p, value, 96, theme["on_accent"], True)
+    _run(p, value, layout.FONT_HERO, theme["on_accent"], True)
     if unit:
-        _run(p, unit, 40, theme["on_accent"], True)
+        _run(p, unit, layout.FONT_H1, theme["on_accent"], True)
     if label:
         p2 = tf.add_paragraph()
         p2.alignment = PP_ALIGN.CENTER
-        _run(p2, label, 22, theme["on_accent"], False)
+        _run(p2, label, layout.FONT_LEAD, theme["on_accent"], False)
 
 
 def _message(pslide, theme, data, region, slide):
@@ -73,7 +73,7 @@ def _message(pslide, theme, data, region, slide):
     tf.vertical_anchor = MSO_ANCHOR.MIDDLE
     p = tf.paragraphs[0]
     p.alignment = PP_ALIGN.CENTER
-    _run(p, text, 40, theme["on_accent"], True)
+    _run(p, text, layout.FONT_H1, theme["on_accent"], True)
 
 
 def _quote(pslide, theme, data, region, slide):
@@ -89,11 +89,11 @@ def _quote(pslide, theme, data, region, slide):
     tf.vertical_anchor = MSO_ANCHOR.MIDDLE
     p = tf.paragraphs[0]
     p.alignment = PP_ALIGN.CENTER
-    _run(p, f"“{text}”", 34, theme["on_accent"], True)
+    _run(p, f"“{text}”", layout.FONT_H2, theme["on_accent"], True)
     if cite:
         p2 = tf.add_paragraph()
         p2.alignment = PP_ALIGN.CENTER
-        _run(p2, cite, 20, theme["on_accent"], False)
+        _run(p2, cite, layout.FONT_LEAD, theme["on_accent"], False)
 
 
 def _kpi(pslide, theme, data, region):
@@ -102,7 +102,7 @@ def _kpi(pslide, theme, data, region):
     if not cards:
         return
     n = len(cards)
-    gap = Inches(0.3)
+    gap = layout.SPACE_3
     card_w = (width - gap * (n - 1)) // n
     card_h = min(Inches(2.6), height)
     card_top = top + (height - card_h) // 2
@@ -117,13 +117,13 @@ def _kpi(pslide, theme, data, region):
         tf.vertical_anchor = MSO_ANCHOR.MIDDLE
         p = tf.paragraphs[0]
         p.alignment = PP_ALIGN.CENTER
-        _run(p, str(card.get("num", "")), 48, theme["accent"], True)
+        _run(p, str(card.get("num", "")), layout.FONT_DISPLAY, theme["accent"], True)
         delta = str(card.get("delta", ""))
         if delta:
-            _run(p, f" {delta}", 24, theme["good"], True)
+            _run(p, f" {delta}", layout.FONT_LEAD, theme["good"], True)
         p2 = tf.add_paragraph()
         p2.alignment = PP_ALIGN.CENTER
-        _run(p2, str(card.get("label", "")), 18, theme["fg"], False)
+        _run(p2, str(card.get("label", "")), layout.FONT_BODY, theme["fg"], False)
 
 
 def _run(p, text, size, color, bold):
