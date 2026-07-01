@@ -33,6 +33,15 @@ OVERFLOW_CHARS_HTML = 600  # 1スライドのテキスト上限（HTML）
 OVERFLOW_CHARS_PER_CM2 = 6  # pptx: 1cm² あたりの推定最大文字数
 OVERFLOW_MIN_CHARS = 100    # pptx: 最低閾値
 
+# --- 視覚品質チェックの閾値（pptx） ---
+MIN_FONT_PT = 14            # これ未満は可読性の下限割れ（型スケール FONT_CAPTION と一致）
+MAX_SIZE_KINDS = 5          # 1 スライドの異なるフォントサイズ種の上限（見出し2 + 多層図解の3層を許容。6 種以上で警告）
+CONTRAST_AA_NORMAL = 4.5    # WCAG AA（通常テキスト）
+CONTRAST_AA_LARGE = 3.0     # WCAG AA（大きいテキスト）
+OVERLAP_AREA_FRAC = 0.4     # 塗り形状の重なりが小さい方の面積のこの割合超で警告
+BOUNDS_EPS_IN = 0.03        # 境界超過判定の許容（インチ、丸め誤差の吸収）
+THIN_SHAPE_IN = 0.2         # これ未満の辺を持つ塗り形状は装飾（バー/罫線）として重なり判定から除外
+
 # void 要素は handle_endtag が呼ばれないため depth カウントから除外
 _VOID_ELEMENTS = frozenset(
     ["area", "base", "br", "col", "embed", "hr", "img", "input",
@@ -180,21 +189,171 @@ def check_html(html_path: Path, label_prefix: str | None = None) -> list[Finding
 
 
 # ---------------------------------------------------------------------------
+# 視覚品質ヘルパ（WCAG コントラスト・図形）
+# ---------------------------------------------------------------------------
+
+def _rel_luminance(hex_color: str) -> float:
+    """sRGB hex の WCAG 相対輝度（0.0–1.0）を返す。"""
+    h = hex_color.lstrip("#")
+    if len(h) != 6:
+        return 0.0
+
+    def _chan(c: int) -> float:
+        x = c / 255.0
+        return x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4
+
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return 0.2126 * _chan(r) + 0.7152 * _chan(g) + 0.0722 * _chan(b)
+
+
+def contrast_ratio(hex1: str, hex2: str) -> float:
+    """2 色の WCAG コントラスト比（1.0–21.0）を返す。"""
+    l1, l2 = _rel_luminance(hex1), _rel_luminance(hex2)
+    hi, lo = max(l1, l2), min(l1, l2)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+# レンダラが実際に生成する「意味色 × 面」の組。逸脱は再利用色の a11y 問題。
+_CONTRAST_PAIRS = (
+    ("fg", "bg"),          # 本文
+    ("fg", "card"),
+    ("muted", "bg"),       # 補足・注記
+    ("muted", "card"),
+    ("good", "bg"),        # メリット（pros-cons / KPI delta）
+    ("good", "card"),
+    ("bad", "bg"),         # デメリット
+    ("bad", "card"),
+    ("accent", "bg"),      # 見出し・KPI 数値
+    ("on_accent", "accent"),  # アクセント面上のラベル
+)
+
+
+def check_theme_contrast(theme: dict, label: str) -> list[Finding]:
+    """テーマの意味色ペアが WCAG AA(4.5:1) を満たすか検査する（deck 非依存）。"""
+    findings: list[Finding] = []
+    for text_tok, surf_tok in _CONTRAST_PAIRS:
+        if text_tok not in theme or surf_tok not in theme:
+            continue
+        ratio = contrast_ratio(theme[text_tok], theme[surf_tok])
+        if ratio < CONTRAST_AA_NORMAL:
+            findings.append(Finding(
+                "QA-THEME-CONTRAST", "warning", label,
+                f"{text_tok} on {surf_tok} = {ratio:.2f}:1 < {CONTRAST_AA_NORMAL}"))
+    return findings
+
+
+def _shape_bbox(shape) -> tuple[int, int, int, int] | None:
+    """(left, top, width, height) を EMU int で返す。取得不能なら None。"""
+    try:
+        return (int(shape.left), int(shape.top),
+                int(shape.width), int(shape.height))
+    except (TypeError, ValueError):
+        return None
+
+
+def _shape_fill_hex(shape) -> str | None:
+    """solid / gradient 塗りの主要色 hex（大文字・# なし）。無ければ None。"""
+    from pptx.enum.dml import MSO_FILL_TYPE  # noqa: PLC0415
+    try:
+        ftype = shape.fill.type
+        if ftype == MSO_FILL_TYPE.SOLID:
+            return str(shape.fill.fore_color.rgb)
+        if ftype == MSO_FILL_TYPE.GRADIENT:
+            return str(shape.fill.gradient_stops[0].color.rgb)
+    except (TypeError, AttributeError, ValueError, IndexError):
+        return None
+    return None
+
+
+def _run_color_hex(run) -> str | None:
+    """run の明示 RGB 文字色 hex（大文字）。テーマ色/継承なら None。"""
+    from pptx.enum.dml import MSO_COLOR_TYPE  # noqa: PLC0415
+    try:
+        color = run.font.color
+        if color is not None and color.type == MSO_COLOR_TYPE.RGB:
+            return str(color.rgb)
+    except (TypeError, AttributeError, ValueError):
+        return None
+    return None
+
+
+def _is_overlap_candidate(shape, slide_w: int, slide_h: int, thin: int) -> bool:
+    """重なり判定の対象（塗りのある通常オートシェイプ）か。
+    背景・細い装飾（バー/罫線）・楕円（バッジ/ベン図）は除外する。"""
+    from pptx.enum.shapes import MSO_SHAPE, MSO_SHAPE_TYPE  # noqa: PLC0415
+    try:
+        if shape.shape_type != MSO_SHAPE_TYPE.AUTO_SHAPE:
+            return False
+        if shape.auto_shape_type == MSO_SHAPE.OVAL:
+            return False
+    except (TypeError, ValueError, AttributeError):
+        return False
+    if _shape_fill_hex(shape) is None:
+        return False
+    bb = _shape_bbox(shape)
+    if bb is None:
+        return False
+    _, _, w, h = bb
+    if min(w, h) < thin:                              # 細い装飾を除外
+        return False
+    if w >= 0.95 * slide_w and h >= 0.95 * slide_h:   # 背景を除外
+        return False
+    return True
+
+
+def _rect_overlap_area(a: tuple, b: tuple) -> int:
+    la, ta, wa, ha = a
+    lb, tb, wb, hb = b
+    ix = max(0, min(la + wa, lb + wb) - max(la, lb))
+    iy = max(0, min(ta + ha, tb + hb) - max(ta, tb))
+    return ix * iy
+
+
+# ---------------------------------------------------------------------------
 # PPTX チェック
 # ---------------------------------------------------------------------------
 
-def check_pptx(pptx_path: Path, label_prefix: str | None = None) -> list[Finding]:
-    """生成済み .pptx を検査し、レンダリング品質問題を返す。"""
+def check_pptx(pptx_path: Path, label_prefix: str | None = None,
+               theme: dict | None = None) -> list[Finding]:
+    """生成済み .pptx を検査し、レンダリング品質問題を返す。
+
+    theme（token→"RRGGBB"）を渡すと色トークン外の文字色も検査する。
+    """
     from pptx import Presentation  # noqa: PLC0415
+    from pptx.util import Inches  # noqa: PLC0415
+
+    from deckgen import layout  # noqa: PLC0415
 
     prefix = label_prefix or pptx_path.as_posix()
     findings: list[Finding] = []
     prs = Presentation(str(pptx_path))
 
+    type_scale = layout.TYPE_SCALE
+    allowed_colors = {v.upper() for v in theme.values()} if theme else None
+    slide_w, slide_h = int(layout.SLIDE_W), int(layout.SLIDE_H)
+    eps = int(Inches(BOUNDS_EPS_IN))
+    thin = int(Inches(THIN_SHAPE_IN))
+
     for i, slide in enumerate(prs.slides, 1):
         slide_label = f"{prefix}:slide-{i}"
+        slide_sizes: set[float] = set()
+        overlap_boxes: list[tuple] = []
 
         for shape in slide.shapes:
+            # QA-PPTX-BOUNDS: スライド境界の超過（全シェイプ対象）
+            bb = _shape_bbox(shape)
+            if bb is not None:
+                l, t, w, h = bb
+                if (l < -eps or t < -eps
+                        or l + w > slide_w + eps or t + h > slide_h + eps):
+                    findings.append(Finding(
+                        "QA-PPTX-BOUNDS", "warning", slide_label,
+                        "シェイプがスライド境界を超過"))
+
+            # 重なり判定の候補（塗り形状）を収集
+            if _is_overlap_candidate(shape, slide_w, slide_h, thin):
+                overlap_boxes.append(bb)
+
             if not shape.has_text_frame:
                 continue
             tf = shape.text_frame
@@ -224,6 +383,55 @@ def check_pptx(pptx_path: Path, label_prefix: str | None = None) -> list[Finding
             except (AttributeError, TypeError):
                 pass
 
+            # ラン単位: フォントサイズ・色トークンの検査
+            for para in tf.paragraphs:
+                for run in para.runs:
+                    size = run.font.size
+                    if size is not None:
+                        pt = round(size.pt, 1)
+                        slide_sizes.add(pt)
+                        # QA-PPTX-MINFONT: 最小フォント割れ
+                        if pt < MIN_FONT_PT:
+                            findings.append(Finding(
+                                "QA-PPTX-MINFONT", "warning", slide_label,
+                                f"フォント {pt}pt < {MIN_FONT_PT}pt"))
+                        # QA-PPTX-TYPESCALE: 型スケール逸脱
+                        elif round(pt) not in type_scale:
+                            findings.append(Finding(
+                                "QA-PPTX-TYPESCALE", "warning", slide_label,
+                                f"型スケール外のフォント {pt}pt"))
+                    # QA-PPTX-COLORTOKEN: テーマ色トークン外の文字色
+                    if allowed_colors is not None:
+                        chex = _run_color_hex(run)
+                        if chex is not None and chex.upper() not in allowed_colors:
+                            findings.append(Finding(
+                                "QA-PPTX-COLORTOKEN", "warning", slide_label,
+                                f"色トークン外の文字色 #{chex}"))
+
+        # QA-PPTX-SIZEKINDS: 1 スライドのフォントサイズ種が多い
+        if len(slide_sizes) > MAX_SIZE_KINDS:
+            findings.append(Finding(
+                "QA-PPTX-SIZEKINDS", "warning", slide_label,
+                f"フォントサイズ種が多い ({len(slide_sizes)} > {MAX_SIZE_KINDS})"))
+
+        # QA-PPTX-OVERLAP: 塗り形状同士の過剰な重なり
+        for a in range(len(overlap_boxes)):
+            for b in range(a + 1, len(overlap_boxes)):
+                area = _rect_overlap_area(overlap_boxes[a], overlap_boxes[b])
+                if area <= 0:
+                    continue
+                _, _, wa, ha = overlap_boxes[a]
+                _, _, wb, hb = overlap_boxes[b]
+                min_area = min(wa * ha, wb * hb)
+                if min_area > 0 and area > OVERLAP_AREA_FRAC * min_area:
+                    findings.append(Finding(
+                        "QA-PPTX-OVERLAP", "warning", slide_label,
+                        "塗り形状が過剰に重なっている"))
+                    break
+            else:
+                continue
+            break
+
     return findings
 
 
@@ -248,6 +456,14 @@ def check_deck(slug_or_path: str) -> list[Finding]:
             f"読み込みエラー: {exc}"))
         return findings
 
+    # テーマを解決（色トークン検査・コントラスト検査に使う）
+    from deckgen.theme import get_theme  # noqa: PLC0415
+    theme_name = (outline.get("deck") or {}).get("theme")
+    theme = get_theme(theme_name)
+
+    # QA-THEME-CONTRAST: 意味色ペアの WCAG コントラスト
+    findings.extend(check_theme_contrast(theme, f"{slug}/theme:{theme_name or 'default'}"))
+
     # index.html（存在する場合のみ）
     html_path = deck_dir / "index.html"
     if html_path.exists():
@@ -256,7 +472,8 @@ def check_deck(slug_or_path: str) -> list[Finding]:
     # {slug}.pptx（存在する場合のみ）
     pptx_path = deck_dir / f"{slug}.pptx"
     if pptx_path.exists():
-        findings.extend(check_pptx(pptx_path, label_prefix=f"{slug}/{slug}.pptx"))
+        findings.extend(check_pptx(
+            pptx_path, label_prefix=f"{slug}/{slug}.pptx", theme=theme))
 
     return findings
 
