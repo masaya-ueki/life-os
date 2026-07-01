@@ -6,15 +6,28 @@
 # - 新しいテーマは themes に 1 ブロック追記するだけで HTML/pptx 両方に反映される。
 # - トークン名はそのまま CSS 変数名（例: accent → --accent / on_accent → --on-accent）。
 font: "Yu Gothic"          # OS 標準の和文ゴシック（Web フォント禁止方針）
+
+# チャートのマルチ系列パレット（Okabe-Ito・色覚多様性 CVD 安全）。
+# deckgen/theme.py が CHART_PALETTE として読み、chart.py が系列/扇形に順に割り当てる。
+chart_palette:
+  - "#0072b2"   # 青
+  - "#d55e00"   # 朱
+  - "#009e73"   # 緑
+  - "#cc79a7"   # 赤紫
+  - "#e69f00"   # 橙
+  - "#56b4e9"   # 空色
+  - "#f0e442"   # 黄
+  - "#000000"   # 黒
+
 themes:
   default:
     bg: "#ffffff"          # スライド背景
     fg: "#1a1a2e"          # 本文
-    muted: "#6b7280"       # 補足・Before
+    muted: "#667085"       # 補足・Before（WCAG AA: card 背景でも 4.5:1 以上）
     accent: "#2563eb"      # 強調・After
     accent2: "#7e57c2"     # 対比 2 色目（system: common と同系）
-    good: "#16a34a"        # 良い・メリット
-    bad: "#dc2626"         # 悪い・デメリット
+    good: "#15803d"        # 良い・メリット（WCAG AA 準拠に暗色化）
+    bad: "#c81e1e"         # 悪い・デメリット（WCAG AA 準拠に暗色化）
     line: "#e5e7eb"        # 罫線
     card: "#f0f4ff"        # カード背景（淡青みがかり白でアクセントと調和）
     on_accent: "#ffffff"   # アクセント面上の文字色
@@ -24,8 +37,8 @@ themes:
     muted: "#94a3b8"       # 補足（グレー）
     accent: "#60a5fa"      # 強調（明るい青）
     accent2: "#7e57c2"     # 対比 2 色目（共通）
-    good: "#16a34a"        # 良い（共通）
-    bad: "#dc2626"         # 悪い（共通）
+    good: "#22c55e"        # 良い（暗背景向けに明色化・WCAG AA）
+    bad: "#f87171"         # 悪い（暗背景向けに明色化・WCAG AA）
     line: "#334155"        # 罫線（濃グレー）
     card: "#1e293b"        # カード背景（濃紺）
     on_accent: "#0f172a"   # アクセント面上の文字色
@@ -35,8 +48,8 @@ themes:
     muted: "#64748b"       # 補足（青灰）
     accent: "#4f46e5"      # 強調（インディゴ・GenSpark水準の鮮やかさ）
     accent2: "#0ea5e9"     # 対比 2 色目（スカイブルー）
-    good: "#10b981"        # 良い（エメラルドグリーン）
-    bad: "#ef4444"         # 悪い（鮮やかレッド）
+    good: "#047857"        # 良い（エメラルド・WCAG AA 準拠に暗色化）
+    bad: "#dc2626"         # 悪い（WCAG AA 準拠に暗色化）
     line: "#e2e8f0"        # 罫線（青灰系）
     card: "#ffffff"        # カード背景（純白でコントラスト最大）
     on_accent: "#ffffff"   # アクセント面上の文字色
