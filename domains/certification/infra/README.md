@@ -23,10 +23,16 @@ terraform plan  -var "cert_user_email=you@example.com" -var "cert_user_password_
 terraform apply -var "cert_user_email=you@example.com" -var "cert_user_password_hash=<hash>"
 ```
 
-## 残作業（P5）
+## 実装済み（P5 コード / IaC）
 
-- Lambda ハンドラ `certification.adapters.lambda_handler`（Mangum アダプタ）の実装
-- `InMemoryAttemptRepository` を DynamoDB 実装に差し替え（ports は既に抽象化済み）
-- Lambda デプロイパッケージ（`build/lambda.zip`）のビルド手順
-- CloudFront ディストリビューションと OAC、S3 バケットポリシー
+- Lambda ハンドラ `certification.adapters.lambda_handler.handler`（Mangum）✅
+- DynamoDB リポジトリ `DynamoAttemptRepository`（`ATTEMPTS_TABLE` があれば api.py が自動採用）✅
+- CloudFront + OAC + S3 バケットポリシー（SPA・非公開バケット）✅
+
+## 残作業（実行のみ・要 AWS 認証情報）
+
+- `terraform apply`（`aws configure --profile cls` の認証情報が必要）
+- Lambda デプロイパッケージ（`build/lambda.zip`）のビルド
+  例: `uv pip install --target build/pkg 'certification[api]'` 相当 + アプリを同梱して zip
+- ビルド済みフロント（`frontend/dist`）を S3 バケットへ同期 + CloudFront invalidation
 - CI/CD（さらに後）

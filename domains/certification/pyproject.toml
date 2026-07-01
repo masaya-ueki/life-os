@@ -7,10 +7,15 @@ dependencies = ["shared"]
 
 # API/フロント配信の実行時依存はオプション。既定の workspace 同期（テスト/境界検査）には
 # 含めず、テストイメージを軽量に保つ。バックエンド実行時は `--extra api` で導入する。
+# - fastapi/uvicorn: ローカル実行（uvicorn）
+# - mangum: Lambda で FastAPI を動かすアダプタ（P5）
+# - boto3: DynamoDB リポジトリ（P5。Lambda ランタイムには標準同梱だが dev 用に含める）
 [project.optional-dependencies]
 api = [
     "fastapi>=0.110",
     "uvicorn>=0.29",
+    "mangum>=0.17",
+    "boto3>=1.34",
 ]
 
 [tool.uv.sources]

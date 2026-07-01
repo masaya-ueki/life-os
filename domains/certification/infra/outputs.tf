@@ -12,3 +12,8 @@ output "frontend_bucket" {
   description = "フロント配信 S3 バケット"
   value       = aws_s3_bucket.frontend.bucket
 }
+
+output "frontend_url" {
+  description = "CloudFront 経由のフロント URL"
+  value       = "https://${aws_cloudfront_distribution.frontend.domain_name}"
+}
