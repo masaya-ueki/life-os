@@ -26,21 +26,23 @@ def _find_tokens_file() -> Path:
     )
 
 
-def _load() -> tuple[dict[str, dict[str, str]], str]:
-    """単一ソースを読み、(THEMES, FONT) を返す。
+def _load() -> tuple[dict[str, dict[str, str]], str, list[str]]:
+    """単一ソースを読み、(THEMES, FONT, CHART_PALETTE) を返す。
 
     色は #rrggbb で記述されているため、pptx 用に先頭 # を外して大文字化する。
+    chart_palette はマルチ系列チャートの CVD 安全パレット（Okabe-Ito）。
     """
     data = yaml.safe_load(_find_tokens_file().read_text(encoding="utf-8"))
     themes = {
         name: {k: str(v).lstrip("#").upper() for k, v in tokens.items()}
         for name, tokens in data["themes"].items()
     }
-    return themes, str(data.get("font", "Yu Gothic"))
+    palette = [str(c).lstrip("#").upper() for c in (data.get("chart_palette") or [])]
+    return themes, str(data.get("font", "Yu Gothic")), palette
 
 
 # base.css.md と同じ配色を theme-tokens.yml から読み込む（二重定義を排除）。
-THEMES, FONT = _load()
+THEMES, FONT, CHART_PALETTE = _load()
 
 
 def get_theme(name: str | None) -> dict[str, str]:

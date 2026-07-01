@@ -11,6 +11,7 @@ from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
 from pptx.util import Inches, Pt
 
 from deckgen import layout
+from deckgen.theme import CHART_PALETTE
 
 _CHART_TYPES = {
     "bar": XL_CHART_TYPE.COLUMN_CLUSTERED,
@@ -95,15 +96,57 @@ def _style_chart(chart, theme, ctype, unit):
         plot.has_data_labels = True
         plot.data_labels.number_format = "0%" if unit == "%" else "General"
         plot.data_labels.number_format_is_linked = False
+        _apply_pie_palette(chart)
     elif ctype in ("stacked", "line"):
         chart.has_legend = True
         chart.legend.position = XL_LEGEND_POSITION.BOTTOM
         chart.legend.include_in_layout = False
-    else:
-        chart.has_legend = False
-        # 単系列の棒はアクセント色で塗る
+        _apply_series_palette(chart, ctype)
+    else:  # bar
+        n = len(list(chart.series))
+        if n <= 1:
+            # 単系列の棒はブランドのアクセント色で塗る
+            chart.has_legend = False
+            try:
+                chart.series[0].format.fill.solid()
+                chart.series[0].format.fill.fore_color.rgb = layout.rgb(theme["accent"])
+            except (IndexError, AttributeError):
+                pass
+        else:
+            # 複数系列は CVD 安全パレットで塗り分け、凡例を出す
+            chart.has_legend = True
+            chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+            chart.legend.include_in_layout = False
+            _apply_series_palette(chart, ctype)
+
+
+def _apply_series_palette(chart, ctype):
+    """各系列に Okabe-Ito パレットを順に割り当てる（line は線色、他は塗り）。"""
+    if not CHART_PALETTE:
+        return
+    for i, s in enumerate(chart.series):
+        color = layout.rgb(CHART_PALETTE[i % len(CHART_PALETTE)])
         try:
-            chart.series[0].format.fill.solid()
-            chart.series[0].format.fill.fore_color.rgb = layout.rgb(theme["accent"])
-        except (IndexError, AttributeError):
+            if ctype == "line":
+                s.format.line.color.rgb = color
+            else:
+                s.format.fill.solid()
+                s.format.fill.fore_color.rgb = color
+        except (AttributeError, TypeError):
+            pass
+
+
+def _apply_pie_palette(chart):
+    """扇形（points）ごとに Okabe-Ito パレットを順に割り当てる。"""
+    if not CHART_PALETTE:
+        return
+    try:
+        points = chart.plots[0].series[0].points
+    except (IndexError, AttributeError):
+        return
+    for j, pt in enumerate(points):
+        try:
+            pt.format.fill.solid()
+            pt.format.fill.fore_color.rgb = layout.rgb(CHART_PALETTE[j % len(CHART_PALETTE)])
+        except (AttributeError, TypeError):
             pass
