@@ -19,7 +19,7 @@ life-os は個人のための「なんでも」環境（personal life operating 
 - 境界は [`.importlinter`](./.importlinter) で機械的に強制される。**他領域の内部パッケージ（`domain` / `application` / `adapters` / `models` / `index`）を直接 import しない。**
 - `shared/` は領域非依存の Shared Kernel。いかなる領域にも依存してはならない。
 - 領域には 2 アーキタイプがある:
-  - **アーキタイプA（動く領域）**: `task` / `content-sales` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
+  - **アーキタイプA（動く領域）**: `task` / `content-sales` / `certification` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
   - **アーキタイプB（データ領域）**: `media` / `travel` / `presentation` — 薄い構成（`models` / `index`）+ `data/`
 - 領域（Bounded Context）は `domains/` 配下にまとめる（`shared` は Shared Kernel として例外的にルート直下）。配置の根拠は [ADR-0009](./docs/adr/0009-group-domains-under-domains-dir.md)。
 - `docs/`・`guides/` はコードを持たない content 領域（uv workspace member でも Bounded Context でもない）。

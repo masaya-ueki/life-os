@@ -21,7 +21,9 @@ life-os/
 │   ├── media/             # (1) 領域: 画像・動画管理（archetype B）       ※ workspace member
 │   ├── travel/            # (1) 領域: 旅行の行先管理（archetype B）       ※ workspace member
 │   ├── english/           # (1) 領域: 英語学習（archetype B）             ※ workspace member
-│   └── presentation/      # (1) 領域: プレゼン作成（archetype B）         ※ workspace member
+│   ├── presentation/      # (1) 領域: プレゼン作成（archetype B）         ※ workspace member
+│   ├── tools/             # (1) 領域: ユーティリティスクリプト集（archetype B）※ workspace member
+│   └── certification/     # (1) 領域: 資格取得学習サイト（archetype A・React+Python）※ workspace member
 ├── shared/            # (1) Shared Kernel（領域非依存の最小基盤）※ workspace member・ルート直下
 ├── docs/              # (2) content: 設計ドキュメント（adr/ など）
 ├── guides/            # (2) content: 開発運用の手順・ルール
@@ -57,7 +59,7 @@ life-os/
 ### R-STRUCT-1: 領域内は archetype に従い同形を保つ
 領域の内部構成は [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md) の 2 archetype を使い分ける（詳細・根拠は ADR を正本とし、ここでは要約のみ）。
 
-- **archetype A（動く領域）**: `src/<pkg>/` に `domain` / `application` / `adapters` ＋ `public.py`（例: `task` / `content-sales`）
+- **archetype A（動く領域）**: `src/<pkg>/` に `domain` / `application` / `adapters` ＋ `public.py`（例: `task` / `content-sales` / `certification`）
 - **archetype B（データ領域）**: `src/<pkg>/` に `models` / `index` ＋ `public.py` ＋ `data/`（例: `media` / `travel`）
 
 同一 archetype の領域どうしは**同じ形**にする（規約優先）。

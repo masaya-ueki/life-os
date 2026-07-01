@@ -49,3 +49,37 @@ services:
     volumes:
       - .:/workspace
     working_dir: /workspace
+
+  # certification 資格学習サイト（ローカル開発）。設計根拠: docs/adr/0011。
+  #   docker compose up cert-backend cert-frontend
+  #   → フロント http://localhost:5173 、API http://localhost:8000
+  #
+  # 単一ユーザー認証は環境変数で与える（平文パスワードはコミットしない）。
+  # 下記は開発用の既定値。自分の資格情報は .env などで上書きすること:
+  #   CERT_USER_EMAIL / CERT_USER_PASSWORD（または CERT_USER_PASSWORD_HASH）
+  cert-backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.certification
+    image: life-os-cert-backend:local
+    environment:
+      CERT_USER_EMAIL: ${CERT_USER_EMAIL:-dev@example.com}
+      CERT_USER_PASSWORD: ${CERT_USER_PASSWORD:-devpassword}
+    volumes:
+      - .:/workspace
+    ports:
+      - "8000:8000"
+
+  # React(Vite) 開発サーバ。node イメージで直接起動（ビルドツールは npm 側の責務）。
+  cert-frontend:
+    image: node:20-slim
+    working_dir: /app
+    environment:
+      VITE_API_TARGET: http://cert-backend:8000
+    command: sh -c "npm install --no-audit --no-fund && npm run dev -- --host"
+    volumes:
+      - ./domains/certification/frontend:/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - cert-backend

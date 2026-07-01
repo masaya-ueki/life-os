@@ -19,6 +19,7 @@ root_packages =
     english
     presentation
     tools
+    certification
 
 # --- shared は基盤。いかなる領域にも依存しない ---
 [importlinter:contract:shared-is-foundation]
@@ -34,6 +35,7 @@ forbidden_modules =
     english
     presentation
     tools
+    certification
 
 # --- task は他領域の内部を直接 import しない（public のみ許可） ---
 [importlinter:contract:task-uses-only-public]
@@ -54,6 +56,9 @@ forbidden_modules =
     presentation.models
     presentation.index
     tools.csv_splitter
+    certification.domain
+    certification.application
+    certification.adapters
 
 # --- content_sales は他領域の内部を直接 import しない ---
 [importlinter:contract:content-sales-uses-only-public]
@@ -74,6 +79,9 @@ forbidden_modules =
     presentation.models
     presentation.index
     tools.csv_splitter
+    certification.domain
+    certification.application
+    certification.adapters
 
 # --- media は他領域の内部を直接 import しない ---
 [importlinter:contract:media-uses-only-public]
@@ -95,6 +103,9 @@ forbidden_modules =
     presentation.models
     presentation.index
     tools.csv_splitter
+    certification.domain
+    certification.application
+    certification.adapters
 
 # --- travel は他領域の内部を直接 import しない ---
 [importlinter:contract:travel-uses-only-public]
@@ -116,6 +127,9 @@ forbidden_modules =
     presentation.models
     presentation.index
     tools.csv_splitter
+    certification.domain
+    certification.application
+    certification.adapters
 
 # --- english は他領域の内部を直接 import しない ---
 [importlinter:contract:english-uses-only-public]
@@ -137,6 +151,9 @@ forbidden_modules =
     presentation.models
     presentation.index
     tools.csv_splitter
+    certification.domain
+    certification.application
+    certification.adapters
 
 # --- presentation は他領域の内部を直接 import しない ---
 [importlinter:contract:presentation-uses-only-public]
@@ -158,6 +175,9 @@ forbidden_modules =
     english.models
     english.index
     tools.csv_splitter
+    certification.domain
+    certification.application
+    certification.adapters
 
 # --- tools は他領域の内部を直接 import しない ---
 [importlinter:contract:tools-uses-only-public]
@@ -180,3 +200,29 @@ forbidden_modules =
     english.index
     presentation.models
     presentation.index
+    certification.domain
+    certification.application
+    certification.adapters
+
+# --- certification は他領域の内部を直接 import しない（public のみ許可） ---
+[importlinter:contract:certification-uses-only-public]
+name = certification は他領域を public 経由でのみ参照する
+type = forbidden
+source_modules =
+    certification
+forbidden_modules =
+    task.domain
+    task.application
+    task.adapters
+    content_sales.domain
+    content_sales.application
+    content_sales.adapters
+    media.models
+    media.index
+    travel.models
+    travel.index
+    english.models
+    english.index
+    presentation.models
+    presentation.index
+    tools.csv_splitter
