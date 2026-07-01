@@ -1,0 +1,65 @@
+name: CI
+
+# life-os の CI パイプライン。
+# ローカルは docker compose（ADR-0006）で回すゲートを、CI では uv で直接実行する。
+# 設計根拠: certification 領域の CI/CD（#82 P5）。lint/test は workspace 全体を対象。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# 同一 PR/ブランチの古い実行はキャンセルする。
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # 領域境界・スモークテスト・構造チェック（uv workspace 全体）
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: 依存を同期（frozen）
+        run: uv sync --frozen --dev
+      - name: 領域境界（lint-imports / .importlinter）
+        run: uv run --no-sync lint-imports
+      - name: スモークテスト（pytest）
+        run: uv run --no-sync pytest
+      - name: 構造チェック（check_structure）
+        run: uv run --no-sync python scripts/check_structure.py
+
+  # certification フロント（React/Vite）のビルド確認
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: domains/certification/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 依存インストール
+        run: npm ci || npm install --no-audit --no-fund
+      - name: ビルド
+        run: npm run build
+
+  # certification インフラ（Terraform）の構文検証
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: domains/certification/infra
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: fmt チェック
+        run: terraform fmt -check
+      - name: init（バックエンドなし）
+        run: terraform init -backend=false -input=false
+      - name: validate
+        run: terraform validate
