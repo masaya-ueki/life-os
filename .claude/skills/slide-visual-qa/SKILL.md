@@ -23,6 +23,13 @@ docker image inspect life-os-pptx-convert:local &>/dev/null && echo "OK" || echo
 docker compose build pptx-convert
 ```
 
+> **トラブルシュート**: `apt-get` が「Unable to locate package libreoffice」等で失敗する場合、
+> BuildKit のネットワーク（IPv6 経路不通など）が原因のことがある。ホストネットワークで
+> ビルドし直すと解決する:
+> ```bash
+> docker build --network=host -f docker/Dockerfile.pptx-convert -t life-os-pptx-convert:local .
+> ```
+
 ---
 
 ## Step 1: PPTX → PNG 変換
