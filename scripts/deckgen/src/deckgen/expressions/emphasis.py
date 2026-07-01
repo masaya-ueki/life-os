@@ -131,5 +131,5 @@ def _run(p, text, size, color, bold):
     r.text = text
     r.font.size = Pt(size)
     r.font.bold = bold
-    r.font.name = "Yu Gothic"
+    r.font.name = layout.FONT
     r.font.color.rgb = layout.rgb(color)
