@@ -18,17 +18,46 @@ from deckgen.theme import FONT
 SLIDE_W = Inches(13.333)
 SLIDE_H = Inches(7.5)
 
-# --- 余白とリージョン ---
-MARGIN = Inches(0.6)
+# --- 型スケール（modular type scale・単一ソース） ---
+# 全 expression が参照する名前付きフォントサイズ（pt）。「文字サイズの統一」要望への
+# 対応として、散在していた ~15 種を 8 段に集約する。逸脱は qa.py の視覚チェックが検出する。
+FONT_CAPTION = 14   # 注記・軸ラベル・日付・ステップ説明（可読性の下限）
+FONT_SMALL = 16     # バッジ・表セル・孫ノード・表紙の補足行
+FONT_BODY = 18      # 本文・ステップラベル・KPI ラベル・表ヘッダ
+FONT_LEAD = 22      # リード(summary)・カード見出し・強調ラベル・箇条書き本文
+FONT_H2 = 36        # スライド見出し（add_header のタイトル）
+FONT_H1 = 40        # メッセージ・big-number の単位
+FONT_DISPLAY = 48   # 表紙タイトル・KPI 数値
+FONT_HERO = 96      # big-number の数値
+
+TYPE_SCALE = frozenset(
+    {FONT_CAPTION, FONT_SMALL, FONT_BODY, FONT_LEAD,
+     FONT_H2, FONT_H1, FONT_DISPLAY, FONT_HERO}
+)
+
+# --- 余白グリッド（8pt ベースライン・単一ソース） ---
+# 余白・ギャップ・インセットは 8pt グリッド（微細インセットのみ 4pt 半グリッド）の
+# 倍数トークンで表す。「図に対する余白」要望への対応。
+GRID = Pt(8)               # 基準グリッド（8pt ≈ 0.111in）
+SPACE_HALF = Pt(4)         # 半グリッド（微細インセット専用）
+SPACE_1 = Pt(8)            # ≈ 0.111in
+SPACE_2 = Pt(16)           # ≈ 0.222in
+SPACE_3 = Pt(24)           # ≈ 0.333in
+SPACE_4 = Pt(32)           # ≈ 0.444in
+SPACE_5 = Pt(40)           # ≈ 0.556in
+SPACE_6 = Pt(48)           # ≈ 0.667in
+
+# --- 余白とリージョン（8pt グリッド整列） ---
+MARGIN = Pt(44)            # 5.5×8pt（≈0.61in）
 CONTENT_LEFT = MARGIN
 CONTENT_WIDTH = SLIDE_W - 2 * MARGIN
 
-TITLE_TOP = Inches(0.4)
-TITLE_HEIGHT = Inches(0.95)
-LEAD_TOP = Inches(1.4)
-LEAD_HEIGHT = Inches(0.75)
-BODY_TOP = Inches(2.35)
-BODY_BOTTOM_MARGIN = Inches(0.45)
+TITLE_TOP = Pt(32)         # 4×8pt（≈0.44in）
+TITLE_HEIGHT = Pt(64)      # 8×8pt（≈0.89in）
+LEAD_TOP = Pt(104)         # 13×8pt（≈1.44in）
+LEAD_HEIGHT = Pt(56)       # 7×8pt（≈0.78in）
+BODY_TOP = Pt(168)         # 21×8pt（≈2.33in）
+BODY_BOTTOM_MARGIN = Pt(32)  # 4×8pt（≈0.44in）
 BODY_HEIGHT = SLIDE_H - BODY_TOP - BODY_BOTTOM_MARGIN
 
 # Region = (left, top, width, height)（すべて EMU int）
@@ -39,36 +68,36 @@ Region = tuple
 DIAG_LINE_W = 1.0          # 通常ボックス枠線（structure / comparison）
 DIAG_LINE_BOLD = 1.5        # 強調ボックス枠線（flow ステップ）
 
-# ボックス内余白
-DIAG_PAD_XS = Inches(0.08)  # 極小余白（矢印-ボックス間）
-DIAG_PAD_SM = Inches(0.12)  # 小余白（バッジオフセット）
-DIAG_PAD = Inches(0.15)     # 標準余白（テキスト左右）
+# ボックス内余白（8pt グリッド整列）
+DIAG_PAD_XS = SPACE_HALF    # 4pt: 極小余白（矢印-ボックス間）
+DIAG_PAD_SM = SPACE_1       # 8pt: 小余白（バッジオフセット）
+DIAG_PAD = Pt(12)           # 12pt(1.5グリッド): 標準余白（テキスト左右）
 
 # ステップバッジ（flow の番号円）
 BADGE_D = Inches(0.45)      # バッジ直径
-BADGE_FONT = 16             # バッジ数字フォントサイズ
+BADGE_FONT = FONT_SMALL     # バッジ数字フォントサイズ
 
 # フロー矢印
 FLOW_ARROW_W = Inches(0.50)  # 水平矢印幅
 FLOW_ARROW_H = Inches(0.35)  # 垂直矢印高さ
-FLOW_LABEL_FONT = 18         # ステップラベルフォントサイズ
-FLOW_DESC_FONT = 13          # ステップ説明フォントサイズ
-FLOW_H_GAP_PAD = Inches(0.10)      # 水平フロー: gap の内訳（FLOW_ARROW_W + これ = 合計 gap）
-FLOW_LABEL_PAD = Inches(0.10)      # 水平フロー: ラベルテキストボックス左右余白
-FLOW_ARROW_OFFSET_H = Inches(0.05) # 水平フロー: ボックス→矢印 x オフセット
-FLOW_ARROW_OFFSET_V = Inches(0.02) # 垂直フロー: ボックス→矢印 y オフセット
-BADGE_Y_OFFSET = Inches(0.10)      # バッジ y オフセット（バッジ x は DIAG_PAD_SM と異なる値）
+FLOW_LABEL_FONT = FONT_BODY  # ステップラベルフォントサイズ
+FLOW_DESC_FONT = FONT_CAPTION  # ステップ説明フォントサイズ
+FLOW_H_GAP_PAD = SPACE_1     # 8pt: gap の内訳（FLOW_ARROW_W + これ = 合計 gap）
+FLOW_LABEL_PAD = SPACE_1     # 8pt: ラベルテキストボックス左右余白
+FLOW_ARROW_OFFSET_H = SPACE_HALF  # 4pt: ボックス→矢印 x オフセット
+FLOW_ARROW_OFFSET_V = Pt(2)  # 垂直フロー: ボックス→矢印 y オフセット（微調整）
+BADGE_Y_OFFSET = SPACE_1     # 8pt: バッジ y オフセット
 
 # ツリー図
 TREE_ROOT_W = Inches(4.2)    # ルートボックス最大幅
 TREE_ROOT_H = Inches(0.75)   # ルートボックス高さ
 TREE_CHILD_W = Inches(3.4)   # 子ボックス最大幅
-TREE_NODE_GAP = Inches(0.25) # 子ノード間ギャップ
+TREE_NODE_GAP = SPACE_2      # 16pt: 子ノード間ギャップ
 TREE_VERT_SPAN = Inches(0.85) # ルート下端→子ボックス上端の距離
 TREE_BUS_OFFSET = Inches(0.42) # バスラインのルート下端からのオフセット
-TREE_ROOT_FONT = 18          # ルートノードフォントサイズ
-TREE_CHILD_FONT = 16         # 子ノードフォントサイズ
-TREE_GC_FONT = 12            # 孫ノードフォントサイズ
+TREE_ROOT_FONT = FONT_BODY   # ルートノードフォントサイズ
+TREE_CHILD_FONT = FONT_SMALL  # 子ノードフォントサイズ
+TREE_GC_FONT = FONT_CAPTION  # 孫ノードフォントサイズ
 
 
 def rgb(hexcolor: str) -> RGBColor:
@@ -113,7 +142,7 @@ def add_textbox(
     height,
     text="",
     *,
-    size=24,
+    size=FONT_LEAD,
     color="1A1A2E",
     bold=False,
     align=PP_ALIGN.LEFT,
@@ -152,7 +181,7 @@ def add_bullets(
     height,
     items,
     *,
-    size=22,
+    size=FONT_LEAD,
     color="1A1A2E",
     font=FONT,
     bullet="•  ",
@@ -278,7 +307,7 @@ def set_fill_alpha(shape, pct: float) -> None:
     srgb.append(srgb.makeelement(qn("a:alpha"), {"val": str(int(pct * 1000))}))
 
 
-def style_cell(cell, text, *, size=18, color="1A1A2E", bold=False, fill=None,
+def style_cell(cell, text, *, size=FONT_BODY, color="1A1A2E", bold=False, fill=None,
                align=PP_ALIGN.LEFT, font=FONT):
     if fill is not None:
         cell.fill.solid()
@@ -314,7 +343,7 @@ def add_header(slide, theme, title, summary):
         CONTENT_WIDTH,
         TITLE_HEIGHT,
         title,
-        size=36,
+        size=FONT_H2,
         color=theme["accent"],
         bold=True,
         anchor=MSO_ANCHOR.BOTTOM,
@@ -335,7 +364,7 @@ def add_header(slide, theme, title, summary):
             CONTENT_WIDTH,
             LEAD_HEIGHT,
             summary,
-            size=20,
+            size=FONT_LEAD,
             color=theme["fg"],
             bold=True,
         )

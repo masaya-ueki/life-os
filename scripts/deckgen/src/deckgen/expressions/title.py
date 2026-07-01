@@ -35,7 +35,7 @@ def render_cover(pslide, theme, deck, slide):
     tf.vertical_anchor = MSO_ANCHOR.MIDDLE
     p = tf.paragraphs[0]
     p.alignment = PP_ALIGN.LEFT
-    _run(p, title, 52, theme["accent"], True)
+    _run(p, title, layout.FONT_DISPLAY, theme["accent"], True)
 
     if subtitle:
         sb = pslide.shapes.add_textbox(
@@ -45,7 +45,7 @@ def render_cover(pslide, theme, deck, slide):
         stf.word_wrap = True
         sp = stf.paragraphs[0]
         sp.alignment = PP_ALIGN.LEFT
-        _run(sp, subtitle, 20, theme["fg"], False)
+        _run(sp, subtitle, layout.FONT_LEAD, theme["fg"], False)
 
     if content:
         cb = pslide.shapes.add_textbox(
@@ -57,7 +57,7 @@ def render_cover(pslide, theme, deck, slide):
             cp = ctf.paragraphs[0] if i == 0 else ctf.add_paragraph()
             cp.alignment = PP_ALIGN.LEFT
             cp.space_after = Pt(4)
-            _run(cp, f"· {line}", 15, theme["muted"], False)
+            _run(cp, f"· {line}", layout.FONT_SMALL, theme["muted"], False)
 
     if date:
         db = pslide.shapes.add_textbox(
@@ -66,7 +66,7 @@ def render_cover(pslide, theme, deck, slide):
         )
         dp = db.text_frame.paragraphs[0]
         dp.alignment = PP_ALIGN.LEFT
-        _run(dp, str(date), 13, theme["muted"], False)
+        _run(dp, str(date), layout.FONT_CAPTION, theme["muted"], False)
 
 
 def _run(p, text, size, color, bold):

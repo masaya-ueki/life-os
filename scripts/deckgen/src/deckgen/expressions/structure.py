@@ -75,18 +75,18 @@ def _matrix_2x2(pslide, theme, data, region):
             fill=fill, line=theme["line"], line_width=1.0,
             shape=MSO_SHAPE.RECTANGLE,
         )
-        _centered_text(box, quad[idx], 16, color)
+        _centered_text(box, quad[idx], layout.FONT_SMALL, color)
     # 軸ラベル: X は下中央(→ 右ほど高い)、Y は左縦(↑ 上ほど高い)
     if axis_x:
         layout.add_textbox(
             pslide, grid_left, top + grid_h + Inches(0.02), grid_w, pad_b,
-            f"→ {axis_x}", size=14, color=theme["muted"], bold=True,
+            f"→ {axis_x}", size=layout.FONT_CAPTION, color=theme["muted"], bold=True,
             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
         )
     if axis_y:
         layout.add_textbox(
             pslide, left - Inches(0.05), top, pad_l + Inches(0.05), grid_h,
-            f"↑ {axis_y}", size=14, color=theme["muted"], bold=True,
+            f"↑ {axis_y}", size=layout.FONT_CAPTION, color=theme["muted"], bold=True,
             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, wrap=True,
         )
 
@@ -187,7 +187,7 @@ def _tree_bullets(pslide, theme, root, children, region):
         return
     layout.add_bullets(
         pslide, left, top, width, height, items,
-        size=20, color=theme["fg"], bullet="", line_spacing=1.3, space_after=8,
+        size=layout.FONT_LEAD, color=theme["fg"], bullet="", line_spacing=1.3, space_after=8,
     )
 
 
@@ -231,14 +231,14 @@ def _venn(pslide, theme, data, region):
     # 左集合ラベル(重なりの外・左寄り)
     layout.add_textbox(
         pslide, x1 - Inches(0.1), label_cy, int(diam * (1 - overlap_frac) * 0.8), label_h,
-        sets[0], size=16, color=theme["on_accent"], bold=True,
+        sets[0], size=layout.FONT_SMALL, color=theme["on_accent"], bold=True,
         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
     )
     # 右集合ラベル(重なりの外・右寄り)
     right_only_x = x2 + int(diam * overlap_frac)
     layout.add_textbox(
         pslide, right_only_x, label_cy, int(diam * (1 - overlap_frac) * 0.8), label_h,
-        sets[1], size=16, color=theme["on_accent"], bold=True,
+        sets[1], size=layout.FONT_SMALL, color=theme["on_accent"], bold=True,
         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
     )
     # 重なりラベル(中央)
@@ -247,7 +247,7 @@ def _venn(pslide, theme, data, region):
         ov_w = (x1 + diam) - x2
         layout.add_textbox(
             pslide, ov_x, label_cy, ov_w, label_h,
-            overlap, size=14, color=theme["fg"], bold=True,
+            overlap, size=layout.FONT_CAPTION, color=theme["fg"], bold=True,
             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
         )
 
@@ -265,7 +265,7 @@ def _pyramid(pslide, theme, data, region):
     if not layers:
         return
     n = len(layers)
-    gap = Inches(0.12)
+    gap = layout.SPACE_1
     row_h = (height - gap * (n - 1)) // n
     # 頂点(最後)が狭く、土台(最初)が広い。layers[0]=土台 を最下段に。
     for i, layer in enumerate(reversed(layers)):
@@ -287,7 +287,7 @@ def _pyramid(pslide, theme, data, region):
         )
         # 塗り色の輝度で文字色を切り替え（薄い背景には濃い文字）
         text_color = theme["fg"] if _color_luminance(fill) > 160 else theme["on_accent"]
-        _centered_text(box, layer, 16, text_color)
+        _centered_text(box, layer, layout.FONT_SMALL, text_color)
 
 
 def _matrix_table(pslide, theme, data, region):

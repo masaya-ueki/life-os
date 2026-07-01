@@ -23,7 +23,7 @@ def render(pslide, theme, slide, region):
 def _two_column(pslide, theme, data, region, mode):
     left, top, width, height = region
     pros_cons = mode == "pros-cons"
-    gap = Inches(0.4)
+    gap = layout.SPACE_4
     col_w = (width - gap) // 2
     note = data.get("note")
     note_h = Inches(0.5) if note else 0
@@ -46,7 +46,7 @@ def _two_column(pslide, theme, data, region, mode):
         layout.add_textbox(
             pslide, x + Inches(0.22), top + Inches(0.15),
             col_w - Inches(0.38), Inches(0.55),
-            col.get("label", ""), size=22, color=head_color, bold=True,
+            col.get("label", ""), size=layout.FONT_LEAD, color=head_color, bold=True,
         )
         # 項目
         items = [str(v) for v in (col.get("items") or [])]
@@ -54,12 +54,12 @@ def _two_column(pslide, theme, data, region, mode):
             layout.add_bullets(
                 pslide, x + Inches(0.27), top + Inches(0.85),
                 col_w - Inches(0.52), body_h - Inches(1.0), items,
-                size=18, color=theme["fg"], line_spacing=1.25, space_after=6,
+                size=layout.FONT_BODY, color=theme["fg"], line_spacing=1.25, space_after=6,
             )
     if note:
         layout.add_textbox(
             pslide, left, top + body_h + Inches(0.1), width, note_h,
-            str(note), size=14, color=theme["muted"],
+            str(note), size=layout.FONT_CAPTION, color=theme["muted"],
         )
 
 
@@ -88,20 +88,20 @@ def _table(pslide, theme, data, region):
     for c, col in enumerate(columns, start=1):
         layout.style_cell(
             table.cell(0, c), str(col.get("name", "")),
-            size=18, color=theme["on_accent"], bold=True,
+            size=layout.FONT_BODY, color=theme["on_accent"], bold=True,
             fill=theme["accent"], align=PP_ALIGN.CENTER,
         )
     # 各評価軸の行
     for r, axis in enumerate(axes, start=1):
         zebra = theme["card"] if r % 2 == 1 else theme["bg"]
         layout.style_cell(
-            table.cell(r, 0), axis, size=16, color=theme["fg"],
+            table.cell(r, 0), axis, size=layout.FONT_SMALL, color=theme["fg"],
             bold=True, fill=theme["card"],
         )
         for c, col in enumerate(columns, start=1):
             vals = col.get("values") or []
             text = str(vals[r - 1]) if r - 1 < len(vals) else ""
             layout.style_cell(
-                table.cell(r, c), text, size=16, color=theme["fg"],
+                table.cell(r, c), text, size=layout.FONT_SMALL, color=theme["fg"],
                 fill=zebra, align=PP_ALIGN.CENTER,
             )
