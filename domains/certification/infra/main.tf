@@ -55,6 +55,7 @@ resource "aws_lambda_function" "api" {
       CERT_USER_EMAIL         = var.cert_user_email
       CERT_USER_PASSWORD_HASH = var.cert_user_password_hash # 平文は渡さない
       ATTEMPTS_TABLE          = aws_dynamodb_table.attempts.name
+      CERT_DATA_DIR           = "/var/task/data" # zip 同梱の問題データ
     }
   }
 
@@ -80,6 +81,20 @@ data "aws_iam_policy_document" "lambda_assume" {
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
   role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# 出題履歴テーブルへの読み書き権限
+resource "aws_iam_role_policy" "lambda_dynamo" {
+  name = "${var.name_prefix}-lambda-dynamo"
+  role = aws_iam_role.lambda.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Query", "dynamodb:BatchGetItem"]
+      Resource = [aws_dynamodb_table.attempts.arn]
+    }]
+  })
 }
 
 # --- API Gateway (HTTP API) → Lambda -----------------------------------------

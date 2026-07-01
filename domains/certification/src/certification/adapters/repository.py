@@ -36,7 +36,11 @@ class JsonContentRepository:
     """``data/`` 配下の JSON から資格・ジャンル・問題を読み込む ContentRepository。"""
 
     def __init__(self, data_dir: Path | None = None) -> None:
-        self._data_dir = data_dir or _DEFAULT_DATA_DIR
+        # 明示指定 > 環境変数 CERT_DATA_DIR（Lambda 等の配置用） > 既定（リポジトリの data/）
+        if data_dir is None:
+            env_dir = os.environ.get("CERT_DATA_DIR")
+            data_dir = Path(env_dir) if env_dir else _DEFAULT_DATA_DIR
+        self._data_dir = data_dir
         self._certifications: list[Certification] = []
         self._genres: list[Genre] = []
         self._questions: list[Question] = []
