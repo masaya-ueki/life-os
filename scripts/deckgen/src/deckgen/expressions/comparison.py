@@ -40,8 +40,10 @@ def _two_column(pslide, theme, data, region, mode):
             fill=theme["card"], line=theme["line"], line_width=1.0,
         )
         card.shadow.inherit = False
-        # 左端アクセントバーでカードに深みを与える（GenSpark 水準）
-        layout.add_accent_bar(pslide, x, top, body_h, head_color)
+        # 左端アクセントバーでカードに深みを与える（GenSpark 水準）。
+        # カードの角丸半径ぶん inset して丸角からのはみ出しを防ぐ。
+        layout.add_accent_bar(pslide, x, top, body_h, head_color,
+                              inset=int(layout.CARD_RADIUS))
         # ラベル見出し（バー分だけ左余白を追加）
         layout.add_textbox(
             pslide, x + Inches(0.22), top + Inches(0.15),

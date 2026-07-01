@@ -267,24 +267,30 @@ def _pyramid(pslide, theme, data, region):
     n = len(layers)
     gap = layout.SPACE_1
     row_h = (height - gap * (n - 1)) // n
-    # 頂点(最後)が狭く、土台(最初)が広い。layers[0]=土台 を最下段に。
+    apex_x = left + width // 2      # 頂点の x（上中央）
+    span = height                   # 頂点(top)→底辺(top+height) の高さ
+
+    def half_w_at(y):
+        # 頂点(y=top)で 0、底辺(y=top+height)で width/2 の連続直線上の半幅。
+        frac = (y - top) / span if span else 0
+        return int(width // 2 * frac)
+
+    shade = [theme["accent"], theme["accent2"], theme["muted"], theme["line"]]
+    # layers[0]=土台 を最下段に。reversed で i=0 が頂点(最上段・最狭)。
     for i, layer in enumerate(reversed(layers)):
-        # i=0 が頂点(最上段・最狭)。頂点は三角形、それ以外は台形/矩形で積む。
-        frac = (i + 1) / n
-        w = int(width * frac)
-        x = left + (width - w) // 2
-        y = top + i * (row_h + gap)
-        shade = [theme["accent"], theme["accent2"], theme["muted"], theme["line"]]
+        y_top = top + i * (row_h + gap)
+        y_bot = y_top + row_h
+        htw_top = half_w_at(y_top)   # 上辺の半幅（各層の端が頂点‐底辺の2直線に載る）
+        htw_bot = half_w_at(y_bot)   # 下辺の半幅
+        # 上辺→下辺の台形（頂点段は上辺幅0=三角形）。連続した三角形シルエットになる。
+        points = [
+            (apex_x - htw_top, y_top),
+            (apex_x + htw_top, y_top),
+            (apex_x + htw_bot, y_bot),
+            (apex_x - htw_bot, y_bot),
+        ]
         fill = shade[i % len(shade)]
-        if i == 0:
-            shape = MSO_SHAPE.ISOSCELES_TRIANGLE
-        elif i == n - 1:
-            shape = MSO_SHAPE.RECTANGLE
-        else:
-            shape = MSO_SHAPE.TRAPEZOID
-        box = layout.add_box_shape(
-            pslide, x, y, w, row_h, fill=fill, line=None, shape=shape,
-        )
+        box = layout.add_freeform_polygon(pslide, points, fill=fill)
         # 塗り色の輝度で文字色を切り替え（薄い背景には濃い文字）
         text_color = theme["fg"] if _color_luminance(fill) > 160 else theme["on_accent"]
         _centered_text(box, layer, layout.FONT_SMALL, text_color)

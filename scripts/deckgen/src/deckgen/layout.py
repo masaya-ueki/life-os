@@ -47,6 +47,10 @@ SPACE_4 = Pt(32)           # ≈ 0.444in
 SPACE_5 = Pt(40)           # ≈ 0.556in
 SPACE_6 = Pt(48)           # ≈ 0.667in
 
+# 角丸の一貫半径。既定の roundRect（shorter*0.16667）は大きいカードで過大になり
+# 大小のカードで角丸がばらつく。サイズ非依存の一定半径に揃えて整合させる。
+CARD_RADIUS = Inches(0.14)
+
 # --- 余白とリージョン（8pt グリッド整列） ---
 MARGIN = Pt(44)            # 5.5×8pt（≈0.61in）
 CONTENT_LEFT = MARGIN
@@ -173,6 +177,14 @@ def _style_run(run, text, size, color, bold, font):
     f.color.rgb = rgb(color)
 
 
+def _set_hanging_indent(paragraph, mar_left: int, indent: int) -> None:
+    """段落にぶら下げインデントを設定する（marL / indent を EMU で指定）。
+    折り返し行を bullet ではなくテキスト先頭に揃える。indent は負値。"""
+    pPr = paragraph._p.get_or_add_pPr()
+    pPr.set("marL", str(int(mar_left)))
+    pPr.set("indent", str(int(indent)))
+
+
 def add_bullets(
     slide,
     left,
@@ -203,9 +215,12 @@ def add_bullets(
         p.level = level
         p.line_spacing = line_spacing
         p.space_after = Pt(space_after)
-        indent = "    " * level
         prefix = bullet if bullet else ""
-        _style_run(p.add_run(), f"{indent}{prefix}{text}", size, color, False, font)
+        # ぶら下げインデント: 折り返し行を bullet/マーク幅ぶん右へ揃える
+        hang = int(Pt(size * (1.1 if bullet else 0.9)))
+        level_indent = level * int(Pt(size * 1.4))
+        _set_hanging_indent(p, level_indent + hang, -hang)
+        _style_run(p.add_run(), f"{prefix}{text}", size, color, False, font)
     return box
 
 
@@ -222,6 +237,32 @@ def add_box_shape(
     shape=MSO_SHAPE.ROUNDED_RECTANGLE,
 ):
     sp = slide.shapes.add_shape(shape, left, top, width, height)
+    # 角丸矩形はサイズ非依存の一貫半径に揃える（既定は shorter*0.16667 で過大）
+    if shape == MSO_SHAPE.ROUNDED_RECTANGLE:
+        try:
+            ss = min(int(width), int(height))
+            if ss > 0:
+                sp.adjustments[0] = min(0.5, int(CARD_RADIUS) / ss)
+        except (TypeError, ValueError, IndexError):
+            pass
+    sp.fill.solid()
+    sp.fill.fore_color.rgb = rgb(fill)
+    if line:
+        sp.line.color.rgb = rgb(line)
+        sp.line.width = Pt(line_width)
+    else:
+        sp.line.fill.background()
+    sp.shadow.inherit = False
+    return sp
+
+
+def add_freeform_polygon(slide, points, *, fill, line=None, line_width=1.0):
+    """EMU 座標の点列 [(x, y), ...] から閉じた多角形（自由形状）を描く。
+    ピラミッドの連続三角形シルエットなど、矩形以外の図形に使う。"""
+    x0, y0 = points[0]
+    fb = slide.shapes.build_freeform(int(x0), int(y0), scale=1.0)
+    fb.add_line_segments([(int(x), int(y)) for x, y in points[1:]], close=True)
+    sp = fb.convert_to_shape()
     sp.fill.solid()
     sp.fill.fore_color.rgb = rgb(fill)
     if line:
@@ -280,10 +321,19 @@ def add_gradient_fill(shape, color1: str, color2: str, angle: float = 135.0) -> 
     stops[1].color.rgb = rgb(color2)
 
 
-def add_accent_bar(slide, left, top, height, color: str, width: float = None) -> None:
-    """カード左端に細いアクセントバーを追加してデプス感を出す。"""
+def add_accent_bar(slide, left, top, height, color: str, width: float = None,
+                   inset=0) -> None:
+    """カード左端に細いアクセントバーを追加してデプス感を出す。
+    inset>0 でカードの角丸半径ぶん上下を詰め、丸角からのはみ出しを防ぐ。
+    端は丸めたピル形状にしてカードの角丸と整合させる。"""
     bar_w = width if width is not None else Inches(0.07)
-    sp = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, bar_w, height)
+    y = top + inset
+    h = height - 2 * inset
+    sp = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, y, bar_w, h)
+    try:
+        sp.adjustments[0] = 0.5  # 半径 = 幅の半分 → 端が半円のピル形状
+    except (IndexError, ValueError):
+        pass
     sp.fill.solid()
     sp.fill.fore_color.rgb = rgb(color)
     sp.line.fill.background()
