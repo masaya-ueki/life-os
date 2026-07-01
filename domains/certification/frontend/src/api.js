@@ -1,4 +1,8 @@
 // FastAPI バックエンドへの薄いクライアント。トークンはメモリ保持（MVP）。
+// API のベース URL: ローカルは "" で Vite プロキシ(/api)、本番は VITE_API_BASE に
+// API Gateway の URL を与えてビルドする。
+const API_BASE = import.meta.env.VITE_API_BASE || "";
+
 let token = null;
 
 export function setToken(t) {
@@ -8,7 +12,7 @@ export function setToken(t) {
 async function request(path, options = {}) {
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
   if (token) headers["Authorization"] = `Bearer ${token}`;
-  const res = await fetch(`/api${path}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}/api${path}`, { ...options, headers });
   if (!res.ok) {
     let detail = `HTTP ${res.status}`;
     try {

@@ -29,10 +29,35 @@ terraform apply -var "cert_user_email=you@example.com" -var "cert_user_password_
 - DynamoDB リポジトリ `DynamoAttemptRepository`（`ATTEMPTS_TABLE` があれば api.py が自動採用）✅
 - CloudFront + OAC + S3 バケットポリシー（SPA・非公開バケット）✅
 
-## 残作業（実行のみ・要 AWS 認証情報）
+## デプロイ（ワンコマンド）
 
-- `terraform apply`（`aws configure --profile cls` の認証情報が必要）
-- Lambda デプロイパッケージ（`build/lambda.zip`）のビルド
-  例: `uv pip install --target build/pkg 'certification[api]'` 相当 + アプリを同梱して zip
-- ビルド済みフロント（`frontend/dist`）を S3 バケットへ同期 + CloudFront invalidation
-- CI/CD（さらに後）
+`~/.aws` に `cls` プロファイル（静的キー）と docker があれば、`deploy.sh` が
+Lambda パッケージビルド → `terraform apply` → フロントビルド → S3 同期 → CloudFront invalidation
+までを一括で実行する（terraform/uv/node/aws-cli はすべて Docker で動く）。
+
+```bash
+CERT_USER_EMAIL='you@example.com' CERT_USER_PASSWORD='＜ログインPW＞' \
+  bash domains/certification/infra/deploy.sh
+```
+
+平文パスワードは環境変数でのみ受け取り、ハッシュ化して Lambda 環境変数に入れる（リポジトリ・state に平文は残さない）。
+完了時にフロント URL（CloudFront）と API URL を表示する。
+
+### 個別実行（手動）
+
+```bash
+bash build_lambda.sh                      # Lambda zip をビルド
+terraform init
+terraform apply -var 'cert_user_email=...' -var 'cert_user_password_hash=...'
+```
+
+### クリーンアップ
+
+```bash
+terraform destroy   # 作成したリソースを削除（課金停止）
+```
+
+## 残作業
+
+- CI/CD への deploy ステージ組み込み（さらに後）
+- terraform state のリモート化（S3 backend）— 現状はローカル state
