@@ -324,6 +324,7 @@ Issue の本質的な性質を表す。
 | `system: english` | 英語学習 |
 | `system: common` | 横断的・共通基盤 |
 | `system: content-sales` | 自作ツール等の販売管理 |
+| `system: certification` | 資格取得学習サイト |
 | `system: deps` | 依存パッケージ |
 
 > 今後 life-os の領域が増えたら、`system: *` ラベルを本表と `scripts/setup-github-labels.sh` に追加する。

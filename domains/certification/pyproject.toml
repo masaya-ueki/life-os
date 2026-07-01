@@ -1,0 +1,24 @@
+[project]
+name = "certification"
+version = "0.0.0"
+description = "資格取得学習サイト（Bounded Context / アーキタイプA: 軽量ヘキサゴナル）"
+requires-python = ">=3.12"
+dependencies = ["shared"]
+
+# API/フロント配信の実行時依存はオプション。既定の workspace 同期（テスト/境界検査）には
+# 含めず、テストイメージを軽量に保つ。バックエンド実行時は `--extra api` で導入する。
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+
+[tool.uv.sources]
+shared = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/certification"]

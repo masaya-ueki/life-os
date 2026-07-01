@@ -1,0 +1,183 @@
+{
+  "certification": {
+    "id": "snowpro-core",
+    "code": "COF-C02",
+    "name": "Snowflake SnowPro Core"
+  },
+  "genres": [
+    { "id": "architecture", "name": "アーキテクチャ" },
+    { "id": "security", "name": "アカウントとセキュリティ" },
+    { "id": "performance", "name": "パフォーマンスとコスト" },
+    { "id": "data-loading", "name": "データのロード/アンロード" }
+  ],
+  "questions": [
+    {
+      "id": "arch-001",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "Snowflake のアーキテクチャを構成する 3 つのレイヤーのうち、クエリを処理する計算リソースを提供するのはどれか。",
+      "choices": [
+        { "id": "a", "text": "クラウドサービス層", "is_correct": false, "ng_reason": "認証・メタデータ・クエリ最適化などを担う層で、計算そのものは実行しない。" },
+        { "id": "b", "text": "コンピュート層（Virtual Warehouse）", "is_correct": true, "ng_reason": "正解。Virtual Warehouse が計算リソースを提供する。" },
+        { "id": "c", "text": "ストレージ層", "is_correct": false, "ng_reason": "データを圧縮・列指向で永続化する層で、クエリ計算は行わない。" },
+        { "id": "d", "text": "メタデータ層", "is_correct": false, "ng_reason": "そのような独立レイヤーは定義されておらず、メタデータはクラウドサービス層が管理する。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/intro-key-concepts",
+      "explanation": "Snowflake は「ストレージ」「コンピュート（Virtual Warehouse）」「クラウドサービス」の3層構成。"
+    },
+    {
+      "id": "arch-002",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "Snowflake のストレージ層の特徴として正しいものはどれか。",
+      "choices": [
+        { "id": "a", "text": "行指向で非圧縮のまま保存する", "is_correct": false, "ng_reason": "実際は列指向かつ自動圧縮で保存する。" },
+        { "id": "b", "text": "利用者が直接ファイルを編集できる", "is_correct": false, "ng_reason": "内部のマイクロパーティションは不変で、直接編集はできない。" },
+        { "id": "c", "text": "列指向・自動圧縮のマイクロパーティションで保存する", "is_correct": true, "ng_reason": "正解。不変のマイクロパーティション単位で列指向・圧縮保存する。" },
+        { "id": "d", "text": "コンピュート停止時にデータが消える", "is_correct": false, "ng_reason": "ストレージはコンピュートから分離され、Warehouse 停止でも永続する。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/tables-micro-partitions",
+      "explanation": "ストレージとコンピュートは分離。データは不変のマイクロパーティションに列指向で保存される。"
+    },
+    {
+      "id": "arch-003",
+      "genre_id": "architecture",
+      "format": "multiple",
+      "text": "クラウドサービス層が担う役割として正しいものをすべて選べ。",
+      "choices": [
+        { "id": "a", "text": "認証とアクセス制御", "is_correct": true, "ng_reason": "正解。認証・アクセス制御はクラウドサービス層の役割。" },
+        { "id": "b", "text": "クエリの最適化", "is_correct": true, "ng_reason": "正解。クエリ最適化はクラウドサービス層が担う。" },
+        { "id": "c", "text": "データの物理的な永続化", "is_correct": false, "ng_reason": "永続化はストレージ層の役割で、クラウドサービス層ではない。" },
+        { "id": "d", "text": "メタデータ管理", "is_correct": true, "ng_reason": "正解。メタデータ管理はクラウドサービス層が行う。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/intro-key-concepts",
+      "explanation": "クラウドサービス層は認証・アクセス制御・最適化・メタデータ管理などを担う。永続化はストレージ層。"
+    },
+    {
+      "id": "sec-001",
+      "genre_id": "security",
+      "format": "single",
+      "text": "Snowflake のロールベースアクセス制御（RBAC）で、権限が付与される対象はどれか。",
+      "choices": [
+        { "id": "a", "text": "ユーザーに直接のみ", "is_correct": false, "ng_reason": "権限は主にロールへ付与し、ロールをユーザーに割り当てるのが基本。" },
+        { "id": "b", "text": "ロール", "is_correct": true, "ng_reason": "正解。権限はロールに付与し、ロールをユーザーやロールに割り当てる。" },
+        { "id": "c", "text": "ウェアハウスのみ", "is_correct": false, "ng_reason": "ウェアハウスは権限を持つ対象であって、権限付与の単位ではない。" },
+        { "id": "d", "text": "テーブルのみ", "is_correct": false, "ng_reason": "テーブルは被アクセス対象で、権限の受け手はロール。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-access-control-overview",
+      "explanation": "Snowflake の RBAC は権限をロールへ付与し、ロールをユーザー/ロールに割り当てる。"
+    },
+    {
+      "id": "sec-002",
+      "genre_id": "security",
+      "format": "single",
+      "text": "アカウントで最上位の管理権限を持つシステム定義ロールはどれか。",
+      "choices": [
+        { "id": "a", "text": "SYSADMIN", "is_correct": false, "ng_reason": "オブジェクト作成・管理向けで、アカウント最上位ではない。" },
+        { "id": "b", "text": "SECURITYADMIN", "is_correct": false, "ng_reason": "ロール/権限管理向けで、最上位の ACCOUNTADMIN の下位。" },
+        { "id": "c", "text": "ACCOUNTADMIN", "is_correct": true, "ng_reason": "正解。ACCOUNTADMIN がアカウント最上位のロール。" },
+        { "id": "d", "text": "PUBLIC", "is_correct": false, "ng_reason": "全ユーザーが持つ最小権限のロールで、管理権限はない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-access-control-considerations",
+      "explanation": "ACCOUNTADMIN は SYSADMIN と SECURITYADMIN を内包する最上位ロール。"
+    },
+    {
+      "id": "sec-003",
+      "genre_id": "security",
+      "format": "multiple",
+      "text": "多要素認証（MFA）やネットワークポリシーに関する説明として正しいものをすべて選べ。",
+      "choices": [
+        { "id": "a", "text": "MFA は Duo Security と連携して利用できる", "is_correct": true, "ng_reason": "正解。Snowflake の MFA は Duo により提供される。" },
+        { "id": "b", "text": "ネットワークポリシーで IP アドレスの許可/拒否を制御できる", "is_correct": true, "ng_reason": "正解。ネットワークポリシーで許可/ブロック IP を指定できる。" },
+        { "id": "c", "text": "MFA を有効化するとパスワードが不要になる", "is_correct": false, "ng_reason": "MFA は追加要素であり、パスワードを置き換えるものではない。" },
+        { "id": "d", "text": "ネットワークポリシーはユーザー単位・アカウント単位で適用できる", "is_correct": true, "ng_reason": "正解。ネットワークポリシーはアカウント/ユーザー単位で適用可能。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-mfa",
+      "explanation": "MFA は Duo 連携の追加要素。ネットワークポリシーは IP 制御をアカウント/ユーザー単位で行う。"
+    },
+    {
+      "id": "perf-001",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "Virtual Warehouse の課金に関する説明として正しいものはどれか。",
+      "choices": [
+        { "id": "a", "text": "起動中の秒数に応じてクレジットを消費する（最低60秒）", "is_correct": true, "ng_reason": "正解。起動後は最低60秒、その後は秒単位でクレジットを消費する。" },
+        { "id": "b", "text": "実行したクエリ数に対して固定課金される", "is_correct": false, "ng_reason": "クエリ数ではなく、Warehouse の稼働時間（クレジット）で課金される。" },
+        { "id": "c", "text": "停止中もサイズに応じて課金される", "is_correct": false, "ng_reason": "停止中の Warehouse はクレジットを消費しない。" },
+        { "id": "d", "text": "ストレージ量に比例して課金される", "is_correct": false, "ng_reason": "それはストレージ課金の話で、Warehouse（コンピュート）課金とは別。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/credits",
+      "explanation": "Warehouse は起動中の時間でクレジット課金（最低60秒、以降秒単位）。停止中は課金されない。"
+    },
+    {
+      "id": "perf-002",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "クエリ結果が完全に同一で基盤データも変わっていない場合に、再計算を避けて即座に結果を返す仕組みはどれか。",
+      "choices": [
+        { "id": "a", "text": "ウェアハウスキャッシュ（ローカルディスク）", "is_correct": false, "ng_reason": "データキャッシュであり、結果そのものの再利用ではない。" },
+        { "id": "b", "text": "結果キャッシュ（Result Cache）", "is_correct": true, "ng_reason": "正解。24時間有効な結果キャッシュが同一クエリ結果を返す。" },
+        { "id": "c", "text": "メタデータキャッシュのみ", "is_correct": false, "ng_reason": "件数等の統計に使われるもので、結果全体の返却用ではない。" },
+        { "id": "d", "text": "マテリアライズドビュー", "is_correct": false, "ng_reason": "事前集計の仕組みで、同一クエリ即時返却の主目的とは異なる。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/querying-persisted-results",
+      "explanation": "Result Cache は同一クエリかつ基盤データ不変なら最大24時間、計算せず結果を返す。"
+    },
+    {
+      "id": "perf-003",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "同時実行が増えて待ち行列が発生するワークロードに有効な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Warehouse のサイズを X-Small に固定する", "is_correct": false, "ng_reason": "サイズ縮小は同時実行の待ち行列を悪化させ得る。" },
+        { "id": "b", "text": "マルチクラスタウェアハウス", "is_correct": true, "ng_reason": "正解。マルチクラスタは同時実行の増加に対しクラスタを自動増減する。" },
+        { "id": "c", "text": "Time Travel の延長", "is_correct": false, "ng_reason": "過去データ参照の機能で、同時実行性能とは無関係。" },
+        { "id": "d", "text": "結果キャッシュの無効化", "is_correct": false, "ng_reason": "むしろ性能を落とす。待ち行列の解決策ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/warehouses-multicluster",
+      "explanation": "マルチクラスタウェアハウスは同時実行の増減に応じてクラスタ数を自動スケールする。"
+    },
+    {
+      "id": "load-001",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "ステージのファイルを継続的に自動でロードする Snowflake の機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "COPY INTO を手動実行", "is_correct": false, "ng_reason": "手動/バッチのロードで、継続的な自動ロードではない。" },
+        { "id": "b", "text": "Snowpipe", "is_correct": true, "ng_reason": "正解。Snowpipe がステージ到着ファイルを継続的にロードする。" },
+        { "id": "c", "text": "Time Travel", "is_correct": false, "ng_reason": "過去データ参照機能でロードとは無関係。" },
+        { "id": "d", "text": "Zero-Copy Clone", "is_correct": false, "ng_reason": "メタデータ複製の機能で、ファイルの取り込みではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro",
+      "explanation": "Snowpipe はイベント駆動でステージ上の新規ファイルを継続ロードする。"
+    },
+    {
+      "id": "load-002",
+      "genre_id": "data-loading",
+      "format": "multiple",
+      "text": "内部ステージの種類として存在するものをすべて選べ。",
+      "choices": [
+        { "id": "a", "text": "ユーザーステージ", "is_correct": true, "ng_reason": "正解。各ユーザーに割り当てられる内部ステージ。" },
+        { "id": "b", "text": "テーブルステージ", "is_correct": true, "ng_reason": "正解。各テーブルに割り当てられる内部ステージ。" },
+        { "id": "c", "text": "名前付きステージ", "is_correct": true, "ng_reason": "正解。明示的に作成する名前付き内部ステージ。" },
+        { "id": "d", "text": "ウェアハウスステージ", "is_correct": false, "ng_reason": "そのような内部ステージ種別は存在しない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage",
+      "explanation": "内部ステージはユーザー/テーブル/名前付きの3種。ウェアハウスステージは存在しない。"
+    },
+    {
+      "id": "load-003",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "半構造化データ（JSON など）を格納するのに適した Snowflake のデータ型はどれか。",
+      "choices": [
+        { "id": "a", "text": "VARCHAR", "is_correct": false, "ng_reason": "文字列として保持できるが、パス指定での参照や最適化が効かない。" },
+        { "id": "b", "text": "VARIANT", "is_correct": true, "ng_reason": "正解。VARIANT は JSON など半構造化データの格納に最適。" },
+        { "id": "c", "text": "NUMBER", "is_correct": false, "ng_reason": "数値型で半構造化データは保持できない。" },
+        { "id": "d", "text": "BOOLEAN", "is_correct": false, "ng_reason": "真偽値型で半構造化データの格納には使えない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/semistructured-concepts",
+      "explanation": "VARIANT は JSON/Avro/XML など半構造化データを格納でき、パス指定で参照できる。"
+    }
+  ]
+}

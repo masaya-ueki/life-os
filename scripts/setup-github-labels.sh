@@ -76,6 +76,7 @@ LABELS=(
   "system: common|7e57c2|横断的・共通基盤"
   "system: content-sales|7e57c2|自作ツール等の販売管理"
   "system: tools|7e57c2|ユーティリティスクリプト集"
+  "system: certification|7e57c2|資格取得学習サイト"
   "system: deps|7e57c2|依存パッケージ"
 
   # === priority ラベル（3 件、派生課題・改善 Issue の緊急度） ===
