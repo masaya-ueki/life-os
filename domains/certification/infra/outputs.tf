@@ -17,3 +17,8 @@ output "frontend_url" {
   description = "CloudFront 経由のフロント URL"
   value       = "https://${aws_cloudfront_distribution.frontend.domain_name}"
 }
+
+output "cloudfront_distribution_id" {
+  description = "CloudFront ディストリビューション ID（invalidation 用）"
+  value       = aws_cloudfront_distribution.frontend.id
+}
