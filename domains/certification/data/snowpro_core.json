@@ -249,6 +249,902 @@
       ],
       "source_url": "https://docs.snowflake.com/en/user-guide/data-failsafe",
       "explanation": "Fail-safe は Time Travel 終了後の 7 日間、ユーザー操作では使えず Snowflake 運用者のみが災害復旧に用いる。"
+    },
+    {
+      "id": "arch-004",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "ある企業は、機微な医療データを扱うため HIPAA や PCI DSS への準拠と、Tri-Secret Secure（顧客管理鍵）による追加のデータ保護を要件としている。これを満たす最低限の Snowflake エディションはどれか。",
+      "choices": [
+        { "id": "a", "text": "Standard", "is_correct": false, "ng_reason": "入門エディションであり、Tri-Secret Secure などの強化されたデータ保護や規制対応機能は含まれない。" },
+        { "id": "b", "text": "Enterprise", "is_correct": false, "ng_reason": "大規模利用向けの機能を追加するが、Tri-Secret Secure や規制準拠向けの強化された保護は含まれない。" },
+        { "id": "c", "text": "Business Critical", "is_correct": true, "ng_reason": "正解。Business Critical は Tri-Secret Secure や PrivateLink、HIPAA/PCI 等の規制対応に向けて強化されたセキュリティ・データ保護を提供する。" },
+        { "id": "d", "text": "Virtual Private Snowflake（VPS）", "is_correct": false, "ng_reason": "要件自体は満たすが、専用環境で最高レベルの分離を提供する上位エディションであり『最低限』ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/intro-editions",
+      "explanation": "Tri-Secret Secure や HIPAA/PCI 対応などの強化されたデータ保護は Business Critical 以上で提供される。より高い分離が必要な場合にのみ VPS を選ぶ。"
+    },
+    {
+      "id": "arch-005",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "アナリストが、SQL クエリを対話的に実行し、その結果をチャートとして可視化してダッシュボードにまとめ、チームと共有したい。追加の BI ツールを導入せずに実現できるものはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowsight（Web UI）", "is_correct": true, "ng_reason": "正解。Snowsight はワークシートでのクエリ実行に加え、結果の可視化・ダッシュボード作成・共有をブラウザ上で提供する。" },
+        { "id": "b", "text": "SnowSQL", "is_correct": false, "ng_reason": "コマンドラインの SQL クライアントであり、結果のチャート化やダッシュボード作成といった GUI 機能は持たない。" },
+        { "id": "c", "text": "Snowpipe", "is_correct": false, "ng_reason": "ファイルを継続的に自動ロードするためのサービスで、可視化やダッシュボードとは無関係。" },
+        { "id": "d", "text": "Snowpark", "is_correct": false, "ng_reason": "DataFrame API でデータ処理をプログラム的に行うライブラリで、ダッシュボードの可視化 UI は提供しない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/ui-snowsight",
+      "explanation": "Snowsight は Snowflake の Web UI で、ワークシート・結果の可視化・ダッシュボード・監視などを統合的に提供する。"
+    },
+    {
+      "id": "arch-006",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "開発チームが、Snowpark や Streamlit などのアプリケーションを CI/CD パイプラインから自動でデプロイし、複数の接続や Snowflake オブジェクトをスクリプトで一貫して管理したい。最も適したツールはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake CLI", "is_correct": true, "ng_reason": "正解。Snowflake CLI はアプリの開発・デプロイやオブジェクト管理をコマンドおよび CI/CD から自動化するための開発者向けツール。" },
+        { "id": "b", "text": "Snowsight", "is_correct": false, "ng_reason": "対話的なブラウザ UI であり、パイプラインからの無人自動デプロイ用途には設計されていない。" },
+        { "id": "c", "text": "Query Profile", "is_correct": false, "ng_reason": "クエリの実行計画を可視化する診断ツールで、アプリのデプロイ自動化とは関係しない。" },
+        { "id": "d", "text": "Resource Monitor", "is_correct": false, "ng_reason": "クレジット消費を監視・制御する仕組みで、開発・デプロイの自動化ツールではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/developer-guide/snowflake-cli/index",
+      "explanation": "Snowflake CLI（snow）はアプリ開発・デプロイやオブジェクト操作をコマンドラインや CI/CD から自動化するための開発者向けツール。"
+    },
+    {
+      "id": "arch-007",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "あるチームは、同名のテーブルを用途別に分離して管理し、完全修飾名『DB名.___.テーブル名』で一意に参照したい。データベースの直下にあり、テーブルやビューをまとめる論理的な名前空間はどれか。",
+      "choices": [
+        { "id": "a", "text": "アカウント", "is_correct": false, "ng_reason": "階層の最上位でデータベース群を含むが、テーブル/ビューを直接まとめる名前空間ではない。" },
+        { "id": "b", "text": "スキーマ", "is_correct": true, "ng_reason": "正解。スキーマはデータベース配下の名前空間で、テーブル・ビューなどのオブジェクトをグルーピングする。完全修飾名は データベース.スキーマ.オブジェクト。" },
+        { "id": "c", "text": "ウェアハウス", "is_correct": false, "ng_reason": "クエリを実行する計算リソースであり、テーブルを格納する論理コンテナではない。" },
+        { "id": "d", "text": "ステージ", "is_correct": false, "ng_reason": "ロード/アンロード用のファイル置き場であり、テーブル/ビューをまとめる階層単位ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/databases",
+      "explanation": "Snowflake のオブジェクトは データベース → スキーマ → テーブル/ビュー等 の階層で整理され、スキーマがテーブル/ビューの名前空間になる。"
+    },
+    {
+      "id": "arch-008",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "1 本の大きく複雑なクエリの処理時間を短縮するため、そのクエリにより多くの計算リソースを割り当てたい。最も適切な対処はどれか。",
+      "choices": [
+        { "id": "a", "text": "ウェアハウスのサイズを大きくする（スケールアップ）", "is_correct": true, "ng_reason": "正解。ウェアハウスサイズを上げると 1 クエリあたりの計算リソースが増え、大規模・複雑なクエリの処理を高速化できる。" },
+        { "id": "b", "text": "マルチクラスタウェアハウスのクラスタ数を増やす", "is_correct": false, "ng_reason": "クラスタ追加は同時実行クエリの数をさばくためのスケールアウトで、単一クエリ自体を高速化するものではない。" },
+        { "id": "c", "text": "ウェアハウスを一時停止する", "is_correct": false, "ng_reason": "一時停止はコンピュート課金を止める操作であり、クエリの高速化には寄与しない。" },
+        { "id": "d", "text": "結果キャッシュを無効化する", "is_correct": false, "ng_reason": "むしろ再実行時の応答を遅くする方向で、単一クエリの高速化にはならない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/warehouses-overview",
+      "explanation": "単一クエリの高速化にはウェアハウスサイズのスケールアップ（計算リソース増強）が適する。同時実行対策はマルチクラスタ（スケールアウト）。"
+    },
+    {
+      "id": "arch-009",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "BI ダッシュボードに多数のユーザーが同時アクセスし、クエリがキューイングされ始めた。個々のクエリの処理速度は十分だが、増減する同時実行需要に応じて処理能力を自動で拡張・縮小したい。適切な構成はどれか。",
+      "choices": [
+        { "id": "a", "text": "マルチクラスタウェアハウス", "is_correct": true, "ng_reason": "正解。マルチクラスタウェアハウスは同時実行需要に応じてクラスタを自動で増減（スケールアウト/イン）し、キューイングを緩和する。スケーリングポリシーで挙動を調整できる。" },
+        { "id": "b", "text": "ウェアハウスサイズを最大にする", "is_correct": false, "ng_reason": "サイズ拡大は 1 クエリの性能を上げるスケールアップであり、多数の同時クエリによるキューイング自体は解消しにくい。" },
+        { "id": "c", "text": "自動一時停止の間隔を延ばす", "is_correct": false, "ng_reason": "アイドル時の課金に関わる設定であり、同時実行数をさばくこととは関係しない。" },
+        { "id": "d", "text": "マテリアライズドビューを作成する", "is_correct": false, "ng_reason": "事前計算で特定クエリを速くする仕組みで、同時実行需要に対するスケールアウト手段ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/warehouses-multicluster",
+      "explanation": "同時実行によるキューイングにはマルチクラスタウェアハウス（スケールアウト）が適し、スケーリングポリシーでクラスタ起動の積極度を調整する。"
+    },
+    {
+      "id": "arch-010",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "数十億行のテーブルに対し、特定の期間で絞り込むクエリの性能を上げたい。Snowflake がクエリのフィルタ条件に基づき、スキャン不要なマイクロパーティションを読み飛ばして I/O を削減する仕組みはどれか。",
+      "choices": [
+        { "id": "a", "text": "パーティションプルーニング", "is_correct": true, "ng_reason": "正解。各マイクロパーティションのメタデータ（列の最小/最大値等）を用いて、条件に一致しないパーティションをスキャン対象から除外する。フィルタ列でよくクラスタ化されているほど効果が高い。" },
+        { "id": "b", "text": "結果キャッシュ", "is_correct": false, "ng_reason": "同一クエリの再実行結果を返す仕組みであり、初回スキャン対象のマイクロパーティションを絞り込むものではない。" },
+        { "id": "c", "text": "自動一時停止", "is_correct": false, "ng_reason": "アイドル時にウェアハウスを止めてコストを抑える機能で、スキャン量の削減とは無関係。" },
+        { "id": "d", "text": "データ共有", "is_correct": false, "ng_reason": "他アカウントへデータを共有する機能であり、スキャン最適化の仕組みではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/tables-micro-partitions",
+      "explanation": "Snowflake はマイクロパーティションのメタデータで不要なパーティションを読み飛ばす（プルーニング）。フィルタ列でのクラスタリングが良いほどスキャン量が減る。"
+    },
+    {
+      "id": "arch-011",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "コスト管理の担当者が、仮想ウェアハウスを使わない時間帯のコンピュートクレジット消費をゼロにしたい。最も適切な対処はどれか。",
+      "choices": [
+        { "id": "a", "text": "ウェアハウスをアイドル時に自動一時停止（auto-suspend）する", "is_correct": true, "ng_reason": "正解。ウェアハウスは稼働中のみサイズと時間に応じてクレジットを消費し、一時停止中は消費しない。アイドル時に自動停止すればコンピュートコストを抑えられる。" },
+        { "id": "b", "text": "ウェアハウスのサイズを大きくする", "is_correct": false, "ng_reason": "サイズを上げると単位時間あたりのクレジット消費はむしろ増える。" },
+        { "id": "c", "text": "データベースの数を減らす", "is_correct": false, "ng_reason": "クレジット消費はコンピュートの稼働に対して発生するもので、データベースの数とは直接関係しない。" },
+        { "id": "d", "text": "クエリ結果を CSV でエクスポートする", "is_correct": false, "ng_reason": "エクスポートはクレジット消費の削減策ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/credits",
+      "explanation": "仮想ウェアハウスは稼働中のみクレジットを消費し、サイズと稼働時間に比例する。停止中は消費しないため、自動一時停止がコスト削減に有効。"
+    },
+    {
+      "id": "arch-012",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "データサイエンティストが、Snowflake 上のデータに対して SQL と Python、Markdown を 1 つのセルベースの対話環境で組み合わせ、探索・可視化・モデルの試作を行いたい。最も適したものはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake Notebooks", "is_correct": true, "ng_reason": "正解。Snowsight 内のセル型対話環境で、SQL・Python・Markdown を組み合わせてデータ探索・可視化・ML の試作を行える。" },
+        { "id": "b", "text": "Query Profile", "is_correct": false, "ng_reason": "単一クエリの実行計画を分析する診断ツールであり、対話的な開発環境ではない。" },
+        { "id": "c", "text": "Resource Monitor", "is_correct": false, "ng_reason": "クレジット消費を監視・制御する機能であり、データ分析のための開発環境ではない。" },
+        { "id": "d", "text": "Time Travel", "is_correct": false, "ng_reason": "過去時点のデータを参照/復元する機能であり、対話的な分析環境ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks",
+      "explanation": "Snowflake Notebooks は Snowsight 内のセル型開発環境で、SQL・Python・Markdown を統合し対話的なデータ探索・可視化・ML 開発を可能にする。"
+    },
+    {
+      "id": "arch-013",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "アナリストが、Snowflake 内のデータを使う対話的な Web データアプリを Python のみで構築し、データを外部に持ち出さずに社内ユーザーへ安全に共有したい。最も適したものはどれか。",
+      "choices": [
+        { "id": "a", "text": "Streamlit in Snowflake", "is_correct": true, "ng_reason": "正解。Python だけで対話的なデータアプリを構築でき、Snowflake 内で実行・共有されるためデータを外部に移動する必要がない。" },
+        { "id": "b", "text": "Snowsight ダッシュボード", "is_correct": false, "ng_reason": "クエリ結果の可視化・ダッシュボードには向くが、入力ウィジェット等を備えたカスタムな対話的アプリを構築する用途ではない。" },
+        { "id": "c", "text": "Snowflake Marketplace", "is_correct": false, "ng_reason": "外部のデータ/アプリを入手する場であり、自作の対話的アプリを構築する仕組みではない。" },
+        { "id": "d", "text": "SnowSQL", "is_correct": false, "ng_reason": "コマンドラインの SQL クライアントであり、Web アプリを構築する仕組みではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit",
+      "explanation": "Streamlit in Snowflake は Python だけで対話的データアプリを構築でき、Snowflake 内で実行・共有されるためデータ移動や別インフラの管理が不要。"
+    },
+    {
+      "id": "arch-014",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "データエンジニアが、Python の DataFrame スタイルのコードで複雑なデータ変換ロジックを記述し、その処理をデータを外部に移動させずに Snowflake のコンピュート上で実行したい。最も適したものはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowpark", "is_correct": true, "ng_reason": "正解。Snowpark は Python/Java/Scala の DataFrame API でデータ処理を記述し、その処理を Snowflake の仮想ウェアハウス内で実行（プッシュダウン）するため、データを外部に持ち出さずに済む。" },
+        { "id": "b", "text": "SnowSQL", "is_correct": false, "ng_reason": "対話的に SQL を送るクライアントであり、DataFrame スタイルのプログラム的処理フレームワークではない。" },
+        { "id": "c", "text": "Snowpipe", "is_correct": false, "ng_reason": "ファイルを継続的に自動ロードするサービスであり、DataFrame でのデータ変換処理の仕組みではない。" },
+        { "id": "d", "text": "Snowsight", "is_correct": false, "ng_reason": "ブラウザベースの UI であり、プログラム的な DataFrame 処理ライブラリではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/developer-guide/snowpark/index",
+      "explanation": "Snowpark は DataFrame API（Python/Java/Scala）でデータ処理を記述し、Snowflake のコンピュート内で実行する。データを外部へ移さずにプログラム的な変換ができる。"
+    },
+    {
+      "id": "arch-015",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "アナリストが、顧客レビューのテキストに対する要約・感情分析・翻訳などを、モデルのホスティングやインフラ管理なしに SQL/Python の関数呼び出しだけで実行したい。最も適したものはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake Cortex", "is_correct": true, "ng_reason": "正解。Cortex はフルマネージドの AI/ML サービスで、SQL や Python の関数呼び出しから LLM や ML 機能（要約・感情分析・翻訳等）をインフラ管理なしに利用できる。" },
+        { "id": "b", "text": "Query Profile", "is_correct": false, "ng_reason": "クエリ実行計画の診断ツールであり、AI/ML 機能は提供しない。" },
+        { "id": "c", "text": "Time Travel", "is_correct": false, "ng_reason": "過去データの参照/復元機能であり、AI/ML 処理とは無関係。" },
+        { "id": "d", "text": "Secure Data Sharing", "is_correct": false, "ng_reason": "データを他アカウントへ共有する機能であり、AI/ML 推論を提供するものではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview",
+      "explanation": "Snowflake Cortex はフルマネージドの AI/ML サービスで、SQL/Python の関数から LLM・ML 機能（要約・感情分析・翻訳など）をインフラ管理不要で利用できる。"
+    },
+    {
+      "id": "sec-004",
+      "genre_id": "security",
+      "format": "single",
+      "text": "あるスキーマに今後作成されるテーブルすべてに対し、都度 GRANT せずに特定ロールへ自動で SELECT 権限を付与し続けたい。最も適切な方法はどれか。",
+      "choices": [
+        { "id": "a", "text": "スキーマに対する future grants（GRANT SELECT ON FUTURE TABLES IN SCHEMA ... TO ROLE）を構成する", "is_correct": true, "ng_reason": "正解。future grants は将来作成されるオブジェクトへ権限を自動付与し、都度の GRANT を不要にする。" },
+        { "id": "b", "text": "対象の各ユーザーに直接 SELECT 権限を付与する", "is_correct": false, "ng_reason": "権限はロールに付与するのが基本で、かつ将来のテーブルを自動で対象にできない。" },
+        { "id": "c", "text": "テーブルが作成されるたびに手動で GRANT SELECT を実行する", "is_correct": false, "ng_reason": "運用負荷が高く、自動付与という要件を満たさない。" },
+        { "id": "d", "text": "PUBLIC ロールに SELECT を付与して全員に見せる", "is_correct": false, "ng_reason": "全ユーザーに広く公開され、特定ロールへの限定付与という意図に反する。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-access-control-privileges",
+      "explanation": "権限はロールに付与し、将来作成されるオブジェクトを自動で対象にするには future grants（ON FUTURE）を使う。"
+    },
+    {
+      "id": "sec-005",
+      "genre_id": "security",
+      "format": "single",
+      "text": "社員が既存の企業 IdP（Okta など）の認証情報でログインでき、Snowflake 側で個別パスワードを管理せずシングルサインオンを実現したい。構成すべき認証方式はどれか。",
+      "choices": [
+        { "id": "a", "text": "SAML 2.0 によるフェデレーション認証（SSO）を構成し、IdP を認証主体にする", "is_correct": true, "ng_reason": "正解。フェデレーション認証は外部 IdP に認証を委ね、Snowflake 個別のパスワード管理なしに SSO を実現する。" },
+        { "id": "b", "text": "多要素認証（MFA）を有効化する", "is_correct": false, "ng_reason": "ログインに認証要素を追加するだけで、IdP による一元認証・SSO を提供するものではない。" },
+        { "id": "c", "text": "キーペア認証を設定する", "is_correct": false, "ng_reason": "クライアント/ドライバ向けの鍵ベース認証で、IdP を用いた対話的 SSO の仕組みではない。" },
+        { "id": "d", "text": "ネットワークポリシーで接続元 IP を制限する", "is_correct": false, "ng_reason": "アクセス元の制御であり、認証の委譲・SSO とは別の機能。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/admin-security-fed-auth-overview",
+      "explanation": "SAML 2.0 フェデレーション認証は外部 IdP に認証を分離し、Snowflake が SP としてシングルサインオンを実現する。"
+    },
+    {
+      "id": "sec-006",
+      "genre_id": "security",
+      "format": "single",
+      "text": "BI ツールがユーザーに代わって Snowflake にアクセスする際、アプリにユーザーのパスワードを渡さず、トークンによる委譲アクセスで接続させたい。適切な認証方式はどれか。",
+      "choices": [
+        { "id": "a", "text": "OAuth を用い、アクセストークンでユーザーに代わって委譲アクセスさせる", "is_correct": true, "ng_reason": "正解。OAuth はトークンベースの委譲アクセスで、クライアントアプリに資格情報を渡さずにアクセスを認可できる。" },
+        { "id": "b", "text": "SAML 2.0 フェデレーション認証（SSO）を使う", "is_correct": false, "ng_reason": "対話的なユーザーログインを IdP に委ねる仕組みで、アプリがトークンで代理アクセスする委譲用途とは異なる。" },
+        { "id": "c", "text": "キーペア認証を使う", "is_correct": false, "ng_reason": "クライアント自身の秘密鍵による認証で、第三者アプリへアクセスを委譲するトークン発行の仕組みではない。" },
+        { "id": "d", "text": "ユーザーのパスワードをアプリに保存させて接続する", "is_correct": false, "ng_reason": "資格情報をアプリに渡してしまい、パスワードを渡さないという要件に反する。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/oauth-intro",
+      "explanation": "OAuth はアクセストークンによる委譲認可で、クライアントアプリにユーザーの資格情報を渡さずにアクセスさせられる。"
+    },
+    {
+      "id": "sec-007",
+      "genre_id": "security",
+      "format": "single",
+      "text": "自動化された ETL のサービスアカウントで、パスワードを使わずにドライバから非対話で安全に認証させたい。最も適切な方法はどれか。",
+      "choices": [
+        { "id": "a", "text": "キーペア認証を使い、RSA 公開鍵をユーザーに割り当てて秘密鍵でクライアント認証する", "is_correct": true, "ng_reason": "正解。キーペア認証はパスワード不要で、ドライバから非対話に接続するサービスアカウントに適する。" },
+        { "id": "b", "text": "SAML 2.0 フェデレーション認証（SSO）を使う", "is_correct": false, "ng_reason": "ブラウザ経由の対話的な IdP ログイン向けで、非対話のサービスアカウントには不向き。" },
+        { "id": "c", "text": "MFA を必須化する", "is_correct": false, "ng_reason": "対話ログインに追加要素を課すもので、非対話の自動処理では認証の妨げになる。" },
+        { "id": "d", "text": "ユーザーにパスワードのみを設定する", "is_correct": false, "ng_reason": "パスワード方式そのもので、パスワードを使わないという要件に反する。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/key-pair-auth",
+      "explanation": "キーペア認証は RSA 公開鍵をユーザーに割り当て、秘密鍵で認証する。パスワード不要で非対話のドライバ接続に適する。"
+    },
+    {
+      "id": "sec-008",
+      "genre_id": "security",
+      "format": "single",
+      "text": "同じ列を、権限のあるロールには平文で、それ以外のロールにはマスクして見せたい。基礎データ自体は変更したくない。最も適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "動的データマスキングのマスキングポリシーを列に適用する", "is_correct": true, "ng_reason": "正解。マスキングポリシーはクエリ時に実行コンテキスト（CURRENT_ROLE など）で評価され、基礎データを変えずロールに応じて出し分ける。" },
+        { "id": "b", "text": "行アクセスポリシーを適用する", "is_correct": false, "ng_reason": "行の可視性を制御する機能で、列値のマスクには使えない。" },
+        { "id": "c", "text": "対象列を事前に暗号化した値に置き換えて保存する", "is_correct": false, "ng_reason": "基礎データを改変してしまい、ロールに応じた動的な出し分けもできない。" },
+        { "id": "d", "text": "ロールごとに対象列を除外したビューを個別に作成する", "is_correct": false, "ng_reason": "ビューが乱立して手管理となり、同一列の動的な出し分けをポリシーで一元管理できない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-column-ddm-intro",
+      "explanation": "動的データマスキングはマスキングポリシーをクエリ時に評価し、基礎データを変えずにロールに応じて平文/マスクを出し分ける。"
+    },
+    {
+      "id": "sec-009",
+      "genre_id": "security",
+      "format": "single",
+      "text": "機微データを Snowflake にロードする前に第三者プロバイダでトークン化し、Snowflake 内には平文の機微値を一切保持したくない。列レベルセキュリティのどの方式が適切か。",
+      "choices": [
+        { "id": "a", "text": "外部トークン化（External Tokenization）を使う", "is_correct": true, "ng_reason": "正解。外部トークン化はロード前に外部でデータをトークン化するため、平文の機微値を Snowflake 内に保持しない。" },
+        { "id": "b", "text": "動的データマスキングを使う", "is_correct": false, "ng_reason": "平文データを Snowflake 内に保持したままクエリ時にマスクするため、平文を保持しないという要件に合わない。" },
+        { "id": "c", "text": "行アクセスポリシーを使う", "is_correct": false, "ng_reason": "行の可視性制御であり、列値のトークン化ではない。" },
+        { "id": "d", "text": "Tri-Secret Secure を有効化する", "is_correct": false, "ng_reason": "暗号化のマスター鍵管理に関する機能で、列単位の値保護（列レベルセキュリティ）ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-column-intro",
+      "explanation": "列レベルセキュリティのうち外部トークン化はロード前に外部でトークン化するため、平文の機微値を Snowflake に保持しない。"
+    },
+    {
+      "id": "sec-010",
+      "genre_id": "security",
+      "format": "single",
+      "text": "営業担当が自分の担当地域の行だけを参照できるようにし、多数のテーブルへ一貫して適用しつつ地域別ビューの乱立を避けたい。最も適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "行アクセスポリシーを適用し、マッピングテーブルで可視行を判定する", "is_correct": true, "ng_reason": "正解。行アクセスポリシーはクエリ時に行の可視性を判定し、複数テーブルへ一貫適用・一元管理できる。" },
+        { "id": "b", "text": "動的データマスキングを適用する", "is_correct": false, "ng_reason": "列値のマスクであり、行のフィルタリングには使えない。" },
+        { "id": "c", "text": "地域ごとにセキュアビューを個別作成する", "is_correct": false, "ng_reason": "ビューが乱立して一元管理・変更容易性に欠け、要件に反する。" },
+        { "id": "d", "text": "外部トークン化を適用する", "is_correct": false, "ng_reason": "列値のトークン化であり、行単位の可視性制御ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-row-intro",
+      "explanation": "行アクセスポリシーはクエリ時にコンテキストやマッピングテーブルで可視行を判定し、多数のテーブルへ一貫適用できる。"
+    },
+    {
+      "id": "sec-011",
+      "genre_id": "security",
+      "format": "single",
+      "text": "どのウェアハウスやテーブルがどの部門・コストに帰属するか、またどの列が機微かを、キーと値で体系的に分類・追跡してガバナンスに使いたい。最も適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "オブジェクトタグ（key-value のスキーマレベルオブジェクト）を付与する", "is_correct": true, "ng_reason": "正解。タグはキーと値でオブジェクトや列を体系的に分類・追跡でき、コスト帰属や機微データの識別に使える。" },
+        { "id": "b", "text": "各列にマスキングポリシーを適用する", "is_correct": false, "ng_reason": "データを保護する仕組みで、分類・コスト帰属を追跡するメタデータの付与ではない。" },
+        { "id": "c", "text": "リソースモニターを設定する", "is_correct": false, "ng_reason": "クレジット消費の監視・制御であり、オブジェクトの分類・帰属追跡ではない。" },
+        { "id": "d", "text": "各オブジェクトに自由記述の COMMENT を付ける", "is_correct": false, "ng_reason": "自由記述の注記で、キーと値による体系的な分類・集計・継承には向かない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/object-tagging",
+      "explanation": "オブジェクトタグはキーと値の文字列をオブジェクトや列に付与し、コスト帰属の追跡や機微データの識別などガバナンスに用いる。"
+    },
+    {
+      "id": "sec-012",
+      "genre_id": "security",
+      "format": "single",
+      "text": "PII を含む列が多数あり、列が増えるたびに個別へマスキングポリシーを貼る運用は負荷が高い。特定のタグを付けるだけで自動的に保護されるようにしたい。最も適切な方法はどれか。",
+      "choices": [
+        { "id": "a", "text": "タグにマスキングポリシーを割り当てる（タグベースマスキング）", "is_correct": true, "ng_reason": "正解。タグにポリシーを一度割り当てれば、そのタグが付いたデータ型一致の列が自動的に保護され、列ごとの手動適用が不要になる。" },
+        { "id": "b", "text": "各列に直接マスキングポリシーを適用する", "is_correct": false, "ng_reason": "列が増えるたびに手作業が必要で、運用負荷を下げたいという要件に反する。" },
+        { "id": "c", "text": "行アクセスポリシーを適用する", "is_correct": false, "ng_reason": "行の可視性制御であり、タグ連動で列をマスクする仕組みではない。" },
+        { "id": "d", "text": "セキュアビューで PII 列を都度除外する", "is_correct": false, "ng_reason": "ビューを個別に作成・維持する必要があり、タグによる自動保護にはならない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/tag-based-masking-policies",
+      "explanation": "タグベースマスキングはマスキングポリシーをタグに割り当て、そのタグが付いた列を自動的に保護するため、列ごとの手動適用が不要になる。"
+    },
+    {
+      "id": "sec-013",
+      "genre_id": "security",
+      "format": "single",
+      "text": "運用担当が鍵管理の作業を行わずに、保管データ（at rest）を常に暗号化された状態に保ちたい。Snowflake の既定の暗号化・鍵管理の動作として正しいものはどれか。",
+      "choices": [
+        { "id": "a", "text": "すべての保管データが既定で自動暗号化され、鍵は階層的に管理されて定期的に自動ローテーションされる", "is_correct": true, "ng_reason": "正解。Snowflake はすべての保管データを既定で暗号化し、階層的な鍵モデルと自動ローテーションを追加設定なしで提供する。" },
+        { "id": "b", "text": "各列に暗号化関数を適用しないとデータは暗号化されない", "is_correct": false, "ng_reason": "暗号化は既定で自動的に行われ、列ごとの手動適用は不要。" },
+        { "id": "c", "text": "暗号化は明示的に有効化した一部のアカウントでのみ動作する", "is_correct": false, "ng_reason": "保管データの暗号化はすべてのアカウントで既定で有効。" },
+        { "id": "d", "text": "保管データは平文で保存され、暗号化は任意のオプションである", "is_correct": false, "ng_reason": "既定でエンドツーエンドに暗号化されており、平文保存ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-encryption-manage",
+      "explanation": "Snowflake は保管データを既定で自動暗号化し、階層的な鍵モデルと自動ローテーションを追加設定なしで管理する。"
+    },
+    {
+      "id": "sec-014",
+      "genre_id": "security",
+      "format": "single",
+      "text": "顧客が自社のクラウド KMS で管理する鍵を暗号化キー階層に組み込み、インシデント時に自社鍵を無効化して Snowflake からデータを復号不能にできる制御を持ちたい。最も適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Tri-Secret Secure を有効化し、顧客管理鍵と Snowflake 管理鍵を合成したマスターキーを使う", "is_correct": true, "ng_reason": "正解。Tri-Secret Secure は顧客管理鍵を合成マスターキーに組み込み、顧客が鍵を無効化するとデータを復号不能にできる。" },
+        { "id": "b", "text": "標準の Snowflake 管理暗号化のまま利用する", "is_correct": false, "ng_reason": "鍵は Snowflake が管理し、顧客が自社鍵で復号を無効化する制御は得られない。" },
+        { "id": "c", "text": "動的データマスキングを適用する", "is_correct": false, "ng_reason": "クエリ時の列マスクであり、マスター鍵への顧客鍵の組み込みではない。" },
+        { "id": "d", "text": "列レベルの外部トークン化を適用する", "is_correct": false, "ng_reason": "列値のトークン化であり、暗号化マスター鍵の管理制御ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/security-encryption-tss",
+      "explanation": "Tri-Secret Secure は顧客管理鍵と Snowflake 管理鍵を合成したマスターキーを用い、顧客が鍵を無効化するとデータを復号できなくする。"
+    },
+    {
+      "id": "sec-015",
+      "genre_id": "security",
+      "format": "single",
+      "text": "ある機微テーブルの列が、どの下流オブジェクトへコピー・参照されているかを可視化し、影響分析やタグ/マスキングポリシーの伝播確認に役立てたい。最も適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowsight のデータリネージで上流・下流のオブジェクト関係を可視化する", "is_correct": true, "ng_reason": "正解。データリネージはオブジェクト間のデータの流れと依存を可視化し、影響分析やタグ/ポリシー管理を支援する。" },
+        { "id": "b", "text": "Query Profile を確認する", "is_correct": false, "ng_reason": "単一クエリの実行計画の分析で、オブジェクト間の派生・参照関係の可視化ではない。" },
+        { "id": "c", "text": "リソースモニターを確認する", "is_correct": false, "ng_reason": "クレジット消費の制御であり、データの流れの追跡ではない。" },
+        { "id": "d", "text": "Time Travel でテーブルをクエリする", "is_correct": false, "ng_reason": "過去時点のデータ参照・復元であり、上流下流の依存関係の可視化ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/ui-snowsight-lineage",
+      "explanation": "Snowsight のデータリネージはオブジェクト間の上流・下流関係を可視化し、影響分析やタグ/ポリシー伝播の確認に用いる。"
+    },
+    {
+      "id": "sec-016",
+      "genre_id": "security",
+      "format": "single",
+      "text": "あるウェアハウスのクレジット消費が想定を超えた際に自動で通知し、閾値を超えたらウェアハウスを停止して予算超過を防ぎたい。最も適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "リソースモニターを設定し、クレジット割当と閾値に応じた通知・停止アクションを構成する", "is_correct": true, "ng_reason": "正解。リソースモニターはクレジット割当を定義し、閾値到達時に通知や（即時）停止を自動実行してクレジット超過を防ぐ。" },
+        { "id": "b", "text": "オブジェクトタグでウェアハウスにコストを割り当てる", "is_correct": false, "ng_reason": "コスト帰属の追跡はできるが、消費を自動で制限・停止する仕組みではない。" },
+        { "id": "c", "text": "自動サスペンド（auto-suspend）だけに頼る", "is_correct": false, "ng_reason": "アイドル時に停止するだけで、累積クレジット消費の上限管理・超過防止はしない。" },
+        { "id": "d", "text": "ネットワークポリシーで接続を制限する", "is_correct": false, "ng_reason": "接続元 IP のアクセス制御であり、クレジット消費の監視・制御ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/resource-monitors",
+      "explanation": "リソースモニターはクレジット割当を設定し、閾値到達時に通知やウェアハウス停止を自動実行してクレジット超過を防ぐ。"
+    },
+    {
+      "id": "sec-017",
+      "genre_id": "security",
+      "format": "single",
+      "text": "過去1年分のログイン履歴やクエリ履歴を、削除済みオブジェクトも含めてアカウント全体で監査・分析したい。多少のデータ遅延は許容できる。最も適切な参照先はどれか。",
+      "choices": [
+        { "id": "a", "text": "SNOWFLAKE データベースの ACCOUNT_USAGE スキーマのビューを参照する", "is_correct": true, "ng_reason": "正解。ACCOUNT_USAGE は約1年の履歴を保持し、削除済みオブジェクトも含めアカウント全体を対象とする（一定の遅延あり）。" },
+        { "id": "b", "text": "対象データベースの Information Schema を参照する", "is_correct": false, "ng_reason": "遅延はないが保持期間が短く、削除済みオブジェクトを含まず、範囲もデータベース単位に限られる。" },
+        { "id": "c", "text": "Query Profile を確認する", "is_correct": false, "ng_reason": "単一クエリの実行計画の分析で、アカウント全体の長期履歴監査には使えない。" },
+        { "id": "d", "text": "リソースモニターを確認する", "is_correct": false, "ng_reason": "クレジット消費の制御であり、履歴監査のための分析ビューではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/account-usage",
+      "explanation": "ACCOUNT_USAGE スキーマは約1年分の履歴を保持し、削除済みオブジェクトも含めアカウント全体の使用状況を監査できる（一定の遅延を伴う）。"
+    },
+    {
+      "id": "sec-018",
+      "genre_id": "security",
+      "format": "single",
+      "text": "特定データベース内の現在のオブジェクト定義メタデータを、遅延なくリアルタイムに取得したい。対象はそのデータベースのオブジェクトで十分である。最も適切な参照先はどれか。",
+      "choices": [
+        { "id": "a", "text": "対象データベースの INFORMATION_SCHEMA のビュー/表関数を使う", "is_correct": true, "ng_reason": "正解。Information Schema は各データベースに用意され、遅延なくリアルタイムに現在のメタデータを返す。" },
+        { "id": "b", "text": "ACCOUNT_USAGE スキーマのビューを使う", "is_correct": false, "ng_reason": "数十分から数時間の遅延があり、リアルタイムに現在の定義を得たい要件に合わない。" },
+        { "id": "c", "text": "リソースモニターを確認する", "is_correct": false, "ng_reason": "クレジット消費の制御であり、オブジェクトのメタデータ取得の仕組みではない。" },
+        { "id": "d", "text": "Time Travel で過去時点をクエリする", "is_correct": false, "ng_reason": "過去時点のデータ参照であり、現在のメタデータ辞書の取得ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/info-schema",
+      "explanation": "Information Schema（データ辞書）は各データベースに存在し、遅延なくそのデータベースの現在のメタデータをリアルタイムに提供する。"
+    },
+    {
+      "id": "perf-004",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "多数のクエリが遅いという苦情が来た。パフォーマンス最適化を始めるにあたり、最初のアプローチとして最も適切なものはどれか。",
+      "choices": [
+        { "id": "a", "text": "まず履歴や Query Profile で時間を消費している遅いクエリを特定し、ボトルネックに応じて対策を選ぶ", "is_correct": true, "ng_reason": "正解。最適化は当てずっぽうに設定を変えるのではなく、遅いクエリの特定とボトルネック分析から始めるのが定石。" },
+        { "id": "b", "text": "原因を分析せずに、すべてのウェアハウスを最大サイズへ引き上げる", "is_correct": false, "ng_reason": "ボトルネックを見極めずにサイズだけ上げるとコストが過大になり、原因に対処できないこともある。" },
+        { "id": "c", "text": "分析せずに、すべてのテーブルへ一律にクラスタリングキーを設定する", "is_correct": false, "ng_reason": "クラスタリングは費用が伴う対策で、対象や効果を見極めずに一律適用するのは過剰。" },
+        { "id": "d", "text": "結果キャッシュを無効化して毎回再計算させる", "is_correct": false, "ng_reason": "再利用可能な結果まで捨てることになり、むしろ性能を悪化させる。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/guides-overview-performance",
+      "explanation": "パフォーマンス最適化はまず遅いクエリの特定とボトルネック分析から始め、原因に応じた対策（サイズ調整・クラスタリング・キャッシュ等）を選ぶ。"
+    },
+    {
+      "id": "perf-005",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "遅いクエリの Query Profile を見ると「Bytes spilled to local storage / remote storage」が大きい。この状況の意味と、まず取るべき対処として最も適切なものはどれか。",
+      "choices": [
+        { "id": "a", "text": "中間結果がメモリに収まらずディスク（さらにリモート）へ退避している。ウェアハウスサイズを上げてメモリを増やす（または処理データ量を減らす）", "is_correct": true, "ng_reason": "正解。spilling はメモリ不足の兆候で、より大きいウェアハウスでメモリ/ローカルディスクを増やすか処理量を減らすのが有効。" },
+        { "id": "b", "text": "結果キャッシュがヒットしている証拠なので、何も対処しなくてよい", "is_correct": false, "ng_reason": "spilling は結果キャッシュとは無関係で、むしろ処理がメモリに収まっていない兆候。" },
+        { "id": "c", "text": "パーティションプルーニングが効きすぎているので、絞り込み条件を緩める", "is_correct": false, "ng_reason": "spilling はプルーニングの効きすぎとは関係なく、条件を緩めれば処理量が増えてむしろ悪化しうる。" },
+        { "id": "d", "text": "ネットワーク遅延を示すので、クライアントの接続経路を変更する", "is_correct": false, "ng_reason": "spilled bytes は演算の一時データがストレージへ溢れる現象で、ネットワーク遅延の指標ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/ui-query-profile",
+      "explanation": "Query Profile の spilling はメモリに収まらない中間データがディスク/リモートへ退避している状態。ウェアハウスを大きくしてメモリを増やすか処理量を減らすと改善する。"
+    },
+    {
+      "id": "perf-006",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "あるクエリについて、選択性の低いフィルタや結合による行数の膨張など、Snowflake が自動で検出したパフォーマンス上の問題点を確認したい。Snowsight で参照すべきものはどれか。",
+      "choices": [
+        { "id": "a", "text": "クエリインサイト（Query Insights）", "is_correct": true, "ng_reason": "正解。クエリインサイトはクエリ実行に関する非効率（選択性の低いフィルタ、結合の膨張など）を自動検出して提示する。" },
+        { "id": "b", "text": "リソースモニター", "is_correct": false, "ng_reason": "リソースモニターはクレジット消費の監視・上限管理が目的で、個々のクエリの非効率を診断する機能ではない。" },
+        { "id": "c", "text": "ログイン履歴（Login History）", "is_correct": false, "ng_reason": "ログイン履歴は認証イベントの記録で、クエリの実行性能分析には使えない。" },
+        { "id": "d", "text": "動的データマスキングポリシー", "is_correct": false, "ng_reason": "マスキングは機密列の保護が目的で、パフォーマンス分析とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/performance-query-exploring",
+      "explanation": "Snowsight のクエリインサイトは、クエリ実行時に検出された性能上の問題点（不選択なフィルタや行数の膨張など）を自動で示し、実行時間分析の起点になる。"
+    },
+    {
+      "id": "perf-007",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "巨大なテーブルに対する WHERE 句での絞り込みを高速化したい。Snowflake がスキャン対象のマイクロパーティションを減らす（プルーニングする）仕組みとして正しいものはどれか。",
+      "choices": [
+        { "id": "a", "text": "各マイクロパーティションが保持するメタデータ（列値の最小/最大などの範囲）を用いて、条件に合致し得ないパーティションをスキャンから除外する", "is_correct": true, "ng_reason": "正解。Snowflake はマイクロパーティションのメタデータを使い、フィルタ条件に無関係なパーティションを読み飛ばす。" },
+        { "id": "b", "text": "全マイクロパーティションを一旦読み込み、メモリ上で不要な行を除外する", "is_correct": false, "ng_reason": "それではスキャン量が減らず、プルーニングによる高速化にならない。" },
+        { "id": "c", "text": "結果キャッシュに保存済みの行だけを読み取る", "is_correct": false, "ng_reason": "結果キャッシュは同一クエリの結果再利用であり、パーティション単位のスキャン除外の仕組みではない。" },
+        { "id": "d", "text": "ユーザーが別途 B-tree インデックスを構築し、それを参照する", "is_correct": false, "ng_reason": "Snowflake は従来型の二次インデックスを使わず、プルーニングはマイクロパーティションのメタデータに基づく。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions",
+      "explanation": "プルーニングはマイクロパーティションのメタデータ（列値の範囲など）を用い、フィルタに合致しないパーティションをスキャン対象から外して読み取り量を削減する。"
+    },
+    {
+      "id": "perf-008",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "アカウント全体について、過去数か月にわたるクエリの実行時間やスキャン量の傾向を横断的に集計・分析したい。最も適した情報源はどれか。",
+      "choices": [
+        { "id": "a", "text": "SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY ビュー", "is_correct": true, "ng_reason": "正解。ACCOUNT_USAGE.QUERY_HISTORY はアカウント全体のクエリ履歴を長期間保持し、実行時間などを集計分析できる。" },
+        { "id": "b", "text": "INFORMATION_SCHEMA.QUERY_HISTORY テーブル関数のみ", "is_correct": false, "ng_reason": "Information Schema の履歴は保持期間が短く直近に限られ、数か月にわたる長期の傾向分析には向かない。" },
+        { "id": "c", "text": "SNOWFLAKE.ACCOUNT_USAGE.LOGIN_HISTORY ビュー", "is_correct": false, "ng_reason": "ログイン履歴は認証イベントの記録で、クエリの実行時間やスキャン量は得られない。" },
+        { "id": "d", "text": "各クエリの Query Profile を1件ずつ開いて確認する", "is_correct": false, "ng_reason": "Query Profile は単一クエリの詳細向けで、多数のクエリの横断集計には非効率。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/account-usage/query_history",
+      "explanation": "ACCOUNT_USAGE.QUERY_HISTORY はアカウント横断のクエリ履歴を長期間提供し、実行時間・スキャン量などをまとめて集計・分析するのに適する。"
+    },
+    {
+      "id": "perf-009",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "普段は軽いワークロードだが、ときどき非常に大きなスキャンを伴う外れ値的なクエリが混じって遅くなる。ウェアハウスを常時大きくはしたくない。適切な対策はどれか。",
+      "choices": [
+        { "id": "a", "text": "Query Acceleration Service を有効化し、対象クエリのスキャン部分を追加の共有コンピュートへ委譲して加速する", "is_correct": true, "ng_reason": "正解。QAS は大規模スキャンを含む外れ値クエリの一部を弾力的な共有コンピュートに肩代わりさせ、常時サイズを上げずに加速できる。" },
+        { "id": "b", "text": "すべてのクエリのために、ウェアハウスを常時最大サイズで稼働させる", "is_correct": false, "ng_reason": "たまの外れ値のために常時最大サイズにするのはコストが過大で、要件（常時は大きくしたくない）に反する。" },
+        { "id": "c", "text": "Search Optimization Service を有効化する", "is_correct": false, "ng_reason": "検索最適化は少数行の選択的ポイントルックアップ向けで、大規模スキャンを伴うクエリの加速が目的ではない。" },
+        { "id": "d", "text": "結果キャッシュに任せる", "is_correct": false, "ng_reason": "結果キャッシュは同一クエリの再実行にしか効かず、都度異なる重いクエリの高速化にはならない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/query-acceleration-service",
+      "explanation": "Query Acceleration Service は大きなスキャンを伴う外れ値的なクエリの一部を追加の共有コンピュートへオフロードし、ウェアハウスを常時大型化せずに高速化する。"
+    },
+    {
+      "id": "perf-010",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "巨大なテーブルに対して、特定の値を狙い撃ちする選択性の高い等価・IN 検索（少数行のポイントルックアップ）を高速化したい。最も適した機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Search Optimization Service を有効化する", "is_correct": true, "ng_reason": "正解。検索最適化サービスは大規模テーブルに対する選択性の高いポイントルックアップの性能を改善する。" },
+        { "id": "b", "text": "マテリアライズドビューを作成する", "is_correct": false, "ng_reason": "マテリアライズドビューは重い集計の事前計算向けで、少数行の選択的検索の高速化を主目的とはしない。" },
+        { "id": "c", "text": "Query Acceleration Service を有効化する", "is_correct": false, "ng_reason": "QAS は大規模スキャンを含むクエリの加速向けで、選択的ポイントルックアップの最適化とは狙いが異なる。" },
+        { "id": "d", "text": "結果キャッシュに頼る", "is_correct": false, "ng_reason": "結果キャッシュは同一クエリの再実行のみに効き、多様な条件でのポイントルックアップ全般を速くはしない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/search-optimization-service",
+      "explanation": "Search Optimization Service は大規模テーブルに対する選択性の高いポイントルックアップ検索を高速化するための機能。"
+    },
+    {
+      "id": "perf-011",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "非常に大きなテーブルで、ある列による絞り込みが多いのに取り込み順とその列が一致せずプルーニングが効きにくい。絞り込みを高速化する手段として最も適切なものはどれか。",
+      "choices": [
+        { "id": "a", "text": "頻繁にフィルタ/結合に使うその列でクラスタリングキーを定義し、データをその列で整列させてプルーニングを効きやすくする", "is_correct": true, "ng_reason": "正解。クラスタリングキーはよく絞り込む列でデータを共置し、マイクロパーティションのプルーニングを改善する。" },
+        { "id": "b", "text": "主キー制約を追加して二次インデックスを作らせる", "is_correct": false, "ng_reason": "Snowflake の主キー制約は既定で強制されず、絞り込み高速化のための二次インデックスも作られない。" },
+        { "id": "c", "text": "マテリアライズドビューを作れば元テーブルの絞り込みも自動的に速くなる", "is_correct": false, "ng_reason": "マテリアライズドビューは別オブジェクトで、元テーブル自体のプルーニングを改善するものではない。" },
+        { "id": "d", "text": "できるだけ多くの列を含む複合クラスタリングキーにする", "is_correct": false, "ng_reason": "キー列を増やしすぎると各列の効果が薄れ、一般に推奨されない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/tables-clustering-keys",
+      "explanation": "クラスタリングキーはよく絞り込む列でデータを整列（共置）させ、大規模テーブルでのプルーニング効率を高めて絞り込みを高速化する。"
+    },
+    {
+      "id": "perf-012",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "クラスタリングキーを定義したテーブルに継続的な DML があり、時間とともにクラスタリングが劣化していく。手動での再クラスタリングを繰り返したくない。適切な方法はどれか。",
+      "choices": [
+        { "id": "a", "text": "自動クラスタリング（Automatic Clustering）を有効化し、Snowflake にバックグラウンドで再クラスタリングを維持させる", "is_correct": true, "ng_reason": "正解。自動クラスタリングはサーバレスで背後から継続的に再クラスタリングし、手動運用なしにクラスタリング状態を保つ。" },
+        { "id": "b", "text": "定期的に手動の再クラスタリングコマンドを実行し続ける", "is_correct": false, "ng_reason": "手動運用が必要で、要件（繰り返したくない）に反する。手動再クラスタリングは自動化の代替にならない。" },
+        { "id": "c", "text": "DML のたびにテーブルを作り直して並べ替える", "is_correct": false, "ng_reason": "作り直しは運用負荷とコストが高く、継続的な維持手段としては非現実的。" },
+        { "id": "d", "text": "結果キャッシュに任せてクラスタリング維持を省略する", "is_correct": false, "ng_reason": "結果キャッシュはクエリ結果の再利用で、テーブルの物理的なクラスタリング維持とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/tables-auto-reclustering",
+      "explanation": "自動クラスタリングは DML で劣化したクラスタリングを Snowflake がバックグラウンドで継続的に再編成し、手動運用なしに良好な状態を維持する（サーバレスでクレジットを消費）。"
+    },
+    {
+      "id": "perf-013",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "大きなベーステーブルに対する重い集計を、多数のダッシュボードが繰り返し実行して遅い。結果を事前計算して高速化しつつ、ベーステーブルの更新にも自動で追随させたい。適切な方法はどれか。",
+      "choices": [
+        { "id": "a", "text": "マテリアライズドビューを作成し、事前計算した結果を Snowflake に自動で最新化させる", "is_correct": true, "ng_reason": "正解。マテリアライズドビューは集計結果を保持し、ベース更新に応じて Snowflake がバックグラウンドで自動維持する。" },
+        { "id": "b", "text": "通常の（非マテリアライズド）ビューを作成する", "is_correct": false, "ng_reason": "通常のビューは定義を保存するだけで参照のたびに再計算され、重い集計は高速化されない。" },
+        { "id": "c", "text": "結果キャッシュに頼る", "is_correct": false, "ng_reason": "結果キャッシュはベースが変わるか一定時間で失効し、更新のあるテーブルの重い集計を安定して速くはしない。" },
+        { "id": "d", "text": "CTAS で作った集計テーブルを手動で更新し続ける", "is_correct": false, "ng_reason": "手動リフレッシュが必要で鮮度維持の運用負荷が高く、自動追随という要件を満たさない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/views-materialized",
+      "explanation": "マテリアライズドビューは重い集計結果を事前計算して保持し、ベーステーブルの変更に応じて Snowflake が自動で最新化するため、繰り返しの集計を安定して高速化できる。"
+    },
+    {
+      "id": "perf-014",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "大量データを処理する単一の複雑なクエリが遅く、Query Profile では spilling も見られる。同時実行数は多くない。性能とコストの観点で最も適切な対処はどれか。",
+      "choices": [
+        { "id": "a", "text": "ウェアハウスのサイズを上げる（スケールアップ）", "is_correct": true, "ng_reason": "正解。大きく複雑な単一クエリはより大きいサイズで処理リソース（メモリ含む）が増え、spilling の緩和と高速化が期待できる。" },
+        { "id": "b", "text": "マルチクラスタのクラスタ数を増やす（スケールアウト）", "is_correct": false, "ng_reason": "スケールアウトは同時実行の待ち行列対策で、単一クエリ自体の処理を速くはしない。" },
+        { "id": "c", "text": "ウェアハウスをより小さいサイズに変更する", "is_correct": false, "ng_reason": "サイズを下げると使えるリソースが減り、重いクエリはさらに遅く（spilling も悪化）なりうる。" },
+        { "id": "d", "text": "同じクエリを2つのウェアハウスで同時に流す", "is_correct": false, "ng_reason": "同一クエリの二重実行は無意味でコストが増えるだけで、単一クエリの高速化にはならない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/warehouses-considerations",
+      "explanation": "大きく複雑な単一クエリにはスケールアップ（サイズ増）が有効で、スケールアウト（クラスタ増）は同時実行性の改善向け。両者は用途が異なる。"
+    },
+    {
+      "id": "perf-015",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "VARIANT 列に格納された JSON 配列を、各要素ごとに1行へ展開してリレーショナルに集計したい。使うべきものはどれか。",
+      "choices": [
+        { "id": "a", "text": "FLATTEN テーブル関数を使い、配列/オブジェクトの各要素を行に展開する", "is_correct": true, "ng_reason": "正解。FLATTEN は VARIANT/配列/オブジェクトを要素ごとの行に展開するテーブル関数。" },
+        { "id": "b", "text": "PARSE_JSON で文字列を VARIANT に変換する", "is_correct": false, "ng_reason": "PARSE_JSON は文字列を VARIANT へ変換するだけで、配列を行に展開はしない。" },
+        { "id": "c", "text": "OBJECT_CONSTRUCT でオブジェクトを組み立てる", "is_correct": false, "ng_reason": "OBJECT_CONSTRUCT はキー/値からオブジェクトを構築する関数で、展開とは逆方向。" },
+        { "id": "d", "text": "ARRAY_AGG で行を配列にまとめる", "is_correct": false, "ng_reason": "ARRAY_AGG は複数行を1つの配列に集約する関数で、展開とは逆の操作。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/functions/flatten",
+      "explanation": "FLATTEN は VARIANT・配列・オブジェクトを要素単位の行に展開するテーブル関数で、半構造化データをリレーショナルに扱う際に用いる。"
+    },
+    {
+      "id": "perf-016",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "FROM 句の左側テーブルの各行の列値を入力として、右側のサブクエリやテーブル関数（例: FLATTEN）を評価して結合したい。相関的な結合を可能にする構文はどれか。",
+      "choices": [
+        { "id": "a", "text": "LATERAL 結合を使い、先行するテーブルの列を参照するインラインビュー/テーブル関数を結合する", "is_correct": true, "ng_reason": "正解。LATERAL は FROM 句で先行するテーブルの列を右側のサブクエリ/テーブル関数から参照できるようにする。" },
+        { "id": "b", "text": "通常の INNER JOIN のサブクエリで左テーブルの列を参照する", "is_correct": false, "ng_reason": "LATERAL を付けない FROM 句のサブクエリは、先行テーブルの列を相関参照できない。" },
+        { "id": "c", "text": "UNION ALL で2つの結果を縦に連結する", "is_correct": false, "ng_reason": "UNION ALL は行を縦に連結するもので、行ごとの相関的な結合とは異なる。" },
+        { "id": "d", "text": "相関を持たない CROSS JOIN のみで組み合わせる", "is_correct": false, "ng_reason": "単なる CROSS JOIN では右側から左行の列を参照できず、相関的な評価はできない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/constructs/join-lateral",
+      "explanation": "LATERAL 結合は、FROM 句で先行するテーブルの列を右側のインラインビューやテーブル関数から参照できるようにし、相関サブクエリ的な結合（例: FLATTEN との併用）を実現する。"
+    },
+    {
+      "id": "perf-017",
+      "genre_id": "performance",
+      "format": "single",
+      "text": "画像や PDF などの非構造化ファイルを Snowflake で管理し、アクセス制御を効かせながら SQL から参照・処理したい。適切なアプローチはどれか。",
+      "choices": [
+        { "id": "a", "text": "ファイルをステージに保存し、ディレクトリテーブルやファイル URL（scoped/pre-signed など）を用いてアクセス・管理する", "is_correct": true, "ng_reason": "正解。Snowflake はステージ＋ディレクトリテーブル＋ファイル URL で非構造化ファイルをガバナンス付きで扱える。" },
+        { "id": "b", "text": "画像バイナリを通常の VARCHAR 列に直接格納するのが標準的なやり方である", "is_correct": false, "ng_reason": "非構造化ファイルはステージで管理するのが基本で、テキスト列に生バイナリを詰めるのは推奨されるアプローチではない。" },
+        { "id": "c", "text": "非構造化データは Snowflake ではメタデータ管理もアクセス制御もできず、単に外部へ置くしかない", "is_correct": false, "ng_reason": "誤り。Snowflake はディレクトリテーブルやアクセス制御付きの URL で非構造化ファイルを管理・ガバナンスできる。" },
+        { "id": "d", "text": "FLATTEN で展開してリレーショナル化してから保存する", "is_correct": false, "ng_reason": "FLATTEN は半構造化データ（VARIANT/配列）用で、画像や PDF のような非構造化ファイルには適用しない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/unstructured-intro",
+      "explanation": "非構造化ファイルはステージに保存し、ディレクトリテーブルとファイル URL（scoped/pre-signed 等）を通じてアクセス制御しながら SQL から参照・処理する。"
+    },
+    {
+      "id": "load-004",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "1日1回、まとまった大きなファイル群がクラウドストレージに配置される。自分で用意したウェアハウスのサイズを制御しながら、その都度まとめて取り込みたい。Snowflake のデータロード2方式のうち適切なのはどれか。",
+      "choices": [
+        { "id": "a", "text": "バルクロード（COPY INTO をユーザーのウェアハウスで実行）", "is_correct": true, "ng_reason": "正解。バルクロードはユーザーが用意したウェアハウスを使い、ファイル群をまとめて一括で取り込む方式で、この定期バッチ要件に適する。" },
+        { "id": "b", "text": "継続的ロード（Snowpipe によるサーバーレス自動取り込み）", "is_correct": false, "ng_reason": "Snowpipe はファイル到着イベントごとに継続取り込みする方式で、ウェアハウスのサイズをユーザーが制御しない。まとまった一括取り込みの要件には合わない。" },
+        { "id": "c", "text": "Snowpipe Streaming による行単位ストリーミング", "is_correct": false, "ng_reason": "ファイルではなく行を低遅延で流し込む用途で、既にファイル化された定期バッチの取り込みには適さない。" },
+        { "id": "d", "text": "外部テーブルでファイルをその場参照する", "is_correct": false, "ng_reason": "外部テーブルは取り込まずに外部ファイルを都度クエリする仕組みで、テーブルへのデータロードそのものではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-load-overview",
+      "explanation": "データロードは、ユーザーのウェアハウスで一括取り込みするバルクロードと、到着ごとに取り込む継続的ロードに大別される。まとまったファイルを制御下で一括取り込みするならバルクロードが適する。"
+    },
+    {
+      "id": "load-005",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "複数の COPY INTO で、同じ区切り文字・圧縮・NULL 表現・ヘッダ行スキップといったパース設定を繰り返し使い回したい。設定の重複を避けて一貫させるにはどうするのが適切か。",
+      "choices": [
+        { "id": "a", "text": "名前付きの FILE FORMAT オブジェクトを作成し、各 COPY INTO から参照する", "is_correct": true, "ng_reason": "正解。FILE FORMAT はファイルの種類とパースオプションをまとめた再利用可能なオブジェクトで、複数のロード/アンロードから共通に参照できる。" },
+        { "id": "b", "text": "ストレージ統合を作成して設定をまとめる", "is_correct": false, "ng_reason": "ストレージ統合はクラウドストレージへの認証を担うオブジェクトで、ファイルのパース設定（区切り文字や圧縮）は扱わない。" },
+        { "id": "c", "text": "各 COPY INTO のたびにオプションを直接ベタ書きする", "is_correct": false, "ng_reason": "毎回ベタ書きすると設定が重複し一貫性が保てない。要件（使い回し・重複回避）に反する。" },
+        { "id": "d", "text": "ウェアハウスのサイズを大きくする", "is_correct": false, "ng_reason": "ウェアハウスサイズは計算リソースの話で、ファイルのパース設定とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/sql/create-file-format",
+      "explanation": "FILE FORMAT はファイル形式とパースオプションを名前付きオブジェクトとして定義し、複数の COPY 文から再利用して設定を一元化できる。"
+    },
+    {
+      "id": "load-006",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "S3 上のデータをロードしたいが、AWS のアクセスキーやシークレットを Snowflake 側に保存したくない。外部ストレージへ安全にアクセスするために使うべきものはどれか。",
+      "choices": [
+        { "id": "a", "text": "ストレージ統合（STORAGE INTEGRATION）を作成し、IAM ロールに委譲する", "is_correct": true, "ng_reason": "正解。ストレージ統合は IAM ロールへの委譲でアクセスを行い、資格情報を Snowflake に保存せずに外部ステージから安全にアクセスできる。" },
+        { "id": "b", "text": "ステージ定義にアクセスキーとシークレットキーを直接埋め込む", "is_correct": false, "ng_reason": "資格情報を Snowflake 側に保存することになり、「キーを保存したくない」という要件に反する。" },
+        { "id": "c", "text": "ネットワークポリシーで接続元 IP を許可する", "is_correct": false, "ng_reason": "ネットワークポリシーは Snowflake への接続元 IP を制御する仕組みで、外部クラウドストレージへの認証手段ではない。" },
+        { "id": "d", "text": "動的データマスキングを適用する", "is_correct": false, "ng_reason": "動的データマスキングは列値の閲覧制御であり、外部ストレージへのアクセス認証とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-load-s3-config-storage-integration",
+      "explanation": "ストレージ統合は資格情報を保存せず IAM ロールへ委譲して外部ステージにアクセスするため、S3 等へ安全に接続できる。"
+    },
+    {
+      "id": "load-007",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "外部ステージに置いた Parquet ファイル群を、既存テーブルへ一括でロードしたい。この目的に使うコマンドはどれか。",
+      "choices": [
+        { "id": "a", "text": "COPY INTO <テーブル>", "is_correct": true, "ng_reason": "正解。COPY INTO <テーブル> はステージ上のファイルを既存テーブルへ一括ロードするバルクロードのコマンド。" },
+        { "id": "b", "text": "COPY INTO <ロケーション>", "is_correct": false, "ng_reason": "COPY INTO <ロケーション> はテーブルからステージ/外部ロケーションへ書き出すアンロード用で、方向が逆。" },
+        { "id": "c", "text": "PUT", "is_correct": false, "ng_reason": "PUT はローカルファイルを内部ステージへアップロードするコマンドで、テーブルへのロードは行わない。" },
+        { "id": "d", "text": "GET", "is_correct": false, "ng_reason": "GET は内部ステージからローカルへファイルをダウンロードするコマンドで、ロードとは逆方向。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/sql/copy-into-table",
+      "explanation": "ステージ上のファイルをテーブルへ取り込むバルクロードは COPY INTO <テーブル> を使う。PUT/GET はローカルと内部ステージ間の転送、COPY INTO <ロケーション> はアンロード。"
+    },
+    {
+      "id": "load-008",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "テーブルのクエリ結果を、外部ステージ上のファイルとして書き出したい（アンロード）。この目的に使うコマンドはどれか。",
+      "choices": [
+        { "id": "a", "text": "COPY INTO <ロケーション>", "is_correct": true, "ng_reason": "正解。COPY INTO <ロケーション> はテーブル/クエリ結果をステージや外部ロケーションへファイルとして書き出すアンロードのコマンド。" },
+        { "id": "b", "text": "COPY INTO <テーブル>", "is_correct": false, "ng_reason": "COPY INTO <テーブル> はファイルをテーブルへ取り込むロード用で、書き出しではなく取り込みの方向。" },
+        { "id": "c", "text": "CREATE TABLE AS SELECT", "is_correct": false, "ng_reason": "CTAS はクエリ結果から新しいテーブルを作る操作で、ファイルとしての書き出し（アンロード）ではない。" },
+        { "id": "d", "text": "PUT", "is_correct": false, "ng_reason": "PUT はローカルファイルを内部ステージへアップロードするだけで、クエリ結果のアンロードは行わない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/sql/copy-into-location",
+      "explanation": "クエリ結果をステージ/外部ロケーションへファイルとして出力するアンロードは COPY INTO <ロケーション> を使う。"
+    },
+    {
+      "id": "load-009",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "本番ロードの前に、対象ファイルにフォーマットエラーが無いかを、実際にはテーブルへ取り込まずに検証だけしたい。COPY INTO でどうするのが適切か。",
+      "choices": [
+        { "id": "a", "text": "VALIDATION_MODE を指定して、ロードせずに検証（ドライラン）を実行する", "is_correct": true, "ng_reason": "正解。VALIDATION_MODE は実際のロードを行わずにファイルを検査し、エラーを返す。取り込み前の事前検証という要件に合致する。" },
+        { "id": "b", "text": "ON_ERROR = CONTINUE を指定して実行する", "is_correct": false, "ng_reason": "ON_ERROR=CONTINUE はエラー行をスキップしつつ実際にデータをロードする挙動で、「取り込まずに検証だけ」という要件に反する。" },
+        { "id": "c", "text": "テーブルを TRUNCATE してから COPY INTO を実行する", "is_correct": false, "ng_reason": "TRUNCATE は既存行の削除で、ロード前のファイル検証とは無関係。しかも実際にロードしてしまう。" },
+        { "id": "d", "text": "対象テーブルに Stream を作成する", "is_correct": false, "ng_reason": "Stream は変更データキャプチャ用で、COPY のファイル検証手段ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-load-considerations-load",
+      "explanation": "取り込まずにファイルのエラーを事前検査したい場合は VALIDATION_MODE を使う。ON_ERROR はロードを実行しながらエラー時の挙動を決めるオプションで役割が異なる。"
+    },
+    {
+      "id": "load-010",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "アプリケーションから発生する行を、ファイルにまとめず低遅延でテーブルへ直接ストリーミング取り込みしたい。最も適切な手段はどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowpipe Streaming", "is_correct": true, "ng_reason": "正解。Snowpipe Streaming は行を直接書き込む低遅延の取り込み方式で、ファイル化を介さないストリーミング要件に適する。" },
+        { "id": "b", "text": "Snowpipe", "is_correct": false, "ng_reason": "Snowpipe はステージ上のファイルを起点に取り込む方式で、まず行をファイル化する必要があり、行単位の低遅延ストリーミングには向かない。" },
+        { "id": "c", "text": "COPY INTO を短い間隔で繰り返し実行する", "is_correct": false, "ng_reason": "COPY INTO はファイル単位のバルクロードで、頻繁に実行してもファイル化前提のため行単位の低遅延ストリーミングにはならない。" },
+        { "id": "d", "text": "外部テーブルを作成する", "is_correct": false, "ng_reason": "外部テーブルは外部ファイルをその場参照する仕組みで、行を取り込む機能ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview",
+      "explanation": "ファイルを介さず行を低遅延で直接書き込むには Snowpipe Streaming が適する。Snowpipe や COPY INTO はファイル単位の取り込みで用途が異なる。"
+    },
+    {
+      "id": "load-011",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "あるテーブルに対する変更（INSERT/UPDATE/DELETE）だけを差分として捉え、前回処理した時点以降の変更を下流処理に渡したい。使うべき機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Stream（変更データキャプチャ）", "is_correct": true, "ng_reason": "正解。Stream はテーブルの変更をオフセット付きで記録し、前回消費以降の差分（CDC）を下流処理に渡せる。" },
+        { "id": "b", "text": "Time Travel", "is_correct": false, "ng_reason": "Time Travel は過去のある時点のデータを参照する機能で、消費オフセットを持つ変更差分の取り出しには使わない。" },
+        { "id": "c", "text": "Task", "is_correct": false, "ng_reason": "Task は SQL をスケジュール/依存で実行する仕組みで、変更そのものを捕捉する機能ではない。" },
+        { "id": "d", "text": "マテリアライズドビュー", "is_correct": false, "ng_reason": "マテリアライズドビューは事前計算した結果を保持するもので、変更差分（CDC）を消費する仕組みではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/streams-intro",
+      "explanation": "テーブルの変更を差分として捕捉・消費する CDC には Stream を使う。前回消費以降の INSERT/UPDATE/DELETE を追跡できる。"
+    },
+    {
+      "id": "load-012",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "毎時、Stream の差分を取り込む SQL を定期実行し、さらに複数のステップを依存関係のある順序（DAG）で自動的に回したい。使うべき機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Task（スケジュール/依存で SQL を実行）", "is_correct": true, "ng_reason": "正解。Task はスケジュールや先行タスクへの依存に基づいて SQL を実行でき、複数ステップを DAG として連鎖できる。" },
+        { "id": "b", "text": "Stream", "is_correct": false, "ng_reason": "Stream は変更差分を捕捉するだけで、SQL をスケジュール実行したり依存順に回す機能は持たない。" },
+        { "id": "c", "text": "外部関数", "is_correct": false, "ng_reason": "外部関数は外部 API を呼び出す関数で、定期実行やタスク依存の制御を行う仕組みではない。" },
+        { "id": "d", "text": "リソースモニター", "is_correct": false, "ng_reason": "リソースモニターはクレジット消費の監視・制御が目的で、SQL のスケジュール実行とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/tasks-intro",
+      "explanation": "SQL をスケジュールや依存関係に沿って実行し、複数ステップを DAG として回すには Task を使う。Stream は変更捕捉が役割で実行制御はしない。"
+    },
+    {
+      "id": "load-013",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "複数テーブルを結合した派生テーブルを、変換ロジックを SQL で宣言するだけで自動的に最新化（指定した鮮度目標に追従）したい。Stream と Task を自分で組み立てずに実現するには何が適切か。",
+      "choices": [
+        { "id": "a", "text": "Dynamic Table", "is_correct": true, "ng_reason": "正解。Dynamic Table は結果を定義する SQL を宣言するだけで、Snowflake が指定した鮮度目標に合わせて自動的に更新・維持する。Stream/Task の手組みが不要。" },
+        { "id": "b", "text": "Stream と Task を手動で組み合わせて実装する", "is_correct": false, "ng_reason": "実現は可能だが命令的で自分でパイプラインを構築・保守する必要があり、「宣言だけで、自分で組まずに」という要件に反する。" },
+        { "id": "c", "text": "マテリアライズドビュー", "is_correct": false, "ng_reason": "マテリアライズドビューは単一テーブル中心で表現できる変換が限られ、複数テーブル結合の変換パイプラインには使えない。" },
+        { "id": "d", "text": "通常のビュー", "is_correct": false, "ng_reason": "通常のビューはクエリ時に都度計算されるだけで、結果を維持・自動更新する仕組みを持たない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/dynamic-tables-about",
+      "explanation": "変換を SQL で宣言し、指定した鮮度目標に沿って自動更新される派生テーブルが必要なら Dynamic Table を使う。Stream+Task の命令的な手組みを置き換えられる。"
+    },
+    {
+      "id": "load-014",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "自作の Python アプリケーションから Snowflake に接続し、プログラムからクエリを実行したい。標準的な手段はどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake が提供するドライバ/コネクタ（例: Python Connector、JDBC/ODBC）で接続する", "is_correct": true, "ng_reason": "正解。外部アプリからの接続には Snowflake 公式のドライバ/コネクタを使うのが標準で、Python Connector や JDBC/ODBC などが用意されている。" },
+        { "id": "b", "text": "ストレージ統合を作成する", "is_correct": false, "ng_reason": "ストレージ統合はクラウドストレージへの認証用で、アプリから Snowflake へ接続する手段ではない。" },
+        { "id": "c", "text": "API 統合を作成する", "is_correct": false, "ng_reason": "API 統合は外部関数などから外部 API を呼び出すための構成で、外部アプリ→Snowflake の接続手段ではない。" },
+        { "id": "d", "text": "データ共有を設定する", "is_correct": false, "ng_reason": "データ共有は他アカウントへデータを提供する仕組みで、アプリからの接続とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/developer-guide/drivers",
+      "explanation": "外部アプリケーションから Snowflake へプログラム接続するには、Python Connector や JDBC/ODBC などの公式ドライバ/コネクタを使う。"
+    },
+    {
+      "id": "load-015",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "外部関数から AWS API Gateway 経由で外部の HTTPS サービスを呼び出したい。呼び出し先プロキシと認証情報を安全に管理するために必要なオブジェクトはどれか。",
+      "choices": [
+        { "id": "a", "text": "API 統合（API INTEGRATION）", "is_correct": true, "ng_reason": "正解。API 統合は外部関数の呼び出し先プロキシ（API Gateway 等）と認証設定を保持するオブジェクトで、外部 HTTPS サービス連携に必要。" },
+        { "id": "b", "text": "ストレージ統合（STORAGE INTEGRATION）", "is_correct": false, "ng_reason": "ストレージ統合は外部クラウドストレージ（ステージ）への認証用で、外部 API 呼び出しのプロキシ設定は扱わない。" },
+        { "id": "c", "text": "通知統合（NOTIFICATION INTEGRATION）", "is_correct": false, "ng_reason": "通知統合はクラウドのメッセージング/通知（エラー通知やイベント連携）用で、外部関数の API 呼び出しには使わない。" },
+        { "id": "d", "text": "セキュリティ統合（SECURITY INTEGRATION）", "is_correct": false, "ng_reason": "セキュリティ統合は OAuth/SAML/SCIM など外部認証連携のためのもので、外部 API 呼び出しのプロキシ設定ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/sql-reference/sql/create-api-integration",
+      "explanation": "外部関数が外部 HTTPS サービスをプロキシ経由で呼び出すには、呼び出し先と認証を定義する API 統合が必要。他の統合種別は役割が異なる。"
+    },
+    {
+      "id": "load-016",
+      "genre_id": "data-loading",
+      "format": "single",
+      "text": "GitHub リポジトリ上の SQL スクリプトや Snowpark コードを Snowflake から参照・実行し、リポジトリの内容と同期して管理したい。適切な手段はどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake の Git 統合でリポジトリを接続する", "is_correct": true, "ng_reason": "正解。Git 統合は Git リポジトリを Snowflake に接続し、リポジトリ内のファイルを参照・実行し、内容を同期して扱える。" },
+        { "id": "b", "text": "ファイルを内部ステージへ手動で PUT する", "is_correct": false, "ng_reason": "手動 PUT ではリポジトリとのバージョン同期がなく、都度アップロードが必要で要件（リポジトリと同期）を満たさない。" },
+        { "id": "c", "text": "データ共有を設定する", "is_correct": false, "ng_reason": "データ共有は他アカウントへデータを提供する機能で、Git リポジトリのコード参照・同期とは無関係。" },
+        { "id": "d", "text": "ストレージ統合で S3 を接続する", "is_correct": false, "ng_reason": "ストレージ統合はクラウドオブジェクトストレージへの接続で、Git リポジトリの接続・同期の仕組みではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/developer-guide/git/git-overview",
+      "explanation": "Git リポジトリのコードを Snowflake から参照・実行し同期して管理するには Git 統合を使う。手動アップロードや他統合ではリポジトリ同期は行えない。"
+    },
+    {
+      "id": "collab-006",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "自社データを複数の取引先に提供するにあたり、(1) 実データを複製せず常に最新の状態を見せる、(2) コンシューマ側にストレージ費用を負担させない、の両方を満たしたい。Snowflake のデータ共有の基本的な仕組みとして正しいものはどれか。",
+      "choices": [
+        { "id": "a", "text": "共有はサービス層のメタデータを通じて行われ実データは複製されず、コンシューマは自分のコンピュート（ウェアハウス）にのみ課金される。", "is_correct": true, "ng_reason": "正解。Secure Data Sharing は実データをコピーせずメタデータ経由で参照させるため常に最新で、コンシューマはストレージを持たず自身のコンピュートのみに課金される。" },
+        { "id": "b", "text": "共有時にプロバイダのデータがコンシューマのアカウントへ物理コピーされ、以後は各自が独立に更新していく。", "is_correct": false, "ng_reason": "共有はデータをコピーしない。物理コピーだと最新性が失われ、コンシューマ側にストレージ費用も発生してしまう。" },
+        { "id": "c", "text": "コンシューマが共有データの保管分としてストレージ費用を負担し、クエリはプロバイダのウェアハウスで実行される。", "is_correct": false, "ng_reason": "費用負担が逆。共有データのストレージはプロバイダ側にあり、クエリはコンシューマ自身のウェアハウス（コンピュート）で実行・課金される。" },
+        { "id": "d", "text": "共有を受けるには、コンシューマがプロバイダのアカウントにログインしてクエリを実行する必要がある。", "is_correct": false, "ng_reason": "コンシューマは自分のアカウントから共有をクエリする。プロバイダのアカウントにログインする必要はない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/guides-overview-sharing",
+      "explanation": "Snowflake のデータ共有は実データを複製せずメタデータ経由で最新データを読み取り専用で見せる。共有データのストレージはプロバイダ持ちで、コンシューマは自分のコンピュートにのみ課金される。"
+    },
+    {
+      "id": "collab-007",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "プロバイダとして、特定のテーブルだけを名指しの取引先 1 社に読み取り専用で提供したい（Marketplace のような一般公開はしない）。direct share を構成する手順として正しいものはどれか。",
+      "choices": [
+        { "id": "a", "text": "SHARE オブジェクトを作成し、対象の DB／スキーマ／テーブルへの権限を SHARE に付与したうえで、相手のアカウントを SHARE に追加する。", "is_correct": true, "ng_reason": "正解。direct share はプロバイダが SHARE を作り、共有対象への権限を SHARE に付与し、コンシューマのアカウントを追加することで構成する。" },
+        { "id": "b", "text": "対象テーブルを COPY INTO で相手アカウントへエクスポートし、相手側でインポートしてもらう。", "is_correct": false, "ng_reason": "COPY INTO はデータのアンロードであり共有ではない。データが複製され最新性も読み取り専用性も失われる。" },
+        { "id": "c", "text": "Snowflake Marketplace にパブリックリスティングとして公開し、相手に取得してもらう。", "is_correct": false, "ng_reason": "パブリックリスティングは全 Snowflake 顧客に発見される一般公開であり、特定 1 社に限定して提供したい要件に反する。" },
+        { "id": "d", "text": "相手アカウントのロールに、自社テーブルへの SELECT 権限を直接 GRANT する。", "is_correct": false, "ng_reason": "権限付与はアカウントを跨いで直接は行えない。共有は SHARE オブジェクトを介してアカウント間で行う仕組みである。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-sharing-provider",
+      "explanation": "プロバイダは SHARE を作成し、共有したいオブジェクトへの権限を SHARE に付与し、コンシューマのアカウントを追加する。特定相手への提供には direct share が適する。"
+    },
+    {
+      "id": "collab-008",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "取引先から direct share を受け取ったコンシューマである。共有データを自社アカウントでクエリするために最初に行う操作と、その特性の組み合わせとして正しいものはどれか。",
+      "choices": [
+        { "id": "a", "text": "共有からデータベースを作成（CREATE DATABASE … FROM SHARE）し、読み取り専用でクエリする。費用は自分のウェアハウス分のみ発生する。", "is_correct": true, "ng_reason": "正解。コンシューマは共有からデータベースを作成して読み取り専用でクエリし、自身のコンピュートにのみ課金される。" },
+        { "id": "b", "text": "共有データを自分のスキーマへ COPY INTO で取り込んでから、通常のテーブルとしてクエリする。", "is_correct": false, "ng_reason": "共有データはコピー不要でそのまま参照できる。取り込むとデータが複製され最新性が失われる。" },
+        { "id": "c", "text": "プロバイダのウェアハウスを指定してクエリを実行し、コンピュート費用はプロバイダが負担する。", "is_correct": false, "ng_reason": "コンシューマは自身のウェアハウスでクエリし、そのコンピュート費用は自分が負担する。プロバイダのウェアハウスは使わない。" },
+        { "id": "d", "text": "共有からデータベースを作成後、共有テーブルへ INSERT／UPDATE して自社データを追記できる。", "is_correct": false, "ng_reason": "共有データは読み取り専用で、コンシューマが書き込み・変更することはできない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-share-consumers",
+      "explanation": "コンシューマは共有からデータベースを作成し、読み取り専用でクエリする。ストレージはプロバイダ持ちで、コンシューマは自身のコンピュートにのみ課金される。"
+    },
+    {
+      "id": "collab-009",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "データを提供したい相手が Snowflake を契約しておらず、自前の Snowflake アカウントを持っていない。相手に新規契約をさせずにデータを共有したい。適切な方法はどれか。",
+      "choices": [
+        { "id": "a", "text": "リーダーアカウントを作成して共有する。リーダーアカウントはプロバイダが管理・費用負担し、相手は契約不要でデータを参照できる。", "is_correct": true, "ng_reason": "正解。リーダーアカウントは Snowflake 未契約の相手向けの仕組みで、プロバイダが作成・管理し、そのコンピュート費用も負担する。" },
+        { "id": "b", "text": "通常の direct share を作成し、相手のアカウント識別子を SHARE に追加する。", "is_correct": false, "ng_reason": "direct share はコンシューマが自前の Snowflake アカウントを持っていることが前提で、未契約の相手には使えない。" },
+        { "id": "c", "text": "Snowflake Marketplace にパブリックリスティングとして公開する。", "is_correct": false, "ng_reason": "Marketplace のリスティングを取得・利用するにも相手側に Snowflake アカウントが必要で、未契約の相手には届かない。" },
+        { "id": "d", "text": "プライベートリスティングとして相手のアカウントを指定して提供する。", "is_correct": false, "ng_reason": "プライベートリスティングも相手が Snowflake アカウントを持っていることが前提で、未契約の相手には提供できない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-sharing-reader-create",
+      "explanation": "リーダーアカウントは Snowflake を契約していない相手にデータを共有するための仕組み。プロバイダが作成・管理し、リーダーが消費するコンピュート費用もプロバイダが負担する。"
+    },
+    {
+      "id": "collab-010",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "特定の取引先数社にだけ、データ製品を説明メタデータやサンプルクエリ付きで提供したい。一般には公開したくない。リスティングをどう使うべきか。",
+      "choices": [
+        { "id": "a", "text": "プライベートリスティングとして、指定した特定のアカウントにのみ提供する。", "is_correct": true, "ng_reason": "正解。プライベートリスティングは説明やサンプルクエリなどのメタデータを付けたまま、指定した特定コンシューマにだけ提供できる。" },
+        { "id": "b", "text": "パブリックリスティングとして Snowflake Marketplace に公開し、全 Snowflake 顧客が発見できるようにする。", "is_correct": false, "ng_reason": "パブリックリスティングは Marketplace で誰でも発見できる一般公開であり、特定数社に限定したい要件に反する。" },
+        { "id": "c", "text": "direct share を使う。説明メタデータやサンプルクエリは付けられないが権限だけを渡せる。", "is_correct": false, "ng_reason": "direct share はデータへのアクセスを渡すのみで、リスティングのような説明メタデータやサンプルクエリを添えられない。要件を満たさない。" },
+        { "id": "d", "text": "リーダーアカウントを作成して提供する。", "is_correct": false, "ng_reason": "リーダーアカウントは Snowflake 未契約の相手向けの仕組みで、メタデータ付きで特定顧客に配布する用途とは異なる。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/collaboration/collaboration-listings-about",
+      "explanation": "リスティングはデータ製品に説明やサンプルクエリなどのメタデータを添えて提供する仕組み。特定の相手だけに出すならプライベートリスティング、一般公開なら Marketplace のパブリックリスティングを使う。"
+    },
+    {
+      "id": "collab-011",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "リージョン全体の障害に備え、別リージョンのアカウントへデータベースとアカウントオブジェクトを複製しておき、障害発生時にはそのセカンダリを昇格して業務を継続したい。適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "アカウントレプリケーションとフェイルオーバー（セカンダリをプライマリに昇格）。", "is_correct": true, "ng_reason": "正解。別リージョンへデータベース／アカウントオブジェクトを複製し、障害時にセカンダリを昇格して事業継続を図るのがレプリケーション＆フェイルオーバーの用途である。" },
+        { "id": "b", "text": "Time Travel で障害直前の過去データを参照する。", "is_correct": false, "ng_reason": "Time Travel は同一アカウント内で保持期間内の過去データにアクセスする機能で、リージョン障害に対する事業継続の手段ではない。" },
+        { "id": "c", "text": "ゼロコピークローンで別リージョン用の検証環境を複製する。", "is_correct": false, "ng_reason": "クローンは同一アカウント内の即時コピーで、別リージョンへの複製やフェイルオーバーには対応しない。" },
+        { "id": "d", "text": "Secure Data Sharing で別リージョンのアカウントにデータを共有する。", "is_correct": false, "ng_reason": "direct share は同一リージョン内が前提で、リージョン障害時の昇格・事業継続の仕組みではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/account-replication-intro",
+      "explanation": "アカウントレプリケーションは別リージョン／クラウドのアカウントへデータベースやアカウントオブジェクトを複製し、フェイルオーバーでセカンダリをプライマリに昇格して事業継続（BCP／DR）を実現する。"
+    },
+    {
+      "id": "collab-012",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "自社と提携先が、互いの顧客リストの生データを相手に見せることなく、重複する顧客の規模だけを突合・分析したい。適切な仕組みはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake のデータクリーンルームを用いる。", "is_correct": true, "ng_reason": "正解。データクリーンルームは互いの生データを相手に露出させずに、双方のデータを突合・分析できるプライバシー保護の仕組みである。" },
+        { "id": "b", "text": "Secure Data Sharing の direct share で、互いの顧客テーブルを相手に共有する。", "is_correct": false, "ng_reason": "direct share はコンシューマに元テーブルの行を読み取り可能にするため、生データを相手に見せたくない要件に反する。" },
+        { "id": "c", "text": "ゼロコピークローンで相手の顧客テーブルを複製して分析する。", "is_correct": false, "ng_reason": "クローンは同一アカウント内のコピー機能で、相手にデータを露出せず突合する用途には使えない。" },
+        { "id": "d", "text": "リーダーアカウントを作成し、相手に自社の顧客リストを参照させる。", "is_correct": false, "ng_reason": "リーダーアカウントは相手にデータを参照させる共有手段で、生データを見せずに突合したい要件には合わない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/cleanrooms/introduction",
+      "explanation": "データクリーンルームは複数の当事者が、互いの生データを相手に露出させることなく結合・分析できる仕組み。顧客重複の突合など、プライバシーを保った協業に適する。"
+    },
+    {
+      "id": "collab-013",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "データだけでなく、ストアドプロシージャや UI を含むアプリケーションのロジックを、コンシューマのアカウント内で動作する形で配布したい。かつ自社の実装コードはコンシューマに見せたくない。適切な仕組みはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake Native App Framework でアプリとしてパッケージし、リスティング経由で配布する。", "is_correct": true, "ng_reason": "正解。Native App Framework はデータと処理ロジック（ストアドプロシージャや UI など）をアプリとして配布し、コンシューマのアカウント内で実行させつつ実装を隠蔽できる。" },
+        { "id": "b", "text": "Secure Data Sharing の direct share でテーブルを共有する。", "is_correct": false, "ng_reason": "direct share はデータへの読み取りアクセスを渡すのみで、アプリケーションのロジックや UI を配布・実行させる仕組みではない。" },
+        { "id": "c", "text": "データクリーンルームを設置する。", "is_correct": false, "ng_reason": "データクリーンルームは互いのデータを露出せず突合するための仕組みで、アプリケーションの配布用途ではない。" },
+        { "id": "d", "text": "ゼロコピークローンでアプリ用のデータベースを複製する。", "is_correct": false, "ng_reason": "クローンは同一アカウント内のコピー機能で、他組織へアプリを配布・実行させる仕組みではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about",
+      "explanation": "Snowflake Native App Framework はデータと処理ロジックをアプリとしてパッケージし、リスティング経由で配布してコンシューマのアカウント内で実行させられる。プロバイダの実装コードは隠蔽できる。"
+    },
+    {
+      "id": "arch-016",
+      "genre_id": "architecture",
+      "format": "single",
+      "text": "重い ETL バッチと BI の対話クエリが同じコンピュートを奪い合い、互いに遅くなっている。ワークロードを分離して干渉をなくすには何をすべきか。",
+      "choices": [
+        { "id": "a", "text": "用途ごとに別々の仮想ウェアハウスを割り当てる", "is_correct": true, "ng_reason": "正解。仮想ウェアハウスは独立した計算クラスタで、用途別に分ければ互いの負荷が干渉しない。" },
+        { "id": "b", "text": "1つのウェアハウスのサイズを最大にする", "is_correct": false, "ng_reason": "サイズを上げても同一ウェアハウスを共有する限り、両ワークロードは同じリソースを奪い合う。" },
+        { "id": "c", "text": "テーブルにクラスタリングキーを設定する", "is_correct": false, "ng_reason": "クラスタリングはスキャン量削減の手段で、ワークロード間のリソース分離とは無関係。" },
+        { "id": "d", "text": "結果キャッシュを有効化する", "is_correct": false, "ng_reason": "結果キャッシュは同一クエリの再実行を速くするだけで、異種ワークロードの干渉は解消しない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/warehouses",
+      "explanation": "仮想ウェアハウスは独立した計算リソース。ワークロードごとに専用ウェアハウスを割り当てると性能干渉を避けられる。"
+    },
+    {
+      "id": "sec-019",
+      "genre_id": "security",
+      "format": "single",
+      "text": "自社の企業ネットワーク（特定の IP アドレス範囲）からのみ Snowflake へのアクセスを許可し、それ以外からの接続を拒否したい。使うべき機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "ネットワークポリシー", "is_correct": true, "ng_reason": "正解。ネットワークポリシーは許可/拒否する IP 範囲を定義し、接続元でアクセスを制御する。" },
+        { "id": "b", "text": "多要素認証（MFA）", "is_correct": false, "ng_reason": "MFA は本人確認の追加要素で、接続元 IP による制限は行わない。" },
+        { "id": "c", "text": "ロールベースアクセス制御（RBAC）", "is_correct": false, "ng_reason": "RBAC はオブジェクトへの操作権限の制御で、接続元ネットワークの制限とは別。" },
+        { "id": "d", "text": "動的データマスキング", "is_correct": false, "ng_reason": "マスキングは表示データの秘匿で、アクセス元の制限とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/network-policies",
+      "explanation": "ネットワークポリシーは許可/拒否 IP リストで接続元を制御し、指定ネットワークからのみアクセスを許可できる。"
     }
   ]
 }
