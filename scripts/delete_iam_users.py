@@ -75,12 +75,18 @@ def build_session(profile: str) -> boto3.Session:
 
     戻り値は認証済みのセッション。認証できない場合はプロセスを終了する。
     """
-    session = boto3.Session(profile_name=profile)
-    try:
+
+    def make_session() -> boto3.Session:
+        # プロファイル未設定なら Session 構築時点で ProfileNotFound、資格情報が
+        # 無効/期限切れなら get_caller_identity で例外になる。両方まとめて捕捉する。
+        session = boto3.Session(profile_name=profile)
         session.client("sts").get_caller_identity()
         return session
+
+    try:
+        return make_session()
     except (ClientError, BotoCoreError) as exc:
-        # 資格情報が無効/期限切れ。aws login で再認証を試みる。
+        # 資格情報が無効/期限切れ、またはプロファイル未設定。aws login で再認証を試みる。
         print(f"認証が必要です（{exc.__class__.__name__}）。aws login を実行します...")
 
     try:
@@ -96,12 +102,10 @@ def build_session(profile: str) -> boto3.Session:
         sys.exit("aws login に失敗しました。認証を確認してください。")
 
     # ログイン後は資格情報を読み直すためセッションを作り直す。
-    session = boto3.Session(profile_name=profile)
     try:
-        session.client("sts").get_caller_identity()
+        return make_session()
     except (ClientError, BotoCoreError) as exc:
         sys.exit(f"認証に失敗しました: {exc}")
-    return session
 
 
 def get_account_id(session: boto3.Session) -> str:

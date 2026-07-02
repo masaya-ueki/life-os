@@ -1,0 +1,29 @@
+# syntax=docker/dockerfile:1
+#
+# IAM ユーザ一括削除ツール（scripts/delete_iam_users.py）実行用イメージ
+#
+# テストイメージ（docker/Dockerfile）は boto3 を含めない方針のため
+# （boto3 は certification の api extra 扱い。テストイメージを軽量に保つ）、
+# 本ツール専用に boto3 だけを導入した軽量イメージを用意する。
+#
+# 認証はコンテナ内ではブラウザを開けないため、ホスト側で
+#   aws login --profile iam-tool
+# を済ませ、~/.aws をマウントして使う（compose.yaml の iam-tool サービス参照）。
+#
+# 使い方（compose 経由）:
+#   docker compose build iam-tool                  # 初回のみ
+#   docker compose run --rm iam-tool users.txt     # users.txt は /workspace 相対
+
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+ENV UV_LINK_MODE=copy \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /workspace
+
+# boto3 のみをシステム Python に導入する（uv workspace の同期は不要）。
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system boto3
+
+# 第 1 引数以降（ユーザ一覧パス・--profile 等）をそのままスクリプトに渡す。
+ENTRYPOINT ["python", "scripts/delete_iam_users.py"]
