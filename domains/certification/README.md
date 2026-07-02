@@ -44,6 +44,21 @@ infra/                   # Terraform（サーバレス。P5・後続）
 - 他領域からは `certification.public` のみ参照可（`.importlinter` で強制）。
 - 現状は他領域連携なし。`public.py` は `CertificationSummary` のみ公開。
 
+## 問題作成基盤（スキル＋サブエージェント＋整合性ゲート）
+
+問題を全ジャンル分 網羅的に拡充するための再利用可能な基盤。方針の索引（スキル）と実行（サブエージェント）を分離し、データ品質はテストで機械的に守る。設計根拠は [ADR-0012](../../docs/adr/0012-certification-question-authoring-system.md)。
+
+| 要素 | 場所 | 役割 |
+|------|------|------|
+| 問題作成スキル | [`.claude/skills/cert-question-authoring/`](../../.claude/skills/cert-question-authoring/SKILL.md) | 用途理解型の設問設計原則・NG理由・公式出典・採番規約・整合性ルールを索引化。`references/`（question-quality / schema-and-numbering / genre-doc-map）に各論。 |
+| 登録サブエージェント | [`.claude/agents/snowpro-question-author.md`](../../.claude/agents/snowpro-question-author.md) | 指定ジャンルの問題を生成 → スキーマ/整合性検証 → `data/snowpro_core.json` へ登録。 |
+| 整合性ゲート | [`tests/test_data_integrity.py`](tests/test_data_integrity.py) | id 一意・genre 整合・選択肢構造・正解数・NG理由・公式出典を `docker compose run --rm test` で強制。 |
+| カバレッジ仕様 | `.claude/skills/cert-question-authoring/references/genre-doc-map.md` | ジャンル×主要トピック→公式ドキュメント(source_url) の被覆表。網羅性の基準。 |
+
+**出題ジャンル（SnowPro Core COF-C03 の5ドメインに対応）**: `architecture` / `security` / `performance` / `data-loading` / `data-collaboration`（`data/snowpro_core.json` の `genres`）。
+
+**使い方**: 特定ジャンルの問題を増やすときは `snowpro-question-author` に `genre_id` を渡す。全ジャンルを回すときは呼び出し側でジャンルごとにループし、都度スキル/エージェントの不足を改善する。
+
 ## ローカル実行
 
 認証情報は環境変数で与える（平文パスワードはコミットしない）。

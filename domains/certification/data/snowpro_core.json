@@ -1,14 +1,15 @@
 {
   "certification": {
     "id": "snowpro-core",
-    "code": "COF-C02",
+    "code": "COF-C03",
     "name": "Snowflake SnowPro Core"
   },
   "genres": [
-    { "id": "architecture", "name": "アーキテクチャ" },
-    { "id": "security", "name": "アカウントとセキュリティ" },
-    { "id": "performance", "name": "パフォーマンスとコスト" },
-    { "id": "data-loading", "name": "データのロード/アンロード" }
+    { "id": "architecture", "name": "AIデータクラウドの機能とアーキテクチャ" },
+    { "id": "security", "name": "アカウント管理とデータガバナンス" },
+    { "id": "performance", "name": "パフォーマンス最適化・クエリ・変換" },
+    { "id": "data-loading", "name": "データのロード/アンロードと連携" },
+    { "id": "data-collaboration", "name": "データコラボレーション" }
   ],
   "questions": [
     {
@@ -178,6 +179,76 @@
       ],
       "source_url": "https://docs.snowflake.com/en/user-guide/semistructured-concepts",
       "explanation": "VARIANT は JSON/Avro/XML など半構造化データを格納でき、パス指定で参照できる。"
+    },
+    {
+      "id": "collab-001",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "誤って本番テーブルの行を大量に DELETE してしまった。追加のストレージ契約なしに、削除直前の状態へ表を戻したい。まず使うべき機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Fail-safe", "is_correct": false, "ng_reason": "Fail-safe は Time Travel 期間終了後の 7 日間、Snowflake 運用者のみが災害復旧に使う領域で、ユーザーが任意に復元する手段ではない。" },
+        { "id": "b", "text": "Time Travel", "is_correct": true, "ng_reason": "正解。保持期間内なら AT/BEFORE での参照や UNDROP で削除前の状態を復元できる。" },
+        { "id": "c", "text": "ゼロコピークローン", "is_correct": false, "ng_reason": "クローンは指定時点のコピーを作る機能で、それ単体が復元の第一手段ではない（Time Travel と併用は可能）。" },
+        { "id": "d", "text": "アカウントレプリケーション", "is_correct": false, "ng_reason": "レプリケーションはアカウント/DB を別リージョン等へ複製する機能で、誤削除の復元用途ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-time-travel",
+      "explanation": "Time Travel は保持期間内の過去データへアクセス・復元できる。期間終了後は Fail-safe（運用者のみ）へ移る。"
+    },
+    {
+      "id": "collab-002",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "本番の大規模データベースと同じ内容の検証環境を、ストレージを二重に消費せず即座に用意したい。適切な方法はどれか。",
+      "choices": [
+        { "id": "a", "text": "CREATE DATABASE … CLONE（ゼロコピークローン）", "is_correct": true, "ng_reason": "正解。クローンはメタデータ操作で瞬時に作られ、以後変更された分だけ課金される。" },
+        { "id": "b", "text": "COPY INTO で全テーブルを別 DB に書き出す", "is_correct": false, "ng_reason": "物理コピーはストレージを二重に消費し、時間もかかる。" },
+        { "id": "c", "text": "Secure Data Sharing で共有する", "is_correct": false, "ng_reason": "共有は読み取り専用の参照で、書き換え可能な検証環境にはならない。" },
+        { "id": "d", "text": "Fail-safe から復元する", "is_correct": false, "ng_reason": "Fail-safe は運用者のみの災害復旧枠で、環境複製の手段ではない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/object-clone",
+      "explanation": "ゼロコピークローンはメタデータ参照で即時に複製し、以後の差分のみ課金。検証環境の複製に最適。"
+    },
+    {
+      "id": "collab-003",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "自社データを取引先に提供したい。物理コピーを渡さず、常に最新の同一データを読み取り専用で参照させたい。適切な機能はどれか。",
+      "choices": [
+        { "id": "a", "text": "Secure Data Sharing（直接共有）", "is_correct": true, "ng_reason": "正解。共有はストレージを複製せず、プロバイダの最新データをコンシューマが読み取れる。" },
+        { "id": "b", "text": "COPY INTO でファイルに書き出して渡す", "is_correct": false, "ng_reason": "スナップショットの物理コピーとなり、最新性が保てずデータ本体も渡ることになる。" },
+        { "id": "c", "text": "アカウントレプリケーション", "is_correct": false, "ng_reason": "レプリケーションは自組織アカウント配下の複製で、外部組織への読み取り提供の手段ではない。" },
+        { "id": "d", "text": "ゼロコピークローン", "is_correct": false, "ng_reason": "クローンは同一アカウント内の複製で、他アカウントへのデータ提供には使えない。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-sharing-intro",
+      "explanation": "Secure Data Sharing はストレージをコピーせず、プロバイダのライブデータをコンシューマが読み取れる。"
+    },
+    {
+      "id": "collab-004",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "Snowflake アカウントを持つ他組織に対し、自社のデータ製品を発見・取得可能な形で公開したい。使うべきものはどれか。",
+      "choices": [
+        { "id": "a", "text": "Snowflake Marketplace のリスティング", "is_correct": true, "ng_reason": "正解。Marketplace は listing でデータ製品を公開し、コンシューマが発見・取得できる。" },
+        { "id": "b", "text": "内部ステージにファイルを置く", "is_correct": false, "ng_reason": "内部ステージは自アカウントのロード用領域で、外部への公開・発見の仕組みではない。" },
+        { "id": "c", "text": "リーダーアカウントを作成する", "is_correct": false, "ng_reason": "リーダーアカウントは Snowflake を持たない相手にプロバイダが提供する仕組みで、公開マーケットプレイスではない。" },
+        { "id": "d", "text": "Time Travel を有効化する", "is_correct": false, "ng_reason": "Time Travel は過去データ参照機能で、データ公開とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-marketplace-intro",
+      "explanation": "Snowflake Marketplace は listing を通じてデータ製品を公開し、コンシューマが発見・利用できる。"
+    },
+    {
+      "id": "collab-005",
+      "genre_id": "data-collaboration",
+      "format": "single",
+      "text": "重大障害時に、Time Travel 期間を過ぎたデータでも一定期間 Snowflake 側で復旧してもらえる仕組みを確認したい。この役割を担うのはどれか。",
+      "choices": [
+        { "id": "a", "text": "Fail-safe", "is_correct": true, "ng_reason": "正解。Fail-safe は Time Travel 期間終了後の 7 日間、Snowflake 運用者のみが災害復旧に使う領域。" },
+        { "id": "b", "text": "Time Travel", "is_correct": false, "ng_reason": "Time Travel はユーザーが保持期間内に自分で参照・復元する機能で、運用者による障害復旧枠ではない。" },
+        { "id": "c", "text": "ゼロコピークローン", "is_correct": false, "ng_reason": "クローンは複製作成の機能で、障害時の復旧保証枠ではない。" },
+        { "id": "d", "text": "リソースモニター", "is_correct": false, "ng_reason": "リソースモニターはクレジット消費の監視・制御で、データ復旧とは無関係。" }
+      ],
+      "source_url": "https://docs.snowflake.com/en/user-guide/data-failsafe",
+      "explanation": "Fail-safe は Time Travel 終了後の 7 日間、ユーザー操作では使えず Snowflake 運用者のみが災害復旧に用いる。"
     }
   ]
 }
