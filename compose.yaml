@@ -50,6 +50,24 @@ services:
       - .:/workspace
     working_dir: /workspace
 
+  # IAM ユーザ一括削除ツール（scripts/delete_iam_users.py）。
+  # boto3 はテストイメージに含めないため、boto3 を導入した専用イメージで実行する。
+  #
+  # 認証はコンテナ内でブラウザを開けないため、ホスト側で先に済ませ、~/.aws を
+  # 読み取り専用でマウントする:
+  #   aws login --profile iam-tool                 # ホストで先に認証
+  #   docker compose build iam-tool                # 初回のみ
+  #   docker compose run --rm iam-tool users.txt   # users.txt は /workspace 相対
+  iam-tool:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.iam-tool
+    image: life-os-iam-tool:local
+    volumes:
+      - .:/workspace
+      - ${HOME}/.aws:/root/.aws:ro
+    working_dir: /workspace
+
   # certification 資格学習サイト（ローカル開発）。設計根拠: docs/adr/0011。
   #   docker compose up cert-backend cert-frontend
   #   → フロント http://localhost:5173 、API http://localhost:8000
