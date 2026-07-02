@@ -20,8 +20,9 @@ IAM ユーザは、アクセスキー・ログインプロファイル・MFA デ
 
 認証
 ----
-プロファイルの資格情報が無効/期限切れの場合は ``aws sso login --profile
-<profile>`` を自動実行して再認証を試みる（AWS CLI v2 が必要）。
+プロファイルの資格情報が無効/期限切れの場合は ``aws login --profile
+<profile>`` を自動実行して再認証を試みる。``aws login`` はブラウザを開いて
+サインインする簡易認証コマンド（AWS CLI v2 2.32.0 以降が必要）。
 
 依存
 ----
@@ -70,7 +71,7 @@ def load_usernames(path: Path) -> list[str]:
 # 認証
 # --------------------------------------------------------------------------- #
 def build_session(profile: str) -> boto3.Session:
-    """プロファイルで boto3 セッションを作り、必要なら SSO ログインで再認証する。
+    """プロファイルで boto3 セッションを作り、必要なら aws login で再認証する。
 
     戻り値は認証済みのセッション。認証できない場合はプロセスを終了する。
     """
@@ -79,18 +80,20 @@ def build_session(profile: str) -> boto3.Session:
         session.client("sts").get_caller_identity()
         return session
     except (ClientError, BotoCoreError) as exc:
-        # 資格情報が無効/期限切れ。SSO ログインを試みる。
-        print(f"認証が必要です（{exc.__class__.__name__}）。SSO ログインを実行します...")
+        # 資格情報が無効/期限切れ。aws login で再認証を試みる。
+        print(f"認証が必要です（{exc.__class__.__name__}）。aws login を実行します...")
 
     try:
         subprocess.run(
-            ["aws", "sso", "login", "--profile", profile],
+            ["aws", "login", "--profile", profile],
             check=True,
         )
     except FileNotFoundError:
-        sys.exit("aws CLI が見つかりません。AWS CLI v2 をインストールしてください。")
+        sys.exit(
+            "aws CLI が見つかりません。AWS CLI v2 (2.32.0 以降) をインストールしてください。"
+        )
     except subprocess.CalledProcessError:
-        sys.exit("aws sso login に失敗しました。認証を確認してください。")
+        sys.exit("aws login に失敗しました。認証を確認してください。")
 
     # ログイン後は資格情報を読み直すためセッションを作り直す。
     session = boto3.Session(profile_name=profile)
