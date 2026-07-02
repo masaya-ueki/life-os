@@ -10,20 +10,26 @@
 | ツール | モジュール | 概要 |
 |--------|-----------|------|
 | CSV 分割 | `tools.csv_splitter` | CSV ファイルを指定行数ごとに分割する |
+| IAM ユーザ一覧 | `tools.iam_user_list` | 最終ログイン日で絞り込んだ IAM ユーザ一覧を CSV 出力する |
 
 ## 内部構成
 
 ```
 src/tools/
 ├── public.py         # ★他領域に公開する唯一の契約（現在は空）
-└── csv_splitter/     # 各ツールはサブモジュールとして追加
-    └── split.py      # コアロジック + CLI エントリポイント
+├── csv_splitter/     # 各ツールはサブモジュールとして追加
+│   └── split.py      # コアロジック + CLI エントリポイント
+└── iam_user_list/
+    └── list_users.py # コアロジック + CLI エントリポイント
 data/
-└── csv_splitter/
-    ├── input/        # 入力 CSV のデフォルト置き場
-    └── output/       # 実行ごとにタイムスタンプ付きサブディレクトリを生成
+├── csv_splitter/
+│   ├── input/        # 入力 CSV のデフォルト置き場
+│   └── output/       # 実行ごとにタイムスタンプ付きサブディレクトリを生成
+└── iam_user_list/
+    └── output/       # CSV 出力先（.gitignore で管理外）
 test/
-└── test_csv_splitter.py
+├── test_csv_splitter.py
+└── test_iam_user_list.py
 ```
 
 ## csv_splitter — CSV 分割ツール
@@ -59,8 +65,79 @@ uv run python -m tools.csv_splitter.split --help
 | `domains/tools/data/csv_splitter/input/` | 入力 CSV の置き場（デフォルト） |
 | `domains/tools/data/csv_splitter/output/` | 実行時出力（.gitignore で管理外） |
 
+## iam_user_list — IAM ユーザ一覧取得ツール
+
+最終ログイン日（コンソールログイン＝`PasswordLastUsed`）が指定日 **以前** の IAM ユーザに
+絞り込み、最終ログイン日で昇順ソートした一覧を CSV 出力する。棚卸し（使われていない
+ユーザの洗い出し）を想定したツール。
+
+### 前提
+
+- **boto3** が必要（AWS SDK）。テスト用イメージ（`docker compose run --rm test`）には
+  含めず、専用イメージ `docker/Dockerfile.iam-tool` に焼き込む（テストイメージを AWS SDK で
+  肥大化させず `uv sync --frozen` を維持するため）。
+- 実行には AWS 認証情報が必要。**SSO の場合はホストで `aws sso login --profile iam-tool` を
+  済ませ**、`~/.aws` をコンテナにマウントする（boto3 がキャッシュ済み SSO トークンを読むため
+  コンテナに AWS CLI は不要）。
+
+### 使い方（Docker・推奨）
+
+```bash
+# 初回のみビルド
+docker compose build iam-tool
+
+# ホストで SSO ログイン（ブラウザが開く）
+aws sso login --profile iam-tool
+
+# 実行（--before は必須 yyyy-mm-dd。引数はそのままツールに渡る）
+docker compose run --rm iam-tool --before 2025-01-01 --login-mode never
+
+# オプション一覧
+docker compose run --rm iam-tool
+```
+
+`compose.yaml` の `iam-tool` サービスが `.`（作業ツリー）と `~/.aws` をマウントするため、
+出力 CSV は `domains/tools/data/iam_user_list/output/` に書き出される。コンテナ内は AWS CLI を
+持たないので `--login-mode never`（既存トークンを使う）で実行する。
+
+### 使い方（ホストで直接・AWS CLI があるなら）
+
+```bash
+# boto3 を実行時に一時付与。--login-mode auto（既定）は認証切れ時のみ aws sso login を自動実行
+uv run --with boto3 python -m tools.iam_user_list.list_users --before 2025-01-01
+```
+
+### CLI オプション
+
+| オプション | デフォルト | 説明 |
+|-----------|------------|------|
+| `--before` | （必須） | この最終ログイン日以前（当日を含む）のユーザに絞り込む（`yyyy-mm-dd`） |
+| `--profile` | `iam-tool` | 使用する AWS プロファイル名 |
+| `--output` | `data/iam_user_list/output/{yyyymmdd_hhmmss}_{account_id}_iam_user_list.csv` | `.csv` ならファイル、ディレクトリなら既定ファイル名で配置 |
+| `--login-mode` | `auto` | `aws sso login` の実行方針（`auto`＝必要時のみ / `always`＝必ず / `never`＝しない） |
+| `--exclude-never-logged-in` | （未指定 = 含める） | 一度もログインしていないユーザを対象から除外する |
+
+### 出力 CSV の列
+
+`user_name` / `user_id` / `arn` / `create_date` / `password_last_used` /
+`days_since_last_login` / `ever_logged_in`（Excel で開けるよう UTF-8 BOM 付き）。
+
+### キャビアット
+
+- 「最終ログイン日」は **コンソールログイン**（`PasswordLastUsed`）のみを見る。アクセスキー
+  での API 利用は含まないため、コンソール未ログインでもキーが現役のユーザがいる点に注意
+  （削除判断に使う場合は別途アクセスキーの利用状況を確認すること）。
+- 一度もログインしていないユーザ（`PasswordLastUsed` なし）は「最も古い」とみなして既定で
+  対象に含め、ソートでは先頭に来る。
+
+### データパス
+
+| パス | 用途 |
+|------|------|
+| `domains/tools/data/iam_user_list/output/` | CSV 出力先（デフォルト。`.gitignore` で管理外） |
+
 ## 境界（Context Map メモ）
 
 - 他領域からは `from tools.public import ...` のみ許可（現在エクスポートなし）。
-- `tools.csv_splitter` への直接 import は `.importlinter` で禁止される。
+- `tools.csv_splitter` / `tools.iam_user_list` への直接 import は `.importlinter` で禁止される。
 - tools 自体も他領域の内部パッケージ（`media.models` 等）を直接 import しない。

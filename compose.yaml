@@ -50,6 +50,29 @@ services:
       - .:/workspace
     working_dir: /workspace
 
+  # IAM ユーザ一覧取得ツール（tools.iam_user_list）。boto3 を焼き込んだ専用イメージ。
+  #
+  # 初回のみ build:
+  #   docker compose build iam-tool
+  #
+  # 使い方（--before は必須。ホストで `aws sso login --profile iam-tool` 済みが前提）:
+  #   docker compose run --rm iam-tool --before 2025-01-01 --login-mode never
+  #
+  # ~/.aws をマウントしてホストの認証情報・SSO トークンキャッシュを共有する。
+  # コンテナ内では aws CLI を持たないため、SSO ログインはホストで済ませ --login-mode never にする。
+  # 出力 CSV はマウントした作業ツリー（domains/tools/data/iam_user_list/output/）に書き出される。
+  iam-tool:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.iam-tool
+    image: life-os-iam-tool:local
+    environment:
+      AWS_PROFILE: ${AWS_PROFILE:-iam-tool}
+    volumes:
+      - .:/workspace
+      - ${HOME}/.aws:/root/.aws
+    working_dir: /workspace
+
   # certification 資格学習サイト（ローカル開発）。設計根拠: docs/adr/0011。
   #   docker compose up cert-backend cert-frontend
   #   → フロント http://localhost:5173 、API http://localhost:8000
