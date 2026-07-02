@@ -73,27 +73,39 @@ uv run python -m tools.csv_splitter.split --help
 
 ### 前提
 
-- **boto3** と **AWS CLI v2**（`aws sso login` 用）が必要。
-- 実行環境に AWS 認証情報が要るため、テスト用 Docker イメージ（`docker compose run --rm test`）
-  では動かない。ローカルホストで実行する。boto3 は uv workspace の依存には入れず、実行時に
-  `uv run --with boto3` で一時的に与える（テストイメージを AWS SDK で肥大化させないため）。
+- **boto3** が必要（AWS SDK）。テスト用イメージ（`docker compose run --rm test`）には
+  含めず、専用イメージ `docker/Dockerfile.iam-tool` に焼き込む（テストイメージを AWS SDK で
+  肥大化させず `uv sync --frozen` を維持するため）。
+- 実行には AWS 認証情報が必要。**SSO の場合はホストで `aws sso login --profile iam-tool` を
+  済ませ**、`~/.aws` をコンテナにマウントする（boto3 がキャッシュ済み SSO トークンを読むため
+  コンテナに AWS CLI は不要）。
 
-### 使い方
+### 使い方（Docker・推奨）
 
 ```bash
-# リポジトリルートで実行。--before は必須（yyyy-mm-dd）
-uv run --with boto3 python -m tools.iam_user_list.list_users --before 2025-01-01
+# 初回のみビルド
+docker compose build iam-tool
 
-# プロファイル・出力先を指定
-uv run --with boto3 python -m tools.iam_user_list.list_users \
-  --before 2025-01-01 --profile iam-tool --output ./output/
+# ホストで SSO ログイン（ブラウザが開く）
+aws sso login --profile iam-tool
+
+# 実行（--before は必須 yyyy-mm-dd。引数はそのままツールに渡る）
+docker compose run --rm iam-tool --before 2025-01-01 --login-mode never
 
 # オプション一覧
-uv run --with boto3 python -m tools.iam_user_list.list_users --help
+docker compose run --rm iam-tool
 ```
 
-`--login-mode auto`（既定）では、認証情報が無効なときだけ自動で
-`aws sso login --profile <profile>` を実行して再試行する。
+`compose.yaml` の `iam-tool` サービスが `.`（作業ツリー）と `~/.aws` をマウントするため、
+出力 CSV は `domains/tools/data/iam_user_list/output/` に書き出される。コンテナ内は AWS CLI を
+持たないので `--login-mode never`（既存トークンを使う）で実行する。
+
+### 使い方（ホストで直接・AWS CLI があるなら）
+
+```bash
+# boto3 を実行時に一時付与。--login-mode auto（既定）は認証切れ時のみ aws sso login を自動実行
+uv run --with boto3 python -m tools.iam_user_list.list_users --before 2025-01-01
+```
 
 ### CLI オプション
 

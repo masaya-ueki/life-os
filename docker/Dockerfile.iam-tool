@@ -1,0 +1,33 @@
+# syntax=docker/dockerfile:1
+#
+# IAM ユーザ一覧取得ツール（tools.iam_user_list）ローカル実行用イメージ。
+#
+# テストイメージ（docker/Dockerfile）とは別。AWS SDK（boto3）を焼き込む。
+# workspace の uv.lock には boto3 を入れず（テストイメージを肥大化させないため）、
+# certification イメージと同じく `uv sync --frozen` の後に `uv pip install` で追加する。
+#
+# 認証は boto3 が読み込む AWS プロファイル（既定 iam-tool）で行う。SSO を使う場合は
+# ホスト側で `aws sso login --profile iam-tool` を実行し、~/.aws を（compose で）
+# マウントすれば、boto3 がキャッシュ済み SSO トークンを読むためコンテナに AWS CLI は不要。
+
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_PROJECT_ENVIRONMENT=/opt/venv \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /workspace
+
+COPY . .
+# workspace を同期（各領域を editable 導入）した後に boto3 を追加する。
+# 順序が重要: `uv sync` は lock 外のパッケージを削除するため boto3 は必ず後に入れる。
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen \
+    && uv pip install --python /opt/venv/bin/python boto3
+
+# 引数を tools.iam_user_list.list_users にそのまま渡す。
+#   docker compose run --rm iam-tool --before 2025-01-01 --login-mode never
+# 無指定なら CMD の --help が使われる。
+ENTRYPOINT ["uv", "run", "--no-sync", "python", "-m", "tools.iam_user_list.list_users"]
+CMD ["--help"]

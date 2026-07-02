@@ -164,7 +164,9 @@ def _run_aws_sso_login(profile: str) -> None:
     aws = shutil.which("aws")
     if aws is None:
         raise RuntimeError(
-            "aws CLI が見つかりません。AWS CLI v2 をインストールしてください。"
+            "aws CLI が見つかりません。ホストで `aws sso login --profile "
+            f"{profile}` を実行してから、Docker では --login-mode never で実行してください"
+            "（AWS CLI をインストール済みなら --login-mode auto/always が使えます）。"
         )
     print(f"[auth] aws sso login --profile {profile} を実行します...", file=sys.stderr)
     subprocess.run([aws, "sso", "login", "--profile", profile], check=True)
