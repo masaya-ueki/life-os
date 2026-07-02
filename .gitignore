@@ -25,3 +25,6 @@ domains/presentation/decks/**/preview/
 
 # csv_splitter 実行時出力（タイムスタンプ付きサブディレクトリは生成物）
 domains/tools/data/csv_splitter/output/*/
+
+# iam_user_list 実行時出力（IAM ユーザ情報を含む CSV は生成物。コミットしない）
+domains/tools/data/iam_user_list/output/*.csv
