@@ -21,4 +21,5 @@ def render(pslide, theme, slide, region):
     layout.add_bullets(
         pslide, left, top, width, height, [str(x) for x in pts],
         size=size, color=theme["fg"], line_spacing=1.35, space_after=10,
+        autofit=True,
     )

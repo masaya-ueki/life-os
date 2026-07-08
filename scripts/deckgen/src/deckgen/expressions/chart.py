@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from pptx.chart.data import CategoryChartData
 from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
-from pptx.util import Inches, Pt
 
 from deckgen import layout
 from deckgen.theme import CHART_PALETTE
@@ -34,8 +33,8 @@ def render(pslide, theme, slide, region):
 
     left, top, width, height = region
     note = data.get("note")
-    note_h = Inches(0.4) if note else 0
-    chart_h = height - note_h
+    note_h = layout.NOTE_H if note else 0
+    chart_h = height - note_h - (layout.NOTE_GAP if note else 0)
 
     xl_type = _CHART_TYPES.get(ctype, XL_CHART_TYPE.COLUMN_CLUSTERED)
     gframe = pslide.shapes.add_chart(xl_type, left, top, width, chart_h, chart_data)
@@ -44,7 +43,7 @@ def render(pslide, theme, slide, region):
 
     if note:
         layout.add_textbox(
-            pslide, left, top + chart_h + Inches(0.05), width, note_h,
+            pslide, left, top + chart_h + layout.NOTE_GAP, width, note_h,
             str(note), size=layout.FONT_CAPTION, color=theme["muted"],
         )
 

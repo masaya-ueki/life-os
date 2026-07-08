@@ -5,8 +5,7 @@ data 契約: slide-expression/references/comparison.md
 
 from __future__ import annotations
 
-from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
-from pptx.util import Emu, Inches, Pt
+from pptx.enum.text import PP_ALIGN
 
 from deckgen import layout
 
@@ -26,41 +25,41 @@ def _two_column(pslide, theme, data, region, mode):
     gap = layout.SPACE_4
     col_w = (width - gap) // 2
     note = data.get("note")
-    note_h = Inches(0.5) if note else 0
-    body_h = height - note_h
+    # note は region 内に収める（本文 = height − 注記行 − 間隔）
+    note_h = layout.NOTE_H if note else 0
+    body_h = height - note_h - (layout.NOTE_GAP if note else 0)
 
+    # 見出し・アクセントバーの色は意味色で統一する:
+    # pros-cons は good/bad、通常比較は accent2/accent（muted は「対比」を表さない）。
     cols = [
-        ("left", data.get("left") or {}, theme["good"] if pros_cons else theme["muted"]),
+        ("left", data.get("left") or {}, theme["good"] if pros_cons else theme["accent2"]),
         ("right", data.get("right") or {}, theme["bad"] if pros_cons else theme["accent"]),
     ]
+    label_top = top + layout.CARD_PAD_Y
+    items_top = label_top + layout.CARD_LABEL_H + layout.SPACE_1
     for i, (_key, col, head_color) in enumerate(cols):
         x = left + i * (col_w + gap)
-        card = layout.add_box_shape(
-            pslide, x, top, col_w, body_h,
-            fill=theme["card"], line=theme["line"], line_width=1.0,
-        )
-        card.shadow.inherit = False
-        # 左端アクセントバーでカードに深みを与える（GenSpark 水準）。
-        # カードの角丸半径ぶん inset して丸角からのはみ出しを防ぐ。
-        layout.add_accent_bar(pslide, x, top, body_h, head_color,
-                              inset=int(layout.CARD_RADIUS))
+        layout.add_card(pslide, x, top, col_w, body_h, theme,
+                        accent_bar=head_color)
         # ラベル見出し（バー分だけ左余白を追加）
         layout.add_textbox(
-            pslide, x + Inches(0.22), top + Inches(0.15),
-            col_w - Inches(0.38), Inches(0.55),
+            pslide, x + layout.CARD_TEXT_LEFT, label_top,
+            col_w - layout.CARD_TEXT_LEFT - layout.CARD_PAD_X, layout.CARD_LABEL_H,
             col.get("label", ""), size=layout.FONT_LEAD, color=head_color, bold=True,
         )
         # 項目
         items = [str(v) for v in (col.get("items") or [])]
         if items:
             layout.add_bullets(
-                pslide, x + Inches(0.27), top + Inches(0.85),
-                col_w - Inches(0.52), body_h - Inches(1.0), items,
-                size=layout.FONT_BODY, color=theme["fg"], line_spacing=1.25, space_after=6,
+                pslide, x + layout.CARD_TEXT_LEFT, items_top,
+                col_w - layout.CARD_TEXT_LEFT - layout.CARD_PAD_X,
+                top + body_h - items_top - layout.CARD_PAD_Y, items,
+                size=layout.FONT_BODY, color=theme["fg"],
+                line_spacing=1.25, space_after=6, autofit=True,
             )
     if note:
         layout.add_textbox(
-            pslide, left, top + body_h + Inches(0.1), width, note_h,
+            pslide, left, top + body_h + layout.NOTE_GAP, width, note_h,
             str(note), size=layout.FONT_CAPTION, color=theme["muted"],
         )
 
@@ -74,19 +73,20 @@ def _table(pslide, theme, data, region):
     n_rows = 1 + len(axes)
     n_cols = 1 + len(columns)
     # 高さは行数に合わせて上詰め（最大 region 内）
-    row_h = min(Inches(0.7), height // max(n_rows, 1))
+    row_h = min(layout.TABLE_ROW_MAX_H, height // max(n_rows, 1))
     table_h = row_h * n_rows
     table = layout.add_table(pslide, left, top, width, table_h, n_rows, n_cols)
 
     # 1列目を細め、データ列を等幅に
-    first_w = Inches(2.6)
+    first_w = layout.TABLE_FIRST_COL_W
     rest = (width - first_w) // len(columns)
     table.columns[0].width = first_w
     for c in range(1, n_cols):
         table.columns[c].width = rest
 
     # ヘッダ行: [空, 列名...]
-    layout.style_cell(table.cell(0, 0), "", fill=theme["accent"])
+    layout.style_cell(table.cell(0, 0), "", color=theme["on_accent"],
+                      fill=theme["accent"])
     for c, col in enumerate(columns, start=1):
         layout.style_cell(
             table.cell(0, c), str(col.get("name", "")),

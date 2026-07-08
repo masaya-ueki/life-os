@@ -7,10 +7,14 @@
 
 from __future__ import annotations
 
-from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx.dml.color import RGBColor
+from pptx.enum.shapes import MSO_SHAPE, MSO_SHAPE_TYPE
+from pptx.util import Pt
 
+from deckgen import layout
 from deckgen.builder import build_presentation
 from deckgen.loader import iter_slides, load_outline
+from deckgen.theme import get_theme
 
 
 def _all_shapes(prs):
@@ -172,3 +176,135 @@ def test_html_pptx_slide_count_parity():
         outline = load_outline(slug)
         prs, _ = build_presentation(outline)
         assert len(prs.slides) == sum(1 for _ in iter_slides(outline)), slug
+
+
+# --- カードスタイル統一の契約テスト (#109) ---
+
+
+def _fill_rgb(shape):
+    """ソリッド塗りの RGB を返す。ソリッド塗りでなければ None（例外を握りつぶさない）。"""
+    try:
+        return shape.fill.fore_color.rgb
+    except (AttributeError, TypeError, ValueError):
+        return None
+
+
+FLOW_OUTLINE = {
+    "deck": {"title": "t", "theme": "default"},
+    "chapters": [
+        {
+            "chapter": "c",
+            "slides": [
+                {"title": "flow", "summary": "s", "expression": "flow",
+                 "data": {"type": "steps", "orientation": "horizontal",
+                          "steps": [{"label": "1", "desc": "d1"},
+                                    {"label": "2", "desc": "d2"}]}},
+            ],
+        }
+    ],
+}
+
+
+def test_flow_step_cards_use_standard_card_border():
+    """flow ステップの枠線が accent 強調ではなく標準カード（line 色・Pt(1.0)）に統一されている。"""
+    theme = get_theme("default")
+    prs, _ = build_presentation(FLOW_OUTLINE)
+    card_shapes = [
+        sh for sh in _all_shapes(prs)
+        if sh.shape_type == MSO_SHAPE_TYPE.AUTO_SHAPE
+        and sh.auto_shape_type == MSO_SHAPE.ROUNDED_RECTANGLE
+        and _fill_rgb(sh) == RGBColor.from_string(theme["card"])
+    ]
+    assert card_shapes
+    for sh in card_shapes:
+        assert sh.line.color.rgb == RGBColor.from_string(theme["line"])
+        assert sh.line.width == Pt(1.0)
+
+
+MATRIX_OUTLINE = {
+    "deck": {"title": "t", "theme": "default"},
+    "chapters": [
+        {
+            "chapter": "c",
+            "slides": [
+                {"title": "matrix", "summary": "s", "expression": "structure",
+                 "data": {"type": "matrix-2x2", "axis_x": "x", "axis_y": "y",
+                          "quadrants": ["A", "B", "C", "D"]}},
+            ],
+        }
+    ],
+}
+
+
+def test_matrix_quadrants_are_rounded_cards():
+    """matrix-2x2 の象限セルが（矩形ではなく）角丸カードで描かれている。"""
+    prs, _ = build_presentation(MATRIX_OUTLINE)
+    quadrant_shapes = [
+        sh for sh in _all_shapes(prs)
+        if sh.shape_type == MSO_SHAPE_TYPE.AUTO_SHAPE
+        and sh.auto_shape_type == MSO_SHAPE.ROUNDED_RECTANGLE
+        and sh.has_text_frame and sh.text_frame.text in ("A", "B", "C", "D")
+    ]
+    assert len(quadrant_shapes) == 4
+    for sh in quadrant_shapes:
+        # adjustments はネイティブ角丸(roundRect)のみが持つ調整ハンドル
+        assert sh.adjustments[0] > 0
+
+
+KPI_OUTLINE = {
+    "deck": {"title": "t", "theme": "default"},
+    "chapters": [
+        {
+            "chapter": "c",
+            "slides": [
+                {"title": "kpi", "summary": "s", "expression": "emphasis",
+                 "data": {"mode": "kpi", "cards": [
+                     {"num": "120", "delta": "-12%", "label": "件数"},
+                     {"num": "98", "delta": "+5%", "label": "率"},
+                 ]}},
+            ],
+        }
+    ],
+}
+
+
+def test_kpi_delta_uses_semantic_colors():
+    """KPI の増減表示がマイナスは bad、プラスは good の意味色になる。"""
+    theme = get_theme("default")
+    prs, _ = build_presentation(KPI_OUTLINE)
+    runs = [
+        r
+        for sh in _all_shapes(prs) if sh.has_text_frame
+        for p in sh.text_frame.paragraphs
+        for r in p.runs
+    ]
+    bad_run = next(r for r in runs if r.text == " -12%")
+    good_run = next(r for r in runs if r.text == " +5%")
+    assert bad_run.font.color.rgb == RGBColor.from_string(theme["bad"])
+    assert good_run.font.color.rgb == RGBColor.from_string(theme["good"])
+
+
+TITLE_OUTLINE = {
+    "deck": {"title": "タイトル", "subtitle": "サブ", "theme": "default", "date": "2024-01-01"},
+    "chapters": [
+        {
+            "chapter": "c",
+            "slides": [
+                {"title": "表紙", "summary": "s", "content": ["a", "b"],
+                 "expression": "title"},
+            ],
+        }
+    ],
+}
+
+
+def test_title_cover_shapes_align_to_content_left():
+    """表紙のテキストを持つ図形はすべてコンテンツスライドと同じ CONTENT_LEFT に左揃えされる。"""
+    prs, _ = build_presentation(TITLE_OUTLINE)
+    text_shapes = [
+        sh for sh in _all_shapes(prs)
+        if sh.has_text_frame and sh.text_frame.text.strip()
+    ]
+    assert text_shapes
+    for sh in text_shapes:
+        assert sh.left == int(layout.CONTENT_LEFT)

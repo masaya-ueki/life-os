@@ -34,24 +34,51 @@ uv run --project scripts/deckgen -m deckgen claude-code-security --template bran
 
 | expression | data | pptx での表現（すべてネイティブ＝編集可能） |
 |-----------|------|------|
-| `title` | 不要 | 全面の表紙レイアウト（中央寄せの大タイトル＋サブ＋content行＋日付） |
-| `bullet` | content を使用 | ネイティブ箇条書きテキストフレーム（件数で文字サイズ自動調整） |
-| `comparison` | `mode: two-column` / `pros-cons` | 左右2枚のカード（角丸シェイプ）＋ラベル＋箇条書き、`note` を脚注に |
+| `title` | 不要 | 全面の表紙レイアウト（中央寄せの大タイトル＋サブ＋content行＋日付）。左揃えラインはコンテンツスライドと同じ `CONTENT_LEFT` |
+| `bullet` | content を使用 | ネイティブ箇条書きテキストフレーム（件数で文字サイズ自動調整、溢れ時は自動縮小） |
+| `comparison` | `mode: two-column` / `pros-cons` | 左右2枚の統一カード（`add_card`・角丸）＋ラベル＋箇条書き、`note` を脚注に。見出し色は意味色（pros-cons=good/bad、通常比較=accent2/accent） |
 | `comparison` | `mode: table` | ネイティブ表（ヘッダ行=accent、行=評価軸、ゼブラ） |
-| `flow` | `type: steps`（horizontal/vertical） | 角丸シェイプの連結＋番号バッジ（楕円）＋矢印オートシェイプ |
+| `flow` | `type: steps`（horizontal/vertical） | 統一カード（`add_card`・角丸・line 1.0pt 枠）の連結＋番号バッジ（楕円・accent 塗り）＋矢印オートシェイプ |
 | `flow` | timeline / cycle | steps と同様に描画（date があれば見出しに付与） |
-| `structure` | `type: matrix-2x2` | 2×2 の矩形セル＋ X/Y 軸ラベル。`quadrants` は順序契約 `[右上, 左上, 右下, 左下]`（右上=最優先を accent 強調。契約は structure.md） |
-| `structure` | `type: tree` | root + 第1階層を角丸ボックス＋コネクタ線で接続（孫は子ボックス内に小さく列挙）。root/children が片方のみなら多階層箇条書き |
+| `structure` | `type: matrix-2x2` | 2×2 の統一カード（`add_card`・角丸）＋ X/Y 軸ラベル。右上象限は `variant="accent"` で強調。`quadrants` は順序契約 `[右上, 左上, 右下, 左下]`（右上=最優先を accent 強調。契約は structure.md） |
+| `structure` | `type: tree` | root（統一カード・accent 強調）+ 第1階層を統一カード＋コネクタ線で接続（孫は子ボックス内に小さく列挙）。root/children が片方のみなら多階層箇条書き |
 | `structure` | `type: pyramid` | 段を積層（頂点=三角形・中段=台形・土台=矩形、下段ほど広い） |
 | `structure` | `type: venn` | 2集合の半透明な重なり円＋重なり部の overlap ラベル（`sets` が2未満なら tree にフォールバック） |
 | `structure` | matrix-table | tree 同様の箇条書きにフォールバック（汎用分類は rows/cols を持たないため） |
 | `emphasis` | `mode: big-number` | accent 面＋巨大数値＋単位＋ラベル（中央） |
 | `emphasis` | `mode: message` / `quote` | accent 面＋大きな1文（quote は引用符＋出典） |
-| `emphasis` | `mode: kpi` | KPI カードを横並び（数値＋増減＋ラベル） |
+| `emphasis` | `mode: kpi` | 統一カードを横並び（数値＋増減＋ラベル）。増減（delta）は符号で意味色（マイナス方向=bad、それ以外=good） |
 | `chart` | `type: bar/line/pie/stacked` | **ネイティブ PowerPoint チャート**（編集可能。データ不足時は本文の箇条書きにフォールバック） |
 | 未知/欠落 | — | `bullet` にフォールバックし、警告を出力 |
 
 配色は `theme.py`（`domains/presentation/templates/theme-tokens.yml` を単一ソースとして読み、`deck.theme` で `default`/`dark`）。HTML スライドと同じトークンを共有する。`--template` 指定時はマスター背景・配色を優先するため自前の背景塗りは行わない。
+
+## スタイル統一の規約（Issue #109）
+
+expression ごとに「カード」の枠線・角丸・型スケール・余白がばらつかないよう、以下を単一の規約とする。
+
+- **カード風の面は `layout.add_card()` のみで描く**。comparison カラム／KPI／flow ステップ／tree ノード／matrix-2x2 象限など、角丸の面はすべて `add_card(slide, left, top, width, height, theme, *, variant="outline", accent_bar=None)` を使う。
+  - `variant="outline"`（既定）: card 塗り＋line 枠 1.0pt（`CARD_LINE_W`）の標準カード。
+  - `variant="accent"`: accent 塗り・枠なし。スライド内で最重要の面（tree の root、matrix-2x2 の最優先象限など）にのみ使う。
+  - `accent_bar`: 色 hex を渡すと左端にピル形状のアクセントバーを添える（カラム見出し色など）。
+  - 個別 expression から `add_box_shape()` で角丸矩形を直接描かないこと（低レベル API は add_card 内部専用）。
+- **型スケールは 8 段のみ**（`layout.py` の `FONT_*` が単一ソース）。役割対応:
+
+  | 定数 | pt | 役割 |
+  |------|----|------|
+  | `FONT_CAPTION` | 14 | 注記・軸ラベル・ステップ説明 |
+  | `FONT_SMALL` | 16 | バッジ・表セル・ツリー子ノード・表紙補足行 |
+  | `FONT_BODY` | 18 | カード本文・ラベル・表ヘッダ |
+  | `FONT_LEAD` | 22 | リード(summary)・箇条書き本文・カード見出し |
+  | `FONT_H2` | 36 | スライド見出し |
+  | `FONT_H1` | 40 | メッセージ・big-number の単位 |
+  | `FONT_DISPLAY` | 48 | 表紙タイトル・KPI 数値 |
+  | `FONT_HERO` | 96 | big-number の数値 |
+
+- **余白は 8pt グリッド（`SPACE_*`）と `layout.py` の名前付き定数のみを使う**。expression 側のコードに生の `Inches(...)` / `Pt(...)` の寸法リテラルを書かないこと。ベン図の重なり幅など比率演算に由来する式は例外的に許容する。
+- **表紙はコンテンツスライドと同じ `CONTENT_LEFT` に左揃え**。`title.py` は `layout.CONTENT_LEFT` / `CONTENT_WIDTH` を使い、章をまたいでも左端が一直線に揃う。
+- **comparison two-column の見出し色は意味色**: `pros-cons` は good/bad、通常の two-column（muted ではなく）accent2/accent を使う。
+- **KPI の増減表示（delta）も意味色**: 符号（`-` / `−` / `▼` / `▽` / `↓` で始まる）はマイナス方向とみなし bad、それ以外は good で色付けする。
 
 ## ブランドテンプレートの運用（`--template`）
 

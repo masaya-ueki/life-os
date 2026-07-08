@@ -1,9 +1,12 @@
-"""title: 表紙の全面レイアウト（中央寄せ）。builder から個別に呼ばれる。"""
+"""title: 表紙の全面レイアウト。builder から個別に呼ばれる。
+
+左揃えラインはコンテンツスライドと同じ CONTENT_LEFT / CONTENT_WIDTH を使い、
+章をまたいでも左端が一直線に揃うようにする。座標は layout.COVER_* が単一の真実。
+"""
 
 from __future__ import annotations
 
-from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
-from pptx.util import Inches, Pt
+from pptx.enum.text import MSO_ANCHOR
 
 from deckgen import layout
 
@@ -14,65 +17,42 @@ def render_cover(pslide, theme, deck, slide):
     content = [str(x) for x in (slide.get("content") or [])]
     date = deck.get("date", "")
 
-    # 左端アクセントバー（GenSpark 水準のビジュアルアンカー）
+    # 左端アクセントバー（表紙のビジュアルアンカー）
     layout.add_accent_bar(
-        pslide, Inches(0), Inches(0), layout.SLIDE_H,
-        theme["accent"], width=Inches(0.18),
+        pslide, 0, 0, layout.SLIDE_H, theme["accent"], width=layout.COVER_BAR_W,
     )
-    # タイトル下部のアクセントライン（見た目の根拠を与える）
+    # タイトル下のアクセントライン
     layout.add_rule(
-        pslide,
-        Inches(1.0), Inches(4.05), layout.SLIDE_W - Inches(2.0),
+        pslide, layout.CONTENT_LEFT, layout.COVER_RULE_Y, layout.CONTENT_WIDTH,
         theme["accent"], weight=3.0,
     )
 
-    # メインタイトル
-    box = pslide.shapes.add_textbox(
-        Inches(1.2), Inches(2.0), layout.SLIDE_W - Inches(2.0), Inches(2.0)
+    # メインタイトル（下端をルール線に合わせる）
+    layout.add_textbox(
+        pslide, layout.CONTENT_LEFT, layout.COVER_TITLE_TOP,
+        layout.CONTENT_WIDTH, layout.COVER_TITLE_H,
+        title, size=layout.FONT_DISPLAY, color=theme["accent"], bold=True,
+        anchor=MSO_ANCHOR.MIDDLE, autofit=True,
     )
-    tf = box.text_frame
-    tf.word_wrap = True
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    p = tf.paragraphs[0]
-    p.alignment = PP_ALIGN.LEFT
-    _run(p, title, layout.FONT_DISPLAY, theme["accent"], True)
 
     if subtitle:
-        sb = pslide.shapes.add_textbox(
-            Inches(1.2), Inches(4.15), layout.SLIDE_W - Inches(2.0), Inches(1.0)
+        layout.add_textbox(
+            pslide, layout.CONTENT_LEFT, layout.COVER_SUBTITLE_TOP,
+            layout.CONTENT_WIDTH, layout.COVER_SUBTITLE_H,
+            subtitle, size=layout.FONT_LEAD, color=theme["fg"],
         )
-        stf = sb.text_frame
-        stf.word_wrap = True
-        sp = stf.paragraphs[0]
-        sp.alignment = PP_ALIGN.LEFT
-        _run(sp, subtitle, layout.FONT_LEAD, theme["fg"], False)
 
     if content:
-        cb = pslide.shapes.add_textbox(
-            Inches(1.2), Inches(5.25), layout.SLIDE_W - Inches(2.5), Inches(1.5)
+        layout.add_bullets(
+            pslide, layout.CONTENT_LEFT, layout.COVER_CONTENT_TOP,
+            layout.CONTENT_WIDTH, layout.COVER_CONTENT_H,
+            content, size=layout.FONT_SMALL, color=theme["muted"],
+            bullet="· ", line_spacing=1.2, space_after=4,
         )
-        ctf = cb.text_frame
-        ctf.word_wrap = True
-        for i, line in enumerate(content):
-            cp = ctf.paragraphs[0] if i == 0 else ctf.add_paragraph()
-            cp.alignment = PP_ALIGN.LEFT
-            cp.space_after = Pt(4)
-            _run(cp, f"· {line}", layout.FONT_SMALL, theme["muted"], False)
 
     if date:
-        db = pslide.shapes.add_textbox(
-            Inches(1.2), layout.SLIDE_H - Inches(0.75),
-            layout.SLIDE_W - Inches(2.0), Inches(0.45)
+        layout.add_textbox(
+            pslide, layout.CONTENT_LEFT, layout.COVER_DATE_TOP,
+            layout.CONTENT_WIDTH, layout.COVER_DATE_H,
+            str(date), size=layout.FONT_CAPTION, color=theme["muted"],
         )
-        dp = db.text_frame.paragraphs[0]
-        dp.alignment = PP_ALIGN.LEFT
-        _run(dp, str(date), layout.FONT_CAPTION, theme["muted"], False)
-
-
-def _run(p, text, size, color, bold):
-    r = p.add_run()
-    r.text = text
-    r.font.size = Pt(size)
-    r.font.bold = bold
-    r.font.name = layout.FONT
-    r.font.color.rgb = layout.rgb(color)

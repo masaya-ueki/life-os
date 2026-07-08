@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
-from pptx.util import Inches, Pt
+from pptx.util import Inches
 
 from deckgen import layout
 
@@ -29,20 +29,6 @@ def render(pslide, theme, slide, region):
         _tree(pslide, theme, data, region)
 
 
-def _centered_text(shape, text, size, color, *, bold=True):
-    tf = shape.text_frame
-    tf.word_wrap = True
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    p = tf.paragraphs[0]
-    p.alignment = PP_ALIGN.CENTER
-    run = p.add_run()
-    run.text = text
-    run.font.size = Pt(size)
-    run.font.bold = bold
-    run.font.name = layout.FONT
-    run.font.color.rgb = layout.rgb(color)
-
-
 def _matrix_2x2(pslide, theme, data, region):
     left, top, width, height = region
     axis_x = str(data.get("axis_x", ""))
@@ -51,13 +37,14 @@ def _matrix_2x2(pslide, theme, data, region):
     quad += [""] * (4 - len(quad))
 
     # 軸ラベル用に外周マージンを確保
-    pad_l = Inches(0.5)
-    pad_b = Inches(0.4)
+    pad_l = layout.MATRIX_AXIS_PAD_L
+    pad_b = layout.MATRIX_AXIS_PAD_B
     grid_left = left + pad_l
     grid_w = width - pad_l
     grid_h = height - pad_b
     cell_w = grid_w // 2
     cell_h = grid_h // 2
+    inset = layout.MATRIX_CELL_INSET
     # 契約(structure.md): quadrants は [右上, 左上, 右下, 左下] の順。
     # 右上(axis_x/axis_y がともに高い)= 最優先を accent で強調する。
     #   quadrants[0] → 右上(0,1, accent)  quadrants[1] → 左上(0,0)
@@ -67,25 +54,28 @@ def _matrix_2x2(pslide, theme, data, region):
         x = grid_left + cc * cell_w
         y = top + rr * cell_h
         top_right = rr == 0 and cc == 1
-        fill = theme["accent"] if top_right else theme["card"]
         color = theme["on_accent"] if top_right else theme["fg"]
-        box = layout.add_box_shape(
-            pslide, x + Inches(0.05), y + Inches(0.05),
-            cell_w - Inches(0.1), cell_h - Inches(0.1),
-            fill=fill, line=theme["line"], line_width=1.0,
-            shape=MSO_SHAPE.RECTANGLE,
-        )
-        _centered_text(box, quad[idx], layout.FONT_SMALL, color)
+        if top_right:
+            box = layout.add_card(
+                pslide, x + inset, y + inset, cell_w - 2 * inset, cell_h - 2 * inset,
+                theme, variant="accent",
+            )
+        else:
+            box = layout.add_card(
+                pslide, x + inset, y + inset, cell_w - 2 * inset, cell_h - 2 * inset,
+                theme,
+            )
+        layout.set_center_text(box, quad[idx], size=layout.FONT_SMALL, color=color)
     # 軸ラベル: X は下中央(→ 右ほど高い)、Y は左縦(↑ 上ほど高い)
     if axis_x:
         layout.add_textbox(
-            pslide, grid_left, top + grid_h + Inches(0.02), grid_w, pad_b,
+            pslide, grid_left, top + grid_h, grid_w, pad_b,
             f"→ {axis_x}", size=layout.FONT_CAPTION, color=theme["muted"], bold=True,
             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
         )
     if axis_y:
         layout.add_textbox(
-            pslide, left - Inches(0.05), top, pad_l + Inches(0.05), grid_h,
+            pslide, left, top, pad_l, grid_h,
             f"↑ {axis_y}", size=layout.FONT_CAPTION, color=theme["muted"], bold=True,
             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, wrap=True,
         )
@@ -109,16 +99,17 @@ def _tree_native(pslide, theme, root, children, region):
     root_w = min(width, layout.TREE_ROOT_W)
     root_h = layout.TREE_ROOT_H
     root_x = left + (width - root_w) // 2
-    root_box = layout.add_box_shape(
-        pslide, root_x, top, root_w, root_h,
-        fill=theme["accent"], line=None, shape=MSO_SHAPE.ROUNDED_RECTANGLE,
+    root_box = layout.add_card(
+        pslide, root_x, top, root_w, root_h, theme, variant="accent",
     )
-    _centered_text(root_box, root, layout.TREE_ROOT_FONT, theme["on_accent"])
+    layout.set_center_text(
+        root_box, root, size=layout.TREE_ROOT_FONT, color=theme["on_accent"],
+    )
 
     # 子ボックスを下段に横並び
     gap = layout.TREE_NODE_GAP
     child_top = top + root_h + layout.TREE_VERT_SPAN
-    child_h = max(Inches(0.7), top + height - child_top)
+    child_h = max(layout.TREE_CHILD_MIN_H, top + height - child_top)
     cell_w = (width - gap * (n - 1)) // n if n else width
     child_w = min(cell_w, layout.TREE_CHILD_W)
     root_cx = root_x + root_w // 2
@@ -131,11 +122,7 @@ def _tree_native(pslide, theme, root, children, region):
         cx = cell_x + cell_w // 2
         centers.append(cx)
         bx = cx - child_w // 2
-        box = layout.add_box_shape(
-            pslide, bx, child_top, child_w, child_h,
-            fill=theme["card"], line=theme["line"], line_width=1.0,
-            shape=MSO_SHAPE.ROUNDED_RECTANGLE,
-        )
+        box = layout.add_card(pslide, bx, child_top, child_w, child_h, theme)
         _fill_child(box, theme, node)
         # 枝: バス線から各子ボックス上端へ
         layout.add_connector(pslide, cx, bus_y, cx, child_top, theme["muted"], 1.5)
@@ -156,25 +143,11 @@ def _fill_child(box, theme, node):
         ]
     else:
         name, grandchildren = str(node), []
-    tf = box.text_frame
-    tf.word_wrap = True
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    p = tf.paragraphs[0]
-    p.alignment = PP_ALIGN.CENTER
-    r = p.add_run()
-    r.text = name
-    r.font.size = Pt(layout.TREE_CHILD_FONT)
-    r.font.bold = True
-    r.font.name = layout.FONT
-    r.font.color.rgb = layout.rgb(theme["fg"])
+    tf = layout.set_center_text(box, name, size=layout.TREE_CHILD_FONT, color=theme["fg"])
     for g in grandchildren:
         gp = tf.add_paragraph()
         gp.alignment = PP_ALIGN.CENTER
-        gr = gp.add_run()
-        gr.text = f"・{g}"
-        gr.font.size = Pt(layout.TREE_GC_FONT)
-        gr.font.name = layout.FONT
-        gr.font.color.rgb = layout.rgb(theme["muted"])
+        layout.add_run(gp, f"・{g}", size=layout.TREE_GC_FONT, color=theme["muted"])
 
 
 def _tree_bullets(pslide, theme, root, children, region):
@@ -187,7 +160,8 @@ def _tree_bullets(pslide, theme, root, children, region):
         return
     layout.add_bullets(
         pslide, left, top, width, height, items,
-        size=layout.FONT_LEAD, color=theme["fg"], bullet="", line_spacing=1.3, space_after=8,
+        size=layout.FONT_LEAD, color=theme["fg"], bullet="", line_spacing=1.3,
+        space_after=8, autofit=True,
     )
 
 
@@ -293,7 +267,7 @@ def _pyramid(pslide, theme, data, region):
         box = layout.add_freeform_polygon(pslide, points, fill=fill)
         # 塗り色の輝度で文字色を切り替え（薄い背景には濃い文字）
         text_color = theme["fg"] if _color_luminance(fill) > 160 else theme["on_accent"]
-        _centered_text(box, layer, layout.FONT_SMALL, text_color)
+        layout.set_center_text(box, layer, size=layout.FONT_SMALL, color=text_color)
 
 
 def _matrix_table(pslide, theme, data, region):
