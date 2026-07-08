@@ -70,9 +70,24 @@ Input: slug = {slug}[, template = {template}]
 
 ---
 
-## Loop 1〜max_loops: 視覚確認 → 修正サイクル
+## Loop 1〜max_loops: 決定的 QA → 視覚確認 → 修正サイクル
 
 ループ番号を 1 から始めてカウントする。
+
+### (a0) 決定的 QA ゲート（PNG 変換より先に必ず実行）
+
+slide-visual-qa スキルの Step 0 に従い、機械検出できる崩れを先に潰す:
+
+```bash
+docker compose run --rm test uv run --directory scripts/deckgen -m deckgen.qa {slug}
+# uv がホストにあるなら: uv run --project scripts/deckgen -m deckgen.qa {slug}
+```
+
+- **error が 1 件以上**: A 種（outline.yml で直せる）なら (d) と同じ要領でその場で修正 →
+  (e) 再生成 → (a0) を再実行。**error が 0 になるまで PNG 変換に進まない。**
+- **warning**: A 種はその場で修正、B 種（deckgen コード起因）は最終報告の B 種リストに記録して先へ進む。
+  既知の許容 warning（例: チャートのみのスライドの `QA-PPTX-EMPTY`）は理由を添えてスキップ可。
+- ここで検出・修正した内容も (d) と同じ形式でログに出力する。
 
 ### (a) PNG 変換
 

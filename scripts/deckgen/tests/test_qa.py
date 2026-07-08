@@ -63,6 +63,16 @@ def test_outline_placeholder_in_content_flagged():
     assert any(f.check == "QA-OUTLINE-PH" for f in findings)
 
 
+def test_outline_placeholder_in_summary_flagged():
+    """message フィールド削除後も summary のプレースホルダは検出され続ける（リグレッション確認）。"""
+    outline = _make_outline([
+        {"title": "t", "summary": "{{TODO}}", "expression": "bullet"},
+    ])
+    findings = check_outline(outline, "test/outline.yml")
+    ph = [f for f in findings if f.check == "QA-OUTLINE-PH"]
+    assert len(ph) == 1
+
+
 def test_outline_excess_bullets_flagged():
     """content が 8 件以上で QA-OUTLINE-EXCESS-BULLETS が発火する。"""
     content = [f"item{i}" for i in range(8)]  # 8 件（MAX_BULLETS=7 超え）
@@ -322,6 +332,59 @@ def test_pptx_typescale_in_scale_passes():
         findings = check_pptx(out)
         assert not any(f.check in ("QA-PPTX-TYPESCALE", "QA-PPTX-MINFONT")
                        for f in findings)
+
+
+def test_pptx_overflow_font_size_correction():
+    """QA-PPTX-OVERFLOW はフォントサイズで許容文字数を補正する。
+
+    10cm×5cm のテキストボックスでは基準 limit = 10*5*6 = 300 文字。
+    14pt では補正係数 (18/14)^2 ≈ 1.65 で limit ≈ 496 文字（200 文字は収まる）。
+    48pt では補正係数 (18/48)^2 ≈ 0.14 で limit は下限 100 文字（200 文字は超過）。
+    """
+    from pptx import Presentation
+    from pptx.util import Cm, Pt
+
+    with tempfile.TemporaryDirectory() as d:
+        out = Path(d) / "t.pptx"
+        text = "あ" * 200
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+
+        tb_small_font = slide.shapes.add_textbox(Cm(1), Cm(1), Cm(10), Cm(5))
+        r_small = tb_small_font.text_frame.paragraphs[0].add_run()
+        r_small.text = text
+        r_small.font.size = Pt(14)
+
+        tb_large_font = slide.shapes.add_textbox(Cm(1), Cm(8), Cm(10), Cm(5))
+        r_large = tb_large_font.text_frame.paragraphs[0].add_run()
+        r_large.text = text
+        r_large.font.size = Pt(48)
+
+        prs.save(str(out))
+
+        findings = check_pptx(out)
+        overflow = [f for f in findings if f.check == "QA-PPTX-OVERFLOW"]
+        assert len(overflow) == 1, overflow
+
+
+def test_pptx_overflow_default_font_size_when_unspecified():
+    """run にフォントサイズ指定がなければ 18pt 基準（面積×6）で判定される。"""
+    from pptx import Presentation
+    from pptx.util import Cm
+
+    with tempfile.TemporaryDirectory() as d:
+        out = Path(d) / "t.pptx"
+        text = "あ" * 350  # 10cm×5cm: limit = 10*5*6 = 300 文字 → 超過
+        prs = Presentation()
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+        tb = slide.shapes.add_textbox(Cm(1), Cm(1), Cm(10), Cm(5))
+        r = tb.text_frame.paragraphs[0].add_run()
+        r.text = text
+        # font.size は未指定のまま
+        prs.save(str(out))
+
+        findings = check_pptx(out)
+        assert any(f.check == "QA-PPTX-OVERFLOW" for f in findings)
 
 
 def test_pptx_colortoken_flagged_with_theme():

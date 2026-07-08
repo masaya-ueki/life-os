@@ -30,8 +30,10 @@ from deckgen.loader import DECKS_DIR, load_outline, resolve_outline_path
 PLACEHOLDER_RE = re.compile(r"\{\{[^}]+\}\}")
 MAX_BULLETS = 7         # これを超えると 1スライド1メッセージ逸脱と判定
 OVERFLOW_CHARS_HTML = 600  # 1スライドのテキスト上限（HTML）
-OVERFLOW_CHARS_PER_CM2 = 6  # pptx: 1cm² あたりの推定最大文字数
+OVERFLOW_CHARS_PER_CM2 = 6  # pptx: 1cm² あたりの推定最大文字数（基準フォントサイズ時）
 OVERFLOW_MIN_CHARS = 100    # pptx: 最低閾値
+OVERFLOW_REF_FONT_PT = 18   # pptx: CHARS_PER_CM2 の基準フォントサイズ（FONT_BODY）。
+                            # 実フォントが大きいほど収容可能文字数は面積比で減る
 
 # --- 視覚品質チェックの閾値（pptx） ---
 MIN_FONT_PT = 14            # これ未満は可読性の下限割れ（型スケール FONT_CAPTION と一致）
@@ -75,10 +77,10 @@ def check_outline(outline: dict, label: str) -> list[Finding]:
                     "QA-OUTLINE-EMPTY", "error", slide_label, "title が空"))
 
             # QA-OUTLINE-PH: プレースホルダ残存
+            # 検査対象はスキーマ上のテキストフィールド（title / summary / content）。
             all_text = " ".join([
                 title,
                 str(slide.get("summary", "")),
-                str(slide.get("message", "")),
                 " ".join(str(c) for c in slide.get("content", [])),
             ])
             if PLACEHOLDER_RE.search(all_text):
@@ -370,17 +372,30 @@ def check_pptx(pptx_path: Path, label_prefix: str | None = None,
                 findings.append(Finding(
                     "QA-PPTX-PH", "warning", slide_label, "プレースホルダ残存"))
 
-            # QA-PPTX-OVERFLOW: テキスト量超過（面積ベースのヒューリスティック）
+            # QA-PPTX-OVERFLOW: テキスト量超過（面積×フォントサイズのヒューリスティック）
+            # 収容可能文字数は文字の占有面積（∝ フォントサイズ²）に反比例するため、
+            # フレーム内の平均フォントサイズで基準値（18pt 時 6 字/cm²）を補正する。
             try:
                 w_cm = shape.width.cm
                 h_cm = shape.height.cm
                 if w_cm > 0 and h_cm > 0:
-                    limit = max(OVERFLOW_MIN_CHARS, w_cm * h_cm * OVERFLOW_CHARS_PER_CM2)
+                    sizes = [
+                        run.font.size.pt
+                        for para in tf.paragraphs for run in para.runs
+                        if run.font.size is not None
+                    ]
+                    avg_pt = sum(sizes) / len(sizes) if sizes else OVERFLOW_REF_FONT_PT
+                    scale = (OVERFLOW_REF_FONT_PT / avg_pt) ** 2 if avg_pt > 0 else 1.0
+                    limit = max(
+                        OVERFLOW_MIN_CHARS,
+                        w_cm * h_cm * OVERFLOW_CHARS_PER_CM2 * scale,
+                    )
                     if len(text) > limit:
                         findings.append(Finding(
                             "QA-PPTX-OVERFLOW", "warning", slide_label,
-                            f"テキスト量超過 ({len(text)} 文字 > {int(limit)})"))
-            except (AttributeError, TypeError):
+                            f"テキスト量超過 ({len(text)} 文字 > {int(limit)}"
+                            f", 平均 {avg_pt:.0f}pt)"))
+            except (AttributeError, TypeError, ZeroDivisionError):
                 pass
 
             # ラン単位: フォントサイズ・色トークンの検査
