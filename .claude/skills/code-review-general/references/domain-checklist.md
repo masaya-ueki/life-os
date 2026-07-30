@@ -16,7 +16,7 @@
 | `media` | Bounded Context | B（データ領域） | `models` / `index` + `data/` |
 | `travel` | Bounded Context | B（データ領域） | `models` / `index` + `data/` |
 | `shared` | Shared Kernel | —（基盤） | 領域非依存の最小限 |
-| `presentation` / `docs` / `guides` | content領域 | —（コード無し） | Markdown / HTML / 設定 |
+| `docs` / `guides` | content領域 | —（コード無し） | Markdown / 設定 |
 
 ---
 
@@ -53,7 +53,7 @@
 
 ---
 
-## content領域: `presentation` / `docs` / `guides`
+## content領域: `docs` / `guides`
 
 コードを持たない（uv workspace member でも Bounded Context でもない）。観点はコード規約ではなく**整合性**。
 
@@ -61,8 +61,7 @@
 - [ ] **ADR 整合**: 設計判断に対応する ADR があるか、設計側に ADR へのリンクがあるか（[docs/adr/README.md](../../../../docs/adr/README.md) のルール）
 - [ ] **テンプレ準拠**: Issue/PR/ADR のテンプレート・命名規則に沿っているか
 - [ ] **日本語**: ドキュメント・スキル・エージェントの説明は日本語で統一されているか
-- [ ] **スキル/エージェント記法**（`.claude/`）: frontmatter（`name`/`description`/`Triggers on`、必要に応じ `tools`/`model`）が既存（`slide-*`・`issue-memory`）と整合しているか
-- [ ] **presentation 固有**: 生成 HTML が自己完結（外部URL/依存なし・16:9・印刷対応）か（[domains/presentation/README.md](../../../../domains/presentation/README.md)）
+- [ ] **スキル/エージェント記法**（`.claude/`）: frontmatter（`name`/`description`/`Triggers on`、必要に応じ `tools`/`model`）が既存（`issue-memory` 等）と整合しているか
 
 ---
 

@@ -43,7 +43,7 @@ life-os の **Modular Monolith × Bounded Context**（[ADR-0002](../../../docs/a
 - [ ] `README.md` の「ディレクトリ構成」
 
 ### 4. content領域の扱い
-- [ ] `presentation`/`docs`/`guides` をうっかり uv workspace member / Bounded Context として扱っていないか（これらはコード非依存・`.importlinter` 管理外、[ADR-0003](../../../docs/adr/0003-presentation-system.md)）
+- [ ] `docs`/`guides` をうっかり uv workspace member / Bounded Context として扱っていないか（これらはコード非依存・`.importlinter` 管理外）
 - [ ] Claude Code のエージェント/スキルは `.claude/agents/`・`.claude/skills/` に置かれているか
 
 ### 5. ADR リンクルール

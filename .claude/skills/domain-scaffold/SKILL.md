@@ -29,7 +29,7 @@ life-os に新しい **Bounded Context（領域）** を追加するときの手
 | アーキタイプ | 対象例 | src 構成 | いつ選ぶか |
 |---|---|---|---|
 | **A（動く領域）** | `task`, `content-sales` | `domain/ application/ adapters/` + `public.py` | 振る舞い（ユースケース・状態遷移）を持つ |
-| **B（データ領域）** | `english`, `media`, `travel`, `presentation` | `models.py index.py` + `public.py` + `data/` | データ（一覧・検索）が主役で振る舞いが薄い |
+| **B（データ領域）** | `english`, `media`, `travel` | `models.py index.py` + `public.py` + `data/` | データ（一覧・検索）が主役で振る舞いが薄い |
 
 迷ったら B から始め、振る舞いが増えたら A へ昇格（昇格は別 ADR に記録）。
 命名: **ディレクトリは kebab-case**（`content-sales`）、**src パッケージは snake_case**（`content_sales`）。
@@ -111,8 +111,6 @@ packages = ["src/<pkg>"]
        travel.index
        english.models
        english.index
-       presentation.models
-       presentation.index
        tools.csv_splitter
    ```
 4. **既存の全領域コントラクトの `forbidden_modules` に、新領域 `<pkg>` の内部モジュールを追記**

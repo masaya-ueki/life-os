@@ -18,13 +18,12 @@ dependencies = [
     "media",
     "travel",
     "english",
-    "presentation",
     "tools",
     "certification",
 ]
 
 [tool.uv.workspace]
-members = ["shared", "domains/task", "domains/content-sales", "domains/media", "domains/travel", "domains/english", "domains/presentation", "domains/tools", "domains/certification"]
+members = ["shared", "domains/task", "domains/content-sales", "domains/media", "domains/travel", "domains/english", "domains/tools", "domains/certification"]
 
 [tool.uv.sources]
 shared = { workspace = true }
@@ -33,7 +32,6 @@ content-sales = { workspace = true }
 media = { workspace = true }
 travel = { workspace = true }
 english = { workspace = true }
-presentation = { workspace = true }
 tools = { workspace = true }
 certification = { workspace = true }
 
@@ -42,14 +40,6 @@ dev = [
     "import-linter>=2.0",
     "pytest>=8.0",
 ]
-
-[tool.pytest.ini_options]
-# workspace のスモークテストは各領域(member)のみ対象。
-# scripts/deckgen は member 外の支援ツールで独自依存(python-pptx)を持つため除外し、
-# `uv run --directory scripts/deckgen pytest` で個別に検証する（docs/adr/0007）。
-# 注: --project ではなく --directory を使う。--project だと rootdir がこの設定になり
-#     scripts/deckgen が ignore されて deckgen のテストが収集されない。
-addopts = "--ignore=scripts/deckgen"
 
 [build-system]
 requires = ["hatchling"]

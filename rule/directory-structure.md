@@ -21,7 +21,6 @@ life-os/
 │   ├── media/             # (1) 領域: 画像・動画管理（archetype B）       ※ workspace member
 │   ├── travel/            # (1) 領域: 旅行の行先管理（archetype B）       ※ workspace member
 │   ├── english/           # (1) 領域: 英語学習（archetype B）             ※ workspace member
-│   ├── presentation/      # (1) 領域: プレゼン作成（archetype B）         ※ workspace member
 │   ├── tools/             # (1) 領域: ユーティリティスクリプト集（archetype B）※ workspace member
 │   └── certification/     # (1) 領域: 資格取得学習サイト（archetype A・React+Python）※ workspace member
 ├── shared/            # (1) Shared Kernel（領域非依存の最小基盤）※ workspace member・ルート直下
@@ -98,6 +97,6 @@ compose.yaml  .dockerignore   （← テスト実行環境 / ADR-0006）
 ## 領域・content 領域の追加
 
 - **新領域（BC）の追加**: `domains/<領域>/` を作成 → `pyproject.toml` の `members` に `domains/<領域>` を追加 → `.importlinter` のコントラクト更新 → `system: *` ラベル整備。**手順の正本は [ADR-0002](../docs/adr/0002-modular-monolith-bounded-context.md)**（配置先は [ADR-0009](../docs/adr/0009-group-domains-under-domains-dir.md)。ここでは重複させない）。
-- **新 content 領域の追加**: コードを持たないなら member/`.importlinter`/`public.py` は不要（[ADR-0003](../docs/adr/0003-presentation-system.md) の `presentation/` が前例）。
+- **新 content 領域の追加**: コードを持たないなら member/`.importlinter`/`public.py` は不要。
 
 > 関連: ドキュメントの置き方は [documentation.md](./documentation.md)、命名は [naming.md](./naming.md)。

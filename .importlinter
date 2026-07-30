@@ -17,7 +17,6 @@ root_packages =
     media
     travel
     english
-    presentation
     tools
     certification
 
@@ -33,7 +32,6 @@ forbidden_modules =
     media
     travel
     english
-    presentation
     tools
     certification
 
@@ -53,8 +51,6 @@ forbidden_modules =
     travel.index
     english.models
     english.index
-    presentation.models
-    presentation.index
     tools.csv_splitter
     certification.domain
     certification.application
@@ -76,8 +72,6 @@ forbidden_modules =
     travel.index
     english.models
     english.index
-    presentation.models
-    presentation.index
     tools.csv_splitter
     certification.domain
     certification.application
@@ -100,8 +94,6 @@ forbidden_modules =
     travel.index
     english.models
     english.index
-    presentation.models
-    presentation.index
     tools.csv_splitter
     certification.domain
     certification.application
@@ -124,8 +116,6 @@ forbidden_modules =
     media.index
     english.models
     english.index
-    presentation.models
-    presentation.index
     tools.csv_splitter
     certification.domain
     certification.application
@@ -148,32 +138,6 @@ forbidden_modules =
     media.index
     travel.models
     travel.index
-    presentation.models
-    presentation.index
-    tools.csv_splitter
-    certification.domain
-    certification.application
-    certification.adapters
-
-# --- presentation は他領域の内部を直接 import しない ---
-[importlinter:contract:presentation-uses-only-public]
-name = presentation は他領域を public 経由でのみ参照する
-type = forbidden
-source_modules =
-    presentation
-forbidden_modules =
-    task.domain
-    task.application
-    task.adapters
-    content_sales.domain
-    content_sales.application
-    content_sales.adapters
-    media.models
-    media.index
-    travel.models
-    travel.index
-    english.models
-    english.index
     tools.csv_splitter
     certification.domain
     certification.application
@@ -198,8 +162,6 @@ forbidden_modules =
     travel.index
     english.models
     english.index
-    presentation.models
-    presentation.index
     certification.domain
     certification.application
     certification.adapters
@@ -223,6 +185,4 @@ forbidden_modules =
     travel.index
     english.models
     english.index
-    presentation.models
-    presentation.index
     tools.csv_splitter
