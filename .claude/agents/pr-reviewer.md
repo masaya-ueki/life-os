@@ -30,7 +30,7 @@ PR番号
 1. 対象 PR を特定する（引数で番号指定、無ければ `gh pr list` で確認しユーザーに尋ねる）。
 2. `gh pr view {N}`（目的・関連 Issue・本文）と `gh pr diff {N}`（差分）、`gh pr view {N} --json files` 等で**変更ファイル一覧**を取得する。
 3. 変更ファイルから次を判定する。
-   - **領域**: `task` / `content-sales` / `media` / `travel` / `shared` / content領域（`presentation`/`docs`/`guides`）。
+   - **領域**: `task` / `content-sales` / `media` / `travel` / `shared` / content領域（`docs`/`guides`）。
    - **言語**: `.py` を含むか。
    - **境界/構造**: `.importlinter` / `pyproject.toml` / `*/public.py` / 新トップレベルdir / `docs/adr` を含むか。
 

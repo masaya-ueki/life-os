@@ -40,7 +40,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 領域は性質に応じて 2 アーキタイプを使い分ける。
 
 - **アーキタイプA（動く領域）**: `task` / `content-sales` / `certification` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
-- **アーキタイプB（データ領域）**: `media` / `travel` / `english` / `presentation` — 薄い構成（`models` / `index`）+ `data/`
+- **アーキタイプB（データ領域）**: `media` / `travel` / `english` — 薄い構成（`models` / `index`）+ `data/`
 
 ## ディレクトリ構成
 
@@ -58,12 +58,11 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 │   ├── media/                # 領域: 画像・動画管理（アーキタイプB）
 │   ├── travel/               # 領域: 旅行の行先管理（アーキタイプB）
 │   ├── english/              # 領域: 英語学習（アーキタイプB）
-│   ├── presentation/         # 領域: プレゼン作成（HTMLスライド生成・コード非依存）
 │   ├── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
 │   └── certification/        # 領域: 資格取得学習サイト（アーキタイプA・React+Python）
 ├── .claude/
-│   ├── agents/               # Claude Code サブエージェント（スライド生成 / pr-reviewer）
-│   └── skills/               # Claude Code スキル（issue-memory / slide-* / code-review-* / directory-keeper）
+│   ├── agents/               # Claude Code サブエージェント（pr-reviewer 等）
+│   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper）
 ├── .github/
 │   ├── ISSUE_TEMPLATE/        # Issue テンプレート（ProductBacklog / Task / 調査）
 │   └── pull_request_template.md
@@ -110,6 +109,5 @@ docker compose build            # 依存を変えたときにイメージを再�
 - [Issue メモリスキル](./.claude/skills/issue-memory/SKILL.md) — Issue の起票から作業完了報告まで一本化する
 - [コードレビュー運用ルール](./guides/development-policy/code-review-rules.md) — PR を観点別スキルでレビューし、修正PR作成 or 検証付き自動マージまで回す（`pr-reviewer` エージェント）
 - [ADR（設計決定記録）](./docs/adr/README.md) — 「なぜその設計にしたか」を残す
-- [プレゼン作成システム](./domains/presentation/README.md) — テーマから HTML スライドを生成するエージェント・スキル基盤
 - 構成チェック: `python scripts/check_structure.py`（ルール準拠の決定的チェック）
 - ラベルの一括作成: `./scripts/setup-github-labels.sh --dry-run`（確認）/ `./scripts/setup-github-labels.sh`（適用）

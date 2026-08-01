@@ -18,16 +18,17 @@ ADR（Architecture Decision Record）は「なぜその設計にしたのか」�
 |------|---------|-----------|-------|
 | [ADR-0001](./0001-claude-code-native-multi-session.md) | Claude Code の複数セッション管理を自作フレームワークからネイティブ機能へ移行する | 承認済み | 2026-06-14 |
 | [ADR-0002](./0002-modular-monolith-bounded-context.md) | 複数領域を Modular Monolith × Bounded Context で共存させる | 承認済み | 2026-06-15 |
-| [ADR-0003](./0003-presentation-system.md) | プレゼン作成システムをネイティブ Claude Code 構成で導入する | 承認済み | 2026-06-16 |
+| [ADR-0003](./0003-presentation-system.md) | プレゼン作成システムをネイティブ Claude Code 構成で導入する | 置き換え済み（[ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md)） | 2026-06-16 |
 | [ADR-0004](./0004-pr-review-agent.md) | PRレビューをエージェント＋観点別スキルで運用する | 承認済み | 2026-06-17 |
 | [ADR-0005](./0005-directory-governance-daily-keeper.md) | ディレクトリ構成論を rule/ で統治し、日次 directory-keeper で維持する | 承認済み | 2026-06-17 |
 | [ADR-0006](./0006-docker-test-environment.md) | テスト実行環境を Docker（Compose）で提供する | 承認済み | 2026-06-17 |
-| [ADR-0007](./0007-pptx-output.md) | outline.yml から編集可能ネイティブ pptx を生成する | 承認済み | 2026-06-18 |
+| [ADR-0007](./0007-pptx-output.md) | outline.yml から編集可能ネイティブ pptx を生成する | 置き換え済み（[ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md)） | 2026-06-18 |
 | [ADR-0008](./0008-pr-auto-merge-scope-gate.md) | PR の自動マージ/人間レビューをパスベースのスコープゲートで判定する | 承認済み | 2026-06-21 |
 | [ADR-0009](./0009-group-domains-under-domains-dir.md) | 領域（Bounded Context）を domains/ コンテナ配下にまとめる | 承認済み | 2026-06-20 |
 | [ADR-0011](./0011-certification-react-frontend-serverless.md) | certification 領域に React フロントとサーバレスを導入する | 承認済み | 2026-07-01 |
 | [ADR-0010](./0010-cc-launch-skill-and-issue-memory.md) | 作業起動フローをモード選択式スキル + Issue 自動読み込みで標準化する | 承認済み | 2026-06-21 |
 | [ADR-0012](./0012-certification-question-authoring-system.md) | 資格問題の作成をスキル＋登録サブエージェント＋整合性テストゲートで担保する | 承認済み | 2026-07-02 |
+| [ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md) | presentation 領域を廃止し Claude Design へ移行する | 承認済み | 2026-07-30 |
 
 ---
 

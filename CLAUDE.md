@@ -20,7 +20,7 @@ life-os は個人のための「なんでも」環境（personal life operating 
 - `shared/` は領域非依存の Shared Kernel。いかなる領域にも依存してはならない。
 - 領域には 2 アーキタイプがある:
   - **アーキタイプA（動く領域）**: `task` / `content-sales` / `certification` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
-  - **アーキタイプB（データ領域）**: `media` / `travel` / `presentation` — 薄い構成（`models` / `index`）+ `data/`
+  - **アーキタイプB（データ領域）**: `media` / `travel` / `english` — 薄い構成（`models` / `index`）+ `data/`
 - 領域（Bounded Context）は `domains/` 配下にまとめる（`shared` は Shared Kernel として例外的にルート直下）。配置の根拠は [ADR-0009](./docs/adr/0009-group-domains-under-domains-dir.md)。
 - `docs/`・`guides/` はコードを持たない content 領域（uv workspace member でも Bounded Context でもない）。
 - 新領域を追加するときは、`domains/<領域>/` ディレクトリ・uv workspace の `members`（`domains/<領域>`）・`.importlinter` のコントラクト・`system: *` ラベルを併せて整備する（手順は [ADR-0002](./docs/adr/0002-modular-monolith-bounded-context.md)）。
@@ -63,4 +63,3 @@ docker compose build            # 依存を変えたときにイメージを再�
 - [.claude/skills/issue-loop/SKILL.md](./.claude/skills/issue-loop/SKILL.md) — Open Issue を自動実装して PR にする Loop Engineering スキル
 - [.claude/skills/cc-launch/SKILL.md](./.claude/skills/cc-launch/SKILL.md) — モード選択式で作業を起動するスキル（plan / simple / interactive / fable）
 - [.claude/skills/close-task/SKILL.md](./.claude/skills/close-task/SKILL.md) — 作業完了後のクローズ処理（Issue クローズ・知識蓄積・worktree 削除・次タスク提示）を一括実行するスキル
-- [domains/presentation/README.md](./domains/presentation/README.md) — テーマから HTML スライドを生成するエージェント・スキル基盤
