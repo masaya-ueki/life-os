@@ -50,7 +50,7 @@ PR
 
 領域ごとの重点観点（アーキタイプA/B・content領域・shared）は [`code-review-general/references/domain-checklist.md`](../../.claude/skills/code-review-general/references/domain-checklist.md) の早見表で引く。
 
-> 領域が増えても**早見表に行を足すだけ**で対応する（スキルは増やさない）。これは `cert-question-authoring` の「索引＋references」と同じ設計（[ADR-0004](../../docs/adr/0004-pr-review-agent.md)）。
+> 領域が増えても**早見表に行を足すだけ**で対応する（スキルは増やさない）。これは `code-review-general` 自体が採る「索引＋references」と同じ設計（[ADR-0004](../../docs/adr/0004-pr-review-agent.md)）。
 
 ---
 

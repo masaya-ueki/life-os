@@ -1,6 +1,6 @@
 # ADR-0011: certification 領域に React フロントとサーバレスを導入する
 
-- **ステータス**: `承認済み`
+- **ステータス**: `置き換え済み`（[ADR-0014](./0014-deprecate-certification-own-repo.md) — certification 領域を廃止し独立リポジトリへ移管）
 - **決定日**: 2026-07-01
 - **決定者**: masaya-ueki
 - **関連タスク**: #82, #83
@@ -58,5 +58,5 @@ Web（PC・スマホ）からアクセスする SPA・Notion 風 UI・単一ユ�
 
 - [ADR-0002 Modular Monolith × Bounded Context](./0002-modular-monolith-bounded-context.md)
 - [ADR-0009 領域を domains/ 配下に集約](./0009-group-domains-under-domains-dir.md)
-- [domains/certification/README.md](../../domains/certification/README.md)
+- `domains/certification/README.md`（[ADR-0014](./0014-deprecate-certification-own-repo.md) により当領域は削除済み）
 - Issue #82（ProductBacklog）, #83（本 ADR）

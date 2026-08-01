@@ -39,7 +39,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 
 領域は性質に応じて 2 アーキタイプを使い分ける。
 
-- **アーキタイプA（動く領域）**: `task` / `content-sales` / `certification` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
+- **アーキタイプA（動く領域）**: `task` / `content-sales` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
 - **アーキタイプB（データ領域）**: `media` / `travel` / `english` — 薄い構成（`models` / `index`）+ `data/`
 
 ## ディレクトリ構成
@@ -58,8 +58,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 │   ├── media/                # 領域: 画像・動画管理（アーキタイプB）
 │   ├── travel/               # 領域: 旅行の行先管理（アーキタイプB）
 │   ├── english/              # 領域: 英語学習（アーキタイプB）
-│   ├── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
-│   └── certification/        # 領域: 資格取得学習サイト（アーキタイプA・React+Python）
+│   └── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
 ├── .claude/
 │   ├── agents/               # Claude Code サブエージェント（pr-reviewer 等）
 │   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper）
