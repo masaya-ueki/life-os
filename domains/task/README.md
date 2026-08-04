@@ -26,6 +26,7 @@ src/task/
 │   └── acl/          # 他領域参照の腐敗防止層（Anti-Corruption Layer）
 └── public.py      # ★他領域に公開する唯一の契約（境界）
 data/              # この領域のデータ
+docs/              # コード非依存の参照資料（databases/・template/・point-history.md）
 tests/
 ```
 
