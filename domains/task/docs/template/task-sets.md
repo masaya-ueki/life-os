@@ -3,7 +3,7 @@
 > PBI 配下にまとめて Task を作るための「汎用セット」定義。
 > `scrum-notion-task-set` サブエージェントが参照する。新しいセットは今後この下に追記していく運用（エージェント本体にはハードコードしない）。
 >
-> 各 Task の入力パラメータ・固定値・自動判定ルールは [`scrum-notion-task`](../../../.claude/skills/scrum-notion-task/SKILL.md) に従う。ここでは各セットの構成（Task 名と既定 Category）のみを定義する。
+> 各 Task の入力パラメータ・固定値・自動判定ルールは [`scrum-notion-task`](../../../../.claude/skills/scrum-notion-task/SKILL.md) に従う。ここでは各セットの構成（Task 名と既定 Category）のみを定義する。
 
 ## 機能追加
 
