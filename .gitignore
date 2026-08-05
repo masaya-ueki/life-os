@@ -19,3 +19,4 @@ dist/
 
 # csv_splitter 実行時出力（タイムスタンプ付きサブディレクトリは生成物）
 domains/tools/data/csv_splitter/output/*/
+.claude/settings.local.json
