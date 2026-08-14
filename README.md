@@ -61,7 +61,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 │   ├── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
 │   └── certification/        # 領域: 資格取得学習サイト（アーキタイプA・React+Python）
 ├── .claude/
-│   ├── agents/               # Claude Code サブエージェント（pr-reviewer 等）
+│   ├── agents/               # Claude Code サブエージェント（pr-reviewer / biz-* 等）
 │   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper）
 ├── .github/
 │   ├── ISSUE_TEMPLATE/        # Issue テンプレート（ProductBacklog / Task / 調査）
@@ -69,7 +69,8 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 ├── docs/
 │   └── adr/                   # 設計決定記録（Architecture Decision Records）
 ├── guides/
-│   └── development-policy/    # 開発運用ルール（Issue 運用など）
+│   ├── development-policy/    # 開発運用ルール（Issue 運用など）
+│   └── business/              # 収益組織の運用ルール（役割・収益 loop・歯止め）
 ├── rule/                      # ディレクトリ構成論ルール（構造ガバナンス）
 ├── scripts/                   # 開発・運用を補助する自動化スクリプト群
 ├── CLAUDE.md                  # Claude Code 向けプロジェクト指示書
@@ -103,6 +104,7 @@ docker compose build            # 依存を変えたときにイメージを再�
 ## 開発運用
 
 - [目指す開発スタイル — Loop Engineering](./guides/development-policy/loop-engineering.md) — loop エンジニアを目指す方針と Stage 3 へのロードマップ
+- [収益組織の運用ルール](./guides/business/README.md) — Claude エージェント組織で収益 loop を回す（役割・歯止め・撤退基準／[ADR-0014](./docs/adr/0014-revenue-org-inside-life-os.md)）
 - [ディレクトリ構成論ルール](./rule/README.md) — リポジトリがどうあるべきか（配置・命名・ドキュメント重複禁止）
 - [directory-keeper](./.claude/skills/directory-keeper/SKILL.md) — 構成を日次で監査し整頓するエージェント（Routines で定期実行・[ADR-0005](./docs/adr/0005-directory-governance-daily-keeper.md)）
 - [Issue 運用ルール](./guides/development-policy/issue-operation-rules.md) — Issue の分類・ラベル・作業フロー

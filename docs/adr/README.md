@@ -29,6 +29,7 @@ ADR（Architecture Decision Record）は「なぜその設計にしたのか」�
 | [ADR-0010](./0010-cc-launch-skill-and-issue-memory.md) | 作業起動フローをモード選択式スキル + Issue 自動読み込みで標準化する | 承認済み | 2026-06-21 |
 | [ADR-0012](./0012-certification-question-authoring-system.md) | 資格問題の作成をスキル＋登録サブエージェント＋整合性テストゲートで担保する | 承認済み | 2026-07-02 |
 | [ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md) | presentation 領域を廃止し Claude Design へ移行する | 承認済み | 2026-07-30 |
+| [ADR-0014](./0014-revenue-org-inside-life-os.md) | 収益組織を life-os 内に置き、売り物だけを別リポジトリへ切り出す | 承認済み | 2026-08-14 |
 
 ---
 
