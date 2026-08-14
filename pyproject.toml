@@ -19,11 +19,10 @@ dependencies = [
     "travel",
     "english",
     "tools",
-    "certification",
 ]
 
 [tool.uv.workspace]
-members = ["shared", "domains/task", "domains/content-sales", "domains/media", "domains/travel", "domains/english", "domains/tools", "domains/certification"]
+members = ["shared", "domains/task", "domains/content-sales", "domains/media", "domains/travel", "domains/english", "domains/tools"]
 
 [tool.uv.sources]
 shared = { workspace = true }
@@ -33,7 +32,6 @@ media = { workspace = true }
 travel = { workspace = true }
 english = { workspace = true }
 tools = { workspace = true }
-certification = { workspace = true }
 
 [dependency-groups]
 dev = [
