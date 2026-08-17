@@ -88,7 +88,7 @@ life-os は、土台づくりを通じて **Stage 2 を運用しつつ Stage 3 �
 |---------|----------------------|
 | 意図を一度だけ書く | **Issue 駆動**（ProductBacklog / Task Issue）。意図と完了条件を Issue に一度書き、セッションをまたいで引き継ぐ — [Issue 運用ルール](./issue-operation-rules.md) |
 | 反復の管理を委譲する | Claude Code ネイティブの複数セッション運用へ移行済み（[ADR-0001](../../docs/adr/0001-claude-code-native-multi-session.md)）。`/loop`・スケジュール実行などのネイティブ機能が委譲の土台 |
-| 再利用可能なスキル群 | `.claude/skills/`・`.claude/agents/`（例: 資格問題作成パイプライン [ADR-0012](../../docs/adr/0012-certification-question-authoring-system.md)）が loop から呼べる再利用部品 |
+| 再利用可能なスキル群 | `.claude/skills/`・`.claude/agents/`（例: PRレビューパイプライン — `pr-reviewer` サブエージェント＋`code-review-*` スキル、[ADR-0004](../../docs/adr/0004-pr-review-agent.md)）が loop から呼べる再利用部品 |
 | 検証ゲート | `uv run lint-imports`（領域境界）/ `uv run pytest`（スモークテスト）。**Modular Monolith × Bounded Context**（[ADR-0002](../../docs/adr/0002-modular-monolith-bounded-context.md)）が「壊れたら検知できる」境界を機械的に保証する |
 | ハードストップ | GitHub Flow + PR レビュー（`main` へのマージ前に人が確認）。当面は PR が最後の歯止め |
 
@@ -131,4 +131,4 @@ life-os は、土台づくりを通じて **Stage 2 を運用しつつ Stage 3 �
 - [Issue 運用ルール](./issue-operation-rules.md) — 意図を一度書いて引き継ぐ仕組み
 - [ADR-0001](../../docs/adr/0001-claude-code-native-multi-session.md) — Claude Code ネイティブの複数セッション運用
 - [ADR-0002](../../docs/adr/0002-modular-monolith-bounded-context.md) — 検証可能な領域境界（Modular Monolith × Bounded Context）
-- [ADR-0012](../../docs/adr/0012-certification-question-authoring-system.md) — スキル/サブエージェントによる再利用可能パイプラインの例
+- [ADR-0004](../../docs/adr/0004-pr-review-agent.md) — スキル/サブエージェントによる再利用可能パイプラインの例

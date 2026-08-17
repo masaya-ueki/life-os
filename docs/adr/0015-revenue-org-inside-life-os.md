@@ -1,4 +1,4 @@
-# ADR-0014: 収益組織を life-os 内に置き、売り物だけを別リポジトリへ切り出す
+# ADR-0015: 収益組織を life-os 内に置き、売り物だけを別リポジトリへ切り出す
 
 - **ステータス**: `承認済み`
 - **決定日**: 2026-08-14
@@ -31,6 +31,11 @@ Claude Code を使って収益を上げるため、Claude のサブエージェ�
 顧客向けの Issue や問い合わせを伴う可能性があり、これらを私物リポジトリに混ぜると後から分離できない。
 
 つまり「組織」と「売り物」は置き場所の要件が違う、というのがこの ADR が扱う論点である。
+
+なお、**この repo には「育った領域を独立リポジトリへ昇格させる」先例がすでにある**。
+[ADR-0014](./0014-deprecate-certification-own-repo.md) で `certification` 領域が独自ツールチェーン・独自デプロイを
+持つに至った時点で独立リポジトリへ移管され、life-os 側の実体は削除された。
+本 ADR が採る方針は、その昇格パターンを**売り物に対してあらかじめ宣言しておく**ものであり、新しい発明ではない。
 
 ## 決定事項
 
@@ -121,4 +126,5 @@ product-xxx（別リポジトリ）      ← 売り物。公開判断に至っ�
 - [guides/development-policy/loop-engineering.md](../../guides/development-policy/loop-engineering.md) — 目指す開発スタイル
 - [ADR-0002 複数領域を Modular Monolith × Bounded Context で共存させる](./0002-modular-monolith-bounded-context.md)
 - [ADR-0008 PR の自動マージ/人間レビューをパスベースのスコープゲートで判定する](./0008-pr-auto-merge-scope-gate.md)
+- [ADR-0014 certification 領域を廃止し独立リポジトリへ移管する](./0014-deprecate-certification-own-repo.md) — 「育った領域を独立リポジトリへ昇格させる」先例
 - [rule/directory-structure.md](../../rule/directory-structure.md) — 配置ルール

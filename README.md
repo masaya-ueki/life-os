@@ -39,7 +39,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 
 領域は性質に応じて 2 アーキタイプを使い分ける。
 
-- **アーキタイプA（動く領域）**: `task` / `content-sales` / `certification` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
+- **アーキタイプA（動く領域）**: `task` / `content-sales` — 軽量ヘキサゴナル（`domain` / `application` / `adapters`）
 - **アーキタイプB（データ領域）**: `media` / `travel` / `english` — 薄い構成（`models` / `index`）+ `data/`
 
 ## ディレクトリ構成
@@ -58,8 +58,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 │   ├── media/                # 領域: 画像・動画管理（アーキタイプB）
 │   ├── travel/               # 領域: 旅行の行先管理（アーキタイプB）
 │   ├── english/              # 領域: 英語学習（アーキタイプB）
-│   ├── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
-│   └── certification/        # 領域: 資格取得学習サイト（アーキタイプA・React+Python）
+│   └── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
 ├── .claude/
 │   ├── agents/               # Claude Code サブエージェント（pr-reviewer / biz-* 等）
 │   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper）
@@ -104,7 +103,7 @@ docker compose build            # 依存を変えたときにイメージを再�
 ## 開発運用
 
 - [目指す開発スタイル — Loop Engineering](./guides/development-policy/loop-engineering.md) — loop エンジニアを目指す方針と Stage 3 へのロードマップ
-- [収益組織の運用ルール](./guides/business/README.md) — Claude エージェント組織で収益 loop を回す（役割・歯止め・撤退基準／[ADR-0014](./docs/adr/0014-revenue-org-inside-life-os.md)）
+- [収益組織の運用ルール](./guides/business/README.md) — Claude エージェント組織で収益 loop を回す（役割・歯止め・撤退基準／[ADR-0015](./docs/adr/0015-revenue-org-inside-life-os.md)）
 - [ディレクトリ構成論ルール](./rule/README.md) — リポジトリがどうあるべきか（配置・命名・ドキュメント重複禁止）
 - [directory-keeper](./.claude/skills/directory-keeper/SKILL.md) — 構成を日次で監査し整頓するエージェント（Routines で定期実行・[ADR-0005](./docs/adr/0005-directory-governance-daily-keeper.md)）
 - [Issue 運用ルール](./guides/development-policy/issue-operation-rules.md) — Issue の分類・ラベル・作業フロー

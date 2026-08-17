@@ -25,11 +25,12 @@ ADR（Architecture Decision Record）は「なぜその設計にしたのか」�
 | [ADR-0007](./0007-pptx-output.md) | outline.yml から編集可能ネイティブ pptx を生成する | 置き換え済み（[ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md)） | 2026-06-18 |
 | [ADR-0008](./0008-pr-auto-merge-scope-gate.md) | PR の自動マージ/人間レビューをパスベースのスコープゲートで判定する | 承認済み | 2026-06-21 |
 | [ADR-0009](./0009-group-domains-under-domains-dir.md) | 領域（Bounded Context）を domains/ コンテナ配下にまとめる | 承認済み | 2026-06-20 |
-| [ADR-0011](./0011-certification-react-frontend-serverless.md) | certification 領域に React フロントとサーバレスを導入する | 承認済み | 2026-07-01 |
+| [ADR-0011](./0011-certification-react-frontend-serverless.md) | certification 領域に React フロントとサーバレスを導入する | 置き換え済み（[ADR-0014](./0014-deprecate-certification-own-repo.md)） | 2026-07-01 |
 | [ADR-0010](./0010-cc-launch-skill-and-issue-memory.md) | 作業起動フローをモード選択式スキル + Issue 自動読み込みで標準化する | 承認済み | 2026-06-21 |
-| [ADR-0012](./0012-certification-question-authoring-system.md) | 資格問題の作成をスキル＋登録サブエージェント＋整合性テストゲートで担保する | 承認済み | 2026-07-02 |
+| [ADR-0012](./0012-certification-question-authoring-system.md) | 資格問題の作成をスキル＋登録サブエージェント＋整合性テストゲートで担保する | 置き換え済み（[ADR-0014](./0014-deprecate-certification-own-repo.md)） | 2026-07-02 |
 | [ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md) | presentation 領域を廃止し Claude Design へ移行する | 承認済み | 2026-07-30 |
-| [ADR-0014](./0014-revenue-org-inside-life-os.md) | 収益組織を life-os 内に置き、売り物だけを別リポジトリへ切り出す | 承認済み | 2026-08-14 |
+| [ADR-0014](./0014-deprecate-certification-own-repo.md) | certification 領域を廃止し独立リポジトリへ移管する | 承認済み | 2026-08-01 |
+| [ADR-0015](./0015-revenue-org-inside-life-os.md) | 収益組織を life-os 内に置き、売り物だけを別リポジトリへ切り出す | 承認済み | 2026-08-14 |
 
 ---
 

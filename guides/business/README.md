@@ -1,7 +1,7 @@
 # 収益組織の運用ルール
 
 > **適用対象**: life-os 内で収益を生むための Claude エージェント組織
-> **位置づけ**: 「人と AI がどう働くか」のプロセス定義（how-to）。置き場所の判断根拠は [ADR-0014](../../docs/adr/0014-revenue-org-inside-life-os.md)
+> **位置づけ**: 「人と AI がどう働くか」のプロセス定義（how-to）。置き場所の判断根拠は [ADR-0015](../../docs/adr/0015-revenue-org-inside-life-os.md)
 
 ---
 
@@ -28,7 +28,7 @@
 - **役職を並べただけの「AI 会社ごっこ」を作らない。** 各役割は前の役割の成果物を入力に取り、次の役割が使える形で出力する。
   入出力が繋がらない役割は置かない。
 
-組織は life-os 内に置き、売り物だけを別リポジトリへ切り出す 2 層構成をとる。理由は [ADR-0014](../../docs/adr/0014-revenue-org-inside-life-os.md) を参照。
+組織は life-os 内に置き、売り物だけを別リポジトリへ切り出す 2 層構成をとる。理由は [ADR-0015](../../docs/adr/0015-revenue-org-inside-life-os.md) を参照。
 
 ---
 
@@ -131,13 +131,13 @@ Issue の分類・ラベル・ブランチ・コミットの規約は
 
 - **収益仮説は ProductBacklog Issue として起票する。** 仮説は必ず「調査 → 実装 → 公開」の複数フェーズを伴うため。
 - **`system:` ラベルは新設しない。** 売上・KPI・販売物に関することは `system: content-sales`、
-  エージェントや運用ルールなど組織横断のインフラは `system: common` を使う。理由は [ADR-0014](../../docs/adr/0014-revenue-org-inside-life-os.md) を参照。
+  エージェントや運用ルールなど組織横断のインフラは `system: common` を使う。理由は [ADR-0015](../../docs/adr/0015-revenue-org-inside-life-os.md) を参照。
 
 ---
 
 ## 7. やらないこと
 
-- **売り物のコードを life-os に置き続けない。** 公開判断に至った時点で別リポジトリへ切り出す（[ADR-0014](../../docs/adr/0014-revenue-org-inside-life-os.md)）。
+- **売り物のコードを life-os に置き続けない。** 公開判断に至った時点で別リポジトリへ切り出す（[ADR-0015](../../docs/adr/0015-revenue-org-inside-life-os.md)）。
 - **役割を先回りして増やさない。** 表の 7 役割で回らない事実が観測されてから足す。
 - **売れる前に決済・分析・顧客管理の基盤を作らない。** 必要になった時点で `content-sales` の `adapters/` に足す。
 - **一周回す前に組織のドキュメントを増やさない。** 正本はこのファイル 1 つに保つ。
