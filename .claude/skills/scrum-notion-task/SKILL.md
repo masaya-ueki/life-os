@@ -43,7 +43,7 @@ Notion の **Task** データベースに単発タスクを対話形式で作成
 
 | プロパティ | 型 | 決定方法 |
 |---|---|---|
-| `Name` | title | **入力パラメータの一つ**。呼び出し時に指定が無ければヒアリングする |
+| `Name` | title | **入力パラメータの一つ**。呼び出し時に指定が無ければヒアリングする。下記「Name 命名規則」に従う |
 | `Product Backlog` | relation | 入力パラメータ。どの PBI 配下のタスクかを指定（未指定ならヒアリング） |
 | `Planned Hours` | number | 入力パラメータ（未指定ならヒアリング） |
 | `Category` | select | 入力パラメータ。`task` / `todo` / `meeting` から選択してもらう |
@@ -51,6 +51,20 @@ Notion の **Task** データベースに単発タスクを対話形式で作成
 | `Status` | status | **自動判定**。`Planned Date` が null なら `New`、null でなければ `Ready`（ユーザーに確認しない） |
 | `Member` | person | **固定値**。Ueki Masaya（User ID: `c87b9a1c-ef2a-44ef-87d2-5349e1eb8ef2`） |
 | `Acutual Hours` | number | **デフォルト値 `0`**（プロパティ名は Notion 側の原文ママ `Acutual`） |
+
+---
+
+## Name 命名規則
+
+```
+{PBIを簡潔に表したラベル}|{タスク名}
+```
+
+例: `DBTリンター適用見直し|リリース`
+
+- 「PBIを簡潔に表したラベル」は、親 PBI の Title（[scrum-notion-pbi](../scrum-notion-pbi/SKILL.md) の Title 命名規則を参照）から `yyyymmdd` とプロジェクト名を除いた「内容」部分をそのまま使う。
+- 同一 PBI 配下の複数 Task では、このラベル部分をすべて揃える。
+- 区切り文字は半角 `|`。
 
 ---
 
