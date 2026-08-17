@@ -56,6 +56,7 @@ docker compose build            # 依存を変えたときにイメージを再�
 - [README.md](./README.md) — プロジェクトの一次情報源（**最初に読む**）
 - [docs/adr/](./docs/adr/README.md) — 設計決定記録（なぜその設計にしたか）
 - [guides/development-policy/loop-engineering.md](./guides/development-policy/loop-engineering.md) — 目指す開発スタイル（Loop Engineering）
+- [guides/business/README.md](./guides/business/README.md) — 収益組織の運用ルール（役割・収益 loop・ハードストップ・撤退基準）
 - [guides/development-policy/issue-operation-rules.md](./guides/development-policy/issue-operation-rules.md) — Issue 運用ルール
 - [guides/development-policy/code-review-rules.md](./guides/development-policy/code-review-rules.md) — コードレビュー運用ルール（`pr-reviewer` エージェント＋`code-review-*` スキル）
 - [rule/README.md](./rule/README.md) — ディレクトリ構成論ルール（配置・命名・ドキュメント重複禁止）
