@@ -1,0 +1,268 @@
+deck:
+  title: "データ分析基盤の概要"
+  subtitle: "2021年10月リリース〜現在の構成と運用体制"
+  theme: default
+  date: "2026-08-21"
+
+chapters:
+  - chapter: "はじめに"
+    slides:
+      - title: "データ分析基盤の概要"
+        summary: "2021年10月の初回リリースから運用を続けるデータ分析基盤の、現在の構成を共有する。"
+        content:
+          - "初回リリース: 2021年10月〜運用中"
+          - "本資料の目的: 現在のデータ分析基盤の構成を説明する"
+          - "対象読者: ※既存資料を記載（想定読者・部署）"
+        expression: title
+        data: {}
+
+      - title: "本日の流れ"
+        summary: "全体のデータフローから、ETL/Tableau/MA、信頼性・インフラ・セキュリティ・運用体制、将来性まで順に説明する。"
+        content:
+          - "全体のデータフロー / 連携データ一覧"
+          - "ETL / TABLEAU / MA（B-DASH）"
+          - "信頼性・品質 / インフラ / セキュリティ・権限 / 運用体制"
+          - "将来性"
+        expression: bullet
+        data: {}
+
+  - chapter: "全体のデータフロー"
+    slides:
+      - title: "全体のデータフロー"
+        summary: "各種データソースがETL（S3）を経由してTableau・B-DASHに連携され、利用者はTableau/Athenaでデータを確認する。"
+        content:
+          - "データソース → ETL（S3）→ Tableau / B-DASH"
+          - "ETL: 最新断面保持・蓄積・一次加工・二次加工"
+          - "Tableau: 可視化、AWS上（Athena）でも確認可能"
+          - "B-DASH: MA施策への活用"
+        expression: flow
+        data:
+          type: steps
+          orientation: horizontal
+          steps:
+            - { label: "データソース", desc: "※既存資料を記載（連携元一覧）" }
+            - { label: "ETL", desc: "S3 parquet / 一次・二次加工" }
+            - { label: "Tableau", desc: "可視化 / Athenaで確認" }
+            - { label: "B-DASH", desc: "MA施策へ活用" }
+
+  - chapter: "連携しているデータ一覧"
+    slides:
+      - title: "連携しているデータ一覧"
+        summary: "現在ETLで連携している主要データソースを一覧化する。"
+        content:
+          - "※既存資料を記載（データソース名・種類・連携方法・更新頻度の一覧）"
+        expression: comparison
+        data:
+          mode: table
+          axes: ["種類", "連携方法", "更新頻度"]
+          columns:
+            - { name: "※既存資料を記載（データソース1）", values: ["※既存資料を記載", "※既存資料を記載", "※既存資料を記載"] }
+            - { name: "※既存資料を記載（データソース2）", values: ["※既存資料を記載", "※既存資料を記載", "※既存資料を記載"] }
+            - { name: "※既存資料を記載（データソース3）", values: ["※既存資料を記載", "※既存資料を記載", "※既存資料を記載"] }
+
+  - chapter: "ETL"
+    slides:
+      - title: "ETLの全体像"
+        summary: "S3上に最新断面を保持しつつ、時系列でのデータ蓄積と一次・二次加工を行う構成になっている。"
+        content:
+          - "最新断面保持: S3 parquetファイルで最新状態を保持"
+          - "データの蓄積: 過去データも時系列で蓄積"
+          - "後続の一次加工・二次加工の起点となる"
+        expression: structure
+        data:
+          type: tree
+          root: "ETL（S3）"
+          children:
+            - name: "最新断面保持"
+              children:
+                - name: "S3 parquetファイル"
+            - name: "データの蓄積"
+              children:
+                - name: "時系列データ"
+
+      - title: "データ蓄積の仕組み"
+        summary: "連携元から取り込んだデータを時系列で蓄積し、過去断面の参照や再集計を可能にしている。"
+        content:
+          - "※既存資料を記載（蓄積の頻度・保持期間・パーティション設計）"
+        expression: bullet
+        data: {}
+
+      - title: "一次加工・二次加工の違い"
+        summary: "一次加工は型変換（T）のみ、二次加工は集計単位でJOINしたテーブルという役割分担になっている。"
+        content:
+          - "一次加工: 型変換（T）のみを実施"
+          - "二次加工: 一次加工テーブルを集計単位でJOIN"
+        expression: comparison
+        data:
+          mode: table
+          axes: ["処理内容", "主な用途"]
+          columns:
+            - { name: "一次加工", values: ["型変換（T）のみ", "※既存資料を記載"] }
+            - { name: "二次加工", values: ["集計単位でのJOIN", "※既存資料を記載"] }
+
+  - chapter: "TABLEAU"
+    slides:
+      - title: "Tableauで扱えるデータ"
+        summary: "連携データ・一次加工・二次加工に加え、マニュアルデータの投入も可能な構成になっている。"
+        content:
+          - "連携データ（※前井さんに確認予定）"
+          - "一次加工データ"
+          - "二次加工データ"
+          - "マニュアルデータの投入が可能"
+        expression: bullet
+        data: {}
+
+      - title: "AWS上（Athena）でのデータ確認"
+        summary: "Tableau経由だけでなく、AWS上のAthenaから直接データを確認することもできる。"
+        content:
+          - "Athenaを使ってS3上のデータへ直接クエリ可能"
+          - "※既存資料を記載（対象範囲・利用者・アクセス方法）"
+        expression: flow
+        data:
+          type: steps
+          orientation: horizontal
+          steps:
+            - { label: "S3（ETL加工済みデータ）", desc: "一次/二次加工" }
+            - { label: "Athena", desc: "SQLで直接確認" }
+            - { label: "利用者", desc: "※既存資料を記載" }
+
+  - chapter: "MA（B-DASH）"
+    slides:
+      - title: "MA連携しているデータ"
+        summary: "B-DASHには施策実行に必要なデータが連携されている。"
+        content:
+          - "※既存資料を記載（連携データの種類一覧）"
+        expression: bullet
+        data: {}
+
+      - title: "データの更新頻度・仕組み"
+        summary: "B-DASHへの連携は一定の頻度・仕組みで自動更新されている。"
+        content:
+          - "更新頻度: ※既存資料を記載"
+          - "更新の仕組み: ※既存資料を記載"
+        expression: bullet
+        data: {}
+
+      - title: "MAから連携しているデータ"
+        summary: "B-DASHで生成されたログデータも、逆方向にETL側へ連携されている。"
+        content:
+          - "※既存資料を記載（B-DASH→ETL方向の連携データ）"
+        expression: bullet
+        data: {}
+
+  - chapter: "信頼性・品質"
+    slides:
+      - title: "データの正確性をどう担保しているか"
+        summary: "ソースとの突合や異常値検知など、データ品質を担保する仕組みを備えている。"
+        content:
+          - "※既存資料を記載（ソース突合の方法）"
+          - "※既存資料を記載（異常値検知・アラートの有無）"
+        expression: bullet
+        data: {}
+
+      - title: "更新SLA・遅延時の扱い"
+        summary: "各データの更新がいつまでに完了するかのSLAと、遅延時の対応方針を示す。"
+        content:
+          - "更新SLA: ※既存資料を記載（例: 毎朝◯時までに反映）"
+          - "遅延時の対応: ※既存資料を記載"
+        expression: bullet
+        data: {}
+
+  - chapter: "インフラ"
+    slides:
+      - title: "AWSアカウント構成（Organization）"
+        summary: "AWS Organizationsで用途別にアカウントを分割し、統制している。"
+        content:
+          - "※既存資料を記載（Organization配下のアカウント一覧・用途）"
+        expression: structure
+        data:
+          type: tree
+          root: "AWS Organization"
+          children:
+            - name: "※既存資料を記載（アカウント1）"
+            - name: "※既存資料を記載（アカウント2）"
+
+      - title: "ネットワーク構成"
+        summary: "VPC構成やアクセス経路など、ネットワークレベルでの構成を示す。"
+        content:
+          - "※既存資料を記載（VPC構成・接続経路図）"
+        expression: structure
+        data:
+          type: tree
+          root: "ネットワーク構成"
+          children:
+            - name: "※既存資料を記載"
+
+      - title: "監視・監査（信頼性SLA）"
+        summary: "システムレベルの監視・監査に加え、可用性・信頼性のSLAを定めている。"
+        content:
+          - "監視: ※既存資料を記載（監視対象・ツール）"
+          - "監査: ※既存資料を記載（監査ログの取得範囲）"
+          - "信頼性SLA: ※既存資料を記載（可用性目標など）"
+        expression: bullet
+        data: {}
+
+      - title: "コストの確認（権限管理）"
+        summary: "コスト可視化の仕組みに加え、誰がどこまで操作・閲覧できるかの権限管理を行っている。"
+        content:
+          - "コスト確認: ※既存資料を記載（ダッシュボード・アラート）"
+          - "権限管理: ※既存資料を記載（IAMロール設計・承認フロー）"
+        expression: bullet
+        data: {}
+
+  - chapter: "セキュリティ・権限"
+    slides:
+      - title: "アクセス権限管理の仕組み"
+        summary: "データやダッシュボードへのアクセスは役割に応じて権限を分けて管理している。"
+        content:
+          - "※既存資料を記載（権限ロールの一覧・付与フロー）"
+        expression: bullet
+        data: {}
+
+      - title: "個人情報・機微データの取り扱い"
+        summary: "個人情報や機微データはマスキングやアクセス制限などで保護している。"
+        content:
+          - "※既存資料を記載（マスキング方針・保護対象データ）"
+        expression: bullet
+        data: {}
+
+  - chapter: "運用体制"
+    slides:
+      - title: "保守体制・問い合わせ窓口"
+        summary: "基盤の保守は特定の体制で行われており、問い合わせ窓口が明確になっている。"
+        content:
+          - "※既存資料を記載（保守担当・体制図）"
+          - "問い合わせ窓口: ※既存資料を記載"
+        expression: bullet
+        data: {}
+
+      - title: "障害時の連絡フロー・復旧目安"
+        summary: "障害発生時は定められたフローで連絡・対応し、復旧目安時間を設けている。"
+        content:
+          - "※既存資料を記載（連絡フロー図）"
+          - "復旧目安: ※既存資料を記載"
+        expression: flow
+        data:
+          type: steps
+          orientation: horizontal
+          steps:
+            - { label: "検知", desc: "※既存資料を記載" }
+            - { label: "連絡", desc: "※既存資料を記載" }
+            - { label: "復旧", desc: "※既存資料を記載" }
+
+  - chapter: "将来性"
+    slides:
+      - title: "今後のロードマップ"
+        summary: "2021年の構築から4年超が経過し、次のフェーズに向けた改善を計画している。"
+        content:
+          - "※既存資料を記載（今後の機能追加・移行計画）"
+        expression: bullet
+        data: {}
+
+      - title: "スケーラビリティ・技術的負債"
+        summary: "データ量増加への対応と、現行構成における技術的負債の解消方針を示す。"
+        content:
+          - "※既存資料を記載（データ量増加への対応方針）"
+          - "※既存資料を記載（技術的負債・解消計画）"
+        expression: bullet
+        data: {}
