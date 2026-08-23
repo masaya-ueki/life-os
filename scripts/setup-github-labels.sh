@@ -107,8 +107,11 @@ DEPRECATED_LABELS=(
   "system: etl"
   "system: terraform-aws"
   "system: terraform-snowflake"
-  # === 廃止済み領域（別リポジトリへ移管） ===
+  # === 廃止済み領域 ===
+  # certification: 別リポジトリへ移管（ADR-0014）
   "system: certification"
+  # presentation: Claude Design へ移行（ADR-0013）
+  "system: presentation"
 )
 
 #########################################
