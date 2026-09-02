@@ -20,9 +20,10 @@ Notion の **Sprint** データベースに新しい Sprint を1件作成する�
 
 ---
 
-## 参照するデータベース定義
+## 参照するデータベース定義・テンプレート
 
 - [`domains/task/docs/databases/sprint.md`](../../../domains/task/docs/databases/sprint.md) — 作成先データベース
+- [`domains/task/docs/template/sprint.md`](../../../domains/task/docs/template/sprint.md) — Sprint 本文（content）テンプレート。作成時はこのテンプレートをそのまま（空のまま）本文に設定する
 
 | データベース | Data Source URL |
 |---|---|
@@ -47,6 +48,7 @@ Notion の **Sprint** データベースに新しい Sprint を1件作成する�
 | `End Day` | date | **自動算出 → ユーザー確認**。`Start Day` の13日後（2週間固定） |
 | `Reflection notes` | text | 新規作成時は未設定（空） |
 | `Product Backlog` | relation | 新規作成時は未設定（空。PBI の紐付けは PBI 側の作成/更新で行う） |
+| 本文（content） | - | [`domains/task/docs/template/sprint.md`](../../../domains/task/docs/template/sprint.md) をそのまま（各セクション空のまま）設定する。ヒアリング不要 |
 
 ---
 
@@ -97,6 +99,7 @@ Sprint {Start Day: YYYY.MM.DD}-{End Day: DD}
 
 - `notion-create-pages` を用いて Sprint データソース（`collection://6d0c2a31-6647-47db-8447-fad0b3b8e83e`）配下にページを作成する。
 - properties: `Sprint Name`, `Start Day`, `End Day`（`Reflection notes` / `Product Backlog` は未設定のまま）。
+- content: [`domains/task/docs/template/sprint.md`](../../../domains/task/docs/template/sprint.md) をそのまま設定する（各セクションは空のまま。Sprint Goal は後で [scrum-notion-sprint-goal](../scrum-notion-sprint-goal/SKILL.md) が埋める）。
 
 ---
 
@@ -115,3 +118,4 @@ Sprint {Start Day: YYYY.MM.DD}-{End Day: DD}
 - 2週間固定でない特殊 Sprint（実データ上、運用初期の2025-09に短い/重複した Sprint の例あり）を作る場合の正式な運用ルールは未確定。現状は「直近運用（2025-10以降）の2週間固定パターンを既定とし、逸脱時は都度確認」という方針のみ。
 - `Reflection notes` の記入・`Product Backlog` relation の更新は本スキルの対象外（[scrum-notion-sprint-planning](../../agents/scrum-notion-sprint-planning.md) が担当）。
 - ホライズン（何 Sprint 先まで事前作成しておくか）の目安は未確定。本スキルは1件ずつの作成のみを扱う。
+- 本文テンプレート導入前に作成済みの既存 Sprint（本文テンプレートを持たない）への遡及適用は本スキルの対象外。[scrum-notion-sprint-goal](../scrum-notion-sprint-goal/SKILL.md) 側でテンプレート未適用時のフォールバックを扱う。
