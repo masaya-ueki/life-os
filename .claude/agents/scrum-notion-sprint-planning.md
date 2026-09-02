@@ -1,6 +1,6 @@
 ---
 name: scrum-notion-sprint-planning
-description: Sprint Planning セレモニー全体（対象Sprintの確定・Sprint Goal作成・Carryover PBIの繰り越し・新規/既存PBIの割り当て）を統括するオーケストレーター。scrum-notion-sprint-goal / scrum-notion-pbi スキルの入力ルールに従い、Notion書き込み前に必ずチャット内でプレビュー承認を得る。Use when Sprint Planningをしたいとき、次のSprintの計画を立てたいとき、Sprintを切り替えたいとき。Triggers on: Sprint Planning, スプリントプランニング, 次のSprint計画, Sprint切り替え, scrum-notion-sprint-planning.
+description: Sprint Planning セレモニー全体（対象 Sprint の確定・Sprint Goal作成・Carryover PBIの繰り越し・新規/既存PBIの割り当て）を統括するオーケストレーター。scrum-notion-sprint-goal / scrum-notion-pbi スキルの入力ルールに従い、Notion書き込み前に必ずチャット内でプレビュー承認を得る。Use when Sprint Planningをしたいとき、次のSprintの計画を立てたいとき、Sprintを切り替えたいとき。Triggers on: Sprint Planning, スプリントプランニング, 次のSprint計画, Sprint切り替え, scrum-notion-sprint-planning.
 tools: Read, Skill, Agent
 model: inherit
 ---
@@ -19,12 +19,12 @@ model: inherit
 - 対象 Sprint に入れる新規 PBI 作成・既存 PBI の割り当てを確定する。
 - 全体をチャット内のテキストでプレビューし、承認を得てから実行する。
 
-**振り返り（レトロスペクティブ）は本エージェントの対象外**。将来 Sprint 終了時のレトロスペクティブ機能として別途作る（本エージェントでは扱わない）。
+**振り返り（Retrospective）は本エージェントの対象外**。将来 Sprint 終了時の Retrospective 機能として別途作る（本エージェントでは扱わない）。
 
 ## パイプライン
 
 ```
-①対象Sprint確定 → ②Sprint Goal作成 → ③Carryover PBIの繰り越し → ④新規PBI作成/既存PBI割当 → ⑤全体プレビュー・承認 → ⑥実行
+①対象 Sprint 確定 → ②Sprint Goal作成 → ③Carryover PBIの繰り越し → ④新規PBI作成/既存PBI割当 → ⑤全体プレビュー・承認 → ⑥実行
 ```
 
 ## 参照する定義
@@ -98,4 +98,4 @@ model: inherit
 ## 未確定・今後の検討事項
 
 - Backlog に残っている既存 PBI（Sprint 未割当）の一覧提示方法（全件 or フィルタ）は実装時に確定する。
-- レトロスペクティブ（Sprint 終了時の振り返り）機能は将来別途作る。作成後、本エージェントのパイプラインに組み込むかは別途検討する。
+- Retrospective（Sprint 終了時の振り返り）機能は将来別途作る。作成後、本エージェントのパイプラインに組み込むかは別途検討する。

@@ -15,8 +15,9 @@ Notion の **Sprint** データベースに新しい Sprint を1件作成する�
 ## スコープ（現時点）
 
 - 対象は **Sprint の新規作成のみ**。
-- 既存 Sprint の編集（`Reflection notes` 記入、`Product Backlog` relation の付け替え等）は対象外。これらは Sprint Planning セレモニー全体を扱う [scrum-notion-sprint-planning](../../agents/scrum-notion-sprint-planning.md) エージェントが担当する。
+- 既存 Sprint の編集（`Product Backlog` relation の付け替え等）は対象外。これは Sprint Planning セレモニー全体を扱う [scrum-notion-sprint-planning](../../agents/scrum-notion-sprint-planning.md) エージェントが担当する。`Reflection notes` プロパティは本設計では使用しない（振り返りは Sprint 本文の `Retrospective` セクションで扱う想定。プロパティ自体の要否は将来見直す）。
 - 通常運用は **2週間固定・月曜開始〜日曜終了・前 Sprint と連続（隙間なし）**。実データ（2025-10〜2026-12、計31件）で確認済みの安定パターン。この前提から外れる特殊な Sprint を作りたい場合は、その旨を明示的にユーザーに確認してから進める。
+- Sprint のホライズン延長（新規 Sprint の事前作成）は人間が本スキルを都度実行し、**年1回1年分をまとめて作成する運用**とする。本スキル自体は1件ずつの作成のみを扱う。
 
 ---
 
@@ -116,6 +117,5 @@ Sprint {Start Day: YYYY.MM.DD}-{End Day: DD}
 ## 未確定・今後の検討事項
 
 - 2週間固定でない特殊 Sprint（実データ上、運用初期の2025-09に短い/重複した Sprint の例あり）を作る場合の正式な運用ルールは未確定。現状は「直近運用（2025-10以降）の2週間固定パターンを既定とし、逸脱時は都度確認」という方針のみ。
-- `Reflection notes` の記入・`Product Backlog` relation の更新は本スキルの対象外（[scrum-notion-sprint-planning](../../agents/scrum-notion-sprint-planning.md) が担当）。
-- ホライズン（何 Sprint 先まで事前作成しておくか）の目安は未確定。本スキルは1件ずつの作成のみを扱う。
+- `Product Backlog` relation の更新は本スキルの対象外（[scrum-notion-sprint-planning](../../agents/scrum-notion-sprint-planning.md) が担当）。
 - 本文テンプレート導入前に作成済みの既存 Sprint（本文テンプレートを持たない）への遡及適用は本スキルの対象外。[scrum-notion-sprint-goal](../scrum-notion-sprint-goal/SKILL.md) 側でテンプレート未適用時のフォールバックを扱う。

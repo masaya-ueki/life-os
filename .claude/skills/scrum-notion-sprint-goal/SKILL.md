@@ -16,7 +16,7 @@ description: 対象 Sprint の Sprint Goal をユーザーにヒアリングし�
 
 - 対象は **Sprint Goal の記載のみ**。
 - Sprint そのものの新規作成は対象外（[scrum-notion-sprint](../scrum-notion-sprint/SKILL.md) が担当）。Sprint は事前に先の日付まで作成済みの運用のため、本スキルは既存 Sprint に対して Sprint Goal を後から設定する用途を想定する。
-- 本文の「レトロスペクティブ」セクションの記載は対象外（Sprint 終了後の振り返りで別途扱う。本スキルでは触れない）。
+- 本文の「Retrospective」セクションの記載は対象外（Sprint 終了後の振り返りで別途扱う。本スキルでは触れない）。
 
 ---
 
@@ -72,7 +72,7 @@ description: 対象 Sprint の Sprint Goal をユーザーにヒアリングし�
 ## ワークフロー概要（設計）
 
 ```
-ステップ0: 対象Sprintを特定する
+ステップ0: 対象 Sprint を特定する
      ↓
 ステップ1: Sprint Goal をヒアリングする
      ↓
@@ -80,7 +80,7 @@ description: 対象 Sprint の Sprint Goal をユーザーにヒアリングし�
      ↓
 ステップ3: 整形後プレビューをユーザーに提示し、確認/修正を取る
      ↓
-ステップ4: 対象Sprintの本文の状態を確認する
+ステップ4: 対象 Sprint の本文の状態を確認する
      ↓
 ステップ5: 本文の「Sprint Goal」セクションに反映する
 ```
@@ -93,13 +93,13 @@ description: 対象 Sprint の Sprint Goal をユーザーにヒアリングし�
 
 - `notion-fetch` で対象 Sprint ページの本文を取得する。
 - **テンプレート適用済み**（`## Sprint Goal` 見出しが存在する）場合 → ステップ5でそのセクションのみを書き換える。
-- **テンプレート未適用**（本文が空、または `## Sprint Goal` 見出しが存在しない。本文テンプレート導入前に作成された既存 Sprint が該当しうる）場合 → ステップ5で [`domains/task/docs/template/sprint.md`](../../../domains/task/docs/template/sprint.md) の構造ごと反映する（「レトロスペクティブ」セクションは空のまま追加する）。
+- **テンプレート未適用**（本文が空、または `## Sprint Goal` 見出しが存在しない。本文テンプレート導入前に作成された既存 Sprint が該当しうる）場合 → ステップ5で [`domains/task/docs/template/sprint.md`](../../../domains/task/docs/template/sprint.md) の構造ごと反映する（「Retrospective」セクションは空のまま追加する）。
 
 ### ステップ5: 本文へ反映する
 
 - `notion-update-page` を使用する。
-- テンプレート適用済みの場合: `command: "update_content"` で `content_updates`（`old_str`/`new_str`）を使い、既存の「Sprint Goal」セクション（`## Sprint Goal` から次の見出し直前まで)の文字列をそのまま `old_str` とし、整形後の文章を含む同構造の文字列を `new_str` として置換する。
-- テンプレート未適用の場合: `command: "insert_content"`（`position: {"type": "start"}`）または `command: "replace_content"` で、テンプレート構造（`## Sprint Goal` + 整形後の文章 + `## レトロスペクティブ`）を本文に反映する。
+- テンプレート適用済みの場合: `command: "update_content"` で `content_updates`（`old_str`/`new_str`）を使い、既存の「Sprint Goal」セクション（`## Sprint Goal` から次の見出し直前まで）の文字列をそのまま `old_str` とし、整形後の文章を含む同構造の文字列を `new_str` として置換する。
+- テンプレート未適用の場合: `command: "insert_content"`（`position: {"type": "start"}`）または `command: "replace_content"` で、テンプレート構造（`## Sprint Goal` + 整形後の文章 + `## Retrospective`）を本文に反映する。
 - 反映後 `notion-fetch` で本文を再取得し、意図通りに反映されたことを確認する。
 
 ---
