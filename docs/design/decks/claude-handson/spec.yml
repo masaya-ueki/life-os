@@ -1,0 +1,848 @@
+# ==============================================================
+# Claude Design スライド指示書: Claude ハンズオン「AI駆動で、業務をやる。」
+# 使い方: このYAMLと design_system.source のファイル、materials/ を Claude Design に渡す
+# ==============================================================
+
+meta:
+  title: "AI駆動で、業務をやる。"
+  subtitle: "Claude ではじめる、自分の作業のAI化ハンズオン"
+  purpose: "参加者が「自分の作業をAIに任せる型」を持ち帰る。Skillを1つ作り、実行し、不満を書き戻して再実行するまでを一周体験させる"
+  audience: "社内メンバー（Claude Code 利用者。エンジニア以外も含む）"
+  tone: "落ち着いた・事実ベース・装飾過多にしない"
+  language: ja
+  aspect_ratio: "16:9"
+  slide_size: { w: 1920, h: 1080 }
+  page_count: 38
+  delivery: "画面投影"
+
+# --------------------------------------------------------------
+# デザインシステム（共通・全ページ適用）
+# --------------------------------------------------------------
+design_system:
+  source: "docs/design/design-system-notion-like.md"
+
+  # 図表3色ルール（割り付け時の判断メモ）
+  #   1色目 accent      = 今日の到達点・人がやること・注目ステップ
+  #   2色目 text_muted  = 比較対象・過去の姿
+  #   3色目 border      = 母数・背景・非注目
+
+  overrides: {}
+
+# --------------------------------------------------------------
+# 全体構成
+#
+# 時間配分（合計90分）:
+#   座学     33分 / p1-26（うちデモ 3分）
+#   実践     47分 / p27-36
+#   振り返り 10分 / p37-38
+#
+# 用語の方針:
+#   「loop駆動」は使わない。段階名は「ループ化」とする。
+#   業界呼称（Compounding Engineering / Loop Engineering）は p8 に注記で残し、
+#   life-os が正式名として使う「Loop Engineering」への橋渡しを1行入れる。
+#   部品名は「Subagent」に統一する（段階名「エージェント駆動」との用語衝突を避けるため）。
+#
+# 未確定:
+#   「※リポジトリ確定後に記載」はハンズオン用リポジトリ（Claude版）の再作成待ち。
+# --------------------------------------------------------------
+deck:
+  flow_pattern: "時系列"   # 研修の進行順（座学 → 実践 → 振り返り）
+  pages:
+    # --- オープニング（p1-5 / 約7分・うちデモ3分）---
+    - { no: 1,  template: T01_title,       note: "表紙" }
+    - { no: 2,  template: T14_emphasis,    note: "本日の目的（強調1回目/全2回）" }
+    - { no: 3,  template: T02_agenda,      note: "本日の流れ＋時間配分の内訳" }
+    - { no: 4,  template: T05_bullets,     note: "事前確認：動く状態か（挙手確認）" }
+    - { no: 5,  template: T09_process,     note: "デモ：議事録→タスク化。裏側は後で分解の予告" }
+
+    # --- L01 AI駆動の現在地（p6-10 / 約9分）---
+    - { no: 6,  template: T03_section,     note: "章扉：AI駆動の現在地" }
+    - { no: 7,  template: T09_process,     note: "AI活用の4段階（手動→補助→エージェント駆動→ループ化）" }
+    - { no: 8,  template: T18_cycle,       note: "★最重要 ループ化サイクル（5ステップ）" }
+    - { no: 9,  template: T13_before_after, note: "変わるのは人の役割" }
+    - { no: 10, template: T05_bullets,     note: "3回やったら、AI化。" }
+
+    # --- L02 Claudeを構成する部品（p11-21 / 約14分）---
+    - { no: 11, template: T03_section,     note: "章扉：Claudeを構成する部品" }
+    - { no: 12, template: T19_stack,       note: "共通方針＋6種のAI資産（積み上げ）" }
+    - { no: 13, template: T07_table,       note: "Skill① リファレンス型/アクション型" }
+    - { no: 14, template: T09_process,     note: "Skill② 今日作るのはこれ" }
+    - { no: 15, template: T07_table,       note: "Rule（.claude/rules/）" }
+    - { no: 16, template: T07_table,       note: "Subagent（+Agent teams 注記）" }
+    - { no: 17, template: T09_process,     note: "Hook" }
+    - { no: 18, template: T06_cards,       note: "MCP連携" }
+    - { no: 19, template: T06_cards,       note: "Plugin / Marketplace" }
+    - { no: 20, template: T07_table,       note: "トリガー早見表（記号を使わない対応表）" }
+    - { no: 21, template: T05_bullets,     note: "デモの裏側（デモ画面スクショを再掲して回収）" }
+
+    # --- L03 どこに置くか（p22-25 / 約7分）---
+    - { no: 22, template: T03_section,     note: "章扉：どこに置くか" }
+    - { no: 23, template: T05_bullets,     note: ".claude/ にAI資産を集約する" }
+    - { no: 24, template: T04_message,     note: "なぜリポジトリに置くか" }
+    - { no: 25, template: T05_bullets,     note: "歯止め（権限・コスト・機密）" }
+
+    # --- 座学まとめ（p26 / 約2分）---
+    - { no: 26, template: T15_summary,     note: "ここまでが全員共通＋47分後の成果物イメージ" }
+
+    # --- 実践（p27-36 / 47分）---
+    - { no: 27, template: T03_section,     note: "章扉：実践編" }
+    - { no: 28, template: T02_agenda,      note: "実践の進め方と、詰まったときの導線" }
+    - { no: 29, template: T05_bullets,     note: "実践0 リポジトリを開く（5分）" }
+    - { no: 30, template: T09_process,     note: "実践1 棚卸し（7分）" }
+    - { no: 31, template: T09_process,     note: "実践2 Skillを作る（12分）" }
+    - { no: 32, template: T05_bullets,     note: "実践3 動かす（8分）" }
+    - { no: 33, template: T14_emphasis,    note: "実践4 不満を1つ挙げる（5分）★強調2回目/全2回" }
+    - { no: 34, template: T04_message,     note: "実践5 Skillを直す（6分）" }
+    - { no: 35, template: T13_before_after, note: "実践6 もう一度動かす（4分）" }
+    - { no: 36, template: T18_cycle,       note: "実践まとめ：いま一周した（p8の図を再掲し実践番号を重ねる）" }
+
+    # --- クロージング（p37-38 / 10分）---
+    - { no: 37, template: T15_summary,     note: "今日、手元に残ったもの" }
+    - { no: 38, template: T16_next,        note: "明日やる1つと、次のリソース" }
+
+# --------------------------------------------------------------
+# ページテンプレート定義
+#
+# T01-T17 は共通テンプレート。T18/T19 は本案件で追加した。
+# --------------------------------------------------------------
+page_templates:
+
+  - id: T01_title
+    name: 表紙
+    use_when: "1枚目"
+    layout: |
+      +--------------------------------------+
+      |                                      |
+      |   [label] 案件種別                    |
+      |   TITLE（大）                         |
+      |   subtitle                            |
+      |   ───────────                        |
+      |   日付 / 作成者                        |
+      +--------------------------------------+
+    slots: [eyebrow_label, title, subtitle, date, author]
+    rules: ["左下寄せ or 中央。背景は bg。装飾図形は入れない"]
+
+  - id: T02_agenda
+    name: 目次
+    use_when: "全体像を共有するとき"
+    layout: |
+      Agenda
+      ──────────────────
+      01  項目            ─ 補足
+      02  項目            ─ 補足
+      03  項目            ─ 補足
+    slots: ["items[{no, label, note}]"]
+    rules: ["4〜6項目。番号は連番が意味を持つ場合のみ", "現在地を示す場合は accent で該当行のみ強調"]
+
+  - id: T03_section
+    name: 章扉
+    use_when: "話題が切り替わるとき"
+    layout: |
+      +--------------------------------------+
+      |            02                        |
+      |            章タイトル                 |
+      |            この章で分かること          |
+      +--------------------------------------+
+    slots: [section_no, section_title, section_lead]
+    rules: ["背景 bg_subtle。文字は3行以内"]
+
+  - id: T04_message
+    name: メッセージ＋本文（基本形）
+    use_when: "説明・主張を1つ伝えるとき"
+    layout: |
+      page_title
+      ──────────────────
+      ▍key_message（1〜2行）
+
+      ・根拠1
+      ・根拠2
+      ・根拠3
+
+      caption / 出典
+    slots: [page_title, key_message, "points[]", caption]
+    rules: ["根拠は3点まで", "key_message は callout で表現", "本文は1文40字以内"]
+
+  - id: T05_bullets
+    name: 要点リスト
+    use_when: "並列の情報を列挙するとき"
+    layout: |
+      page_title
+      ──────────────────
+      01 見出し  本文…
+      02 見出し  本文…
+      03 見出し  本文…
+    slots: [page_title, "items[{label, body}]"]
+    rules: ["3〜5項目。各項目は見出し＋1〜2行", "順序に意味がなければ番号を付けない"]
+
+  - id: T06_cards
+    name: 並列カード（3カラム）
+    use_when: "同列の選択肢・要素を比較なしで並べるとき"
+    layout: |
+      page_title
+      ──────────────────
+      [ card ]  [ card ]  [ card ]
+       label     label     label
+       body      body      body
+    slots: [page_title, "cards[{label, title, body}]"]
+    rules: ["2〜4枚。カード内テキストは同じ粒度に揃える", "強調したい1枚のみ accent_soft、他は bg_subtle"]
+
+  - id: T07_table
+    name: 比較表
+    use_when: "複数案を評価軸で比べるとき"
+    layout: |
+      page_title
+      ──────────────────
+      |      | 案A | 案B | 案C |
+      | 軸1  |  ○  |  △  |  ×  |
+      | 軸2  | ... | ... | ... |
+      ──────────────────
+      ▍結論（どれを採るか＋理由）
+    slots: [page_title, "columns[]", "rows[{axis, values[]}]", conclusion]
+    rules:
+      - "評価記号は ○ △ × の3段階。色は chart_palette 3色に対応させる"
+      - "推奨案の列のみ accent_soft で面塗り"
+      - "横罫線のみ。表の下に必ず結論を置く"
+      - "本案件の p20 は評価表ではなく対応表のため、評価記号と推奨列の面塗りは適用しない"
+
+  - id: T08_matrix
+    name: 2軸マトリクス
+    use_when: "ポジショニング・優先度を示すとき"
+    layout: |
+      page_title
+      ──────────────────
+          高 |  ②  |  ①  |
+             |-----+-----|
+          低 |  ④  |  ③  |
+              低       高
+    slots: [page_title, x_axis, y_axis, "quadrants[{label, items[]}]", takeaway]
+    rules: ["注目象限のみ accent。他はグレー", "プロットは最大8点"]
+
+  - id: T09_process
+    name: プロセス / ステップ
+    use_when: "順序や手順を示すとき（順序に意味がある場合のみ）"
+    layout: |
+      page_title
+      ──────────────────
+      ①──────▶②──────▶③──────▶④
+      label    label    label    label
+      body     body     body     body
+    slots: [page_title, "steps[{no, label, body, owner, due}]"]
+    rules: ["3〜5ステップ。矢印は border 色の細線", "現在地/次アクションのみ accent"]
+
+  - id: T10_chart
+    name: グラフ＋示唆
+    use_when: "数値で語るとき"
+    layout: |
+      page_title
+      ──────────────────
+      [ graph            ]  ▍示唆
+                            ・読み取り1
+                            ・読み取り2
+      caption（出典・期間）
+    slots: [page_title, "chart{type, x, series[]}", insight, "points[]", caption]
+    rules:
+      - "グラフは1ページ1つ。系列は3つまで（chart_palette準拠）"
+      - "凡例より直接ラベル。グリッド線は最小限、枠線なし"
+      - "注目させたい系列のみ accent、他は grey/light"
+      - "出典と期間を caption に必ず記載"
+
+  - id: T11_kpi
+    name: 数値ハイライト
+    use_when: "インパクトのある数字を見せるとき"
+    layout: |
+      page_title
+      ──────────────────
+       1,240      ▲12%      3.5h
+       label      label     label
+      ──────────────────
+      ▍この数字が意味すること
+    slots: [page_title, "metrics[{value, unit, label, delta}]"]
+    rules: ["数値は3つまで", "増減はプラス=accent / マイナス=text_muted（赤緑は使わない）"]
+
+  - id: T12_timeline
+    name: タイムライン / ロードマップ
+    use_when: "期間つきの計画を示すとき"
+    layout: |
+      page_title
+      ──────────────────
+        Q1      Q2      Q3      Q4
+      ├──────┼──────┼──────┼──────┤
+      [ bar        ]
+              [ bar        ]
+    slots: [page_title, "periods[]", "tracks[{name, bars[{from, to, label}]}]"]
+    rules: ["トラックは4本まで", "バーは accent / grey / light の3色で塗り分け"]
+
+  - id: T13_before_after
+    name: Before / After
+    use_when: "変化・改善を示すとき"
+    layout: |
+      page_title
+      ──────────────────
+      Before            →     After
+      ・課題                  ・解決後
+      ・課題                  ・解決後
+      ──────────────────
+      ▍変化のポイント
+    slots: [page_title, "before[]", "after[]", takeaway]
+    rules: ["Before は grey 系、After のみ accent 系", "項目数は左右で揃える"]
+
+  - id: T14_emphasis
+    name: 一言強調
+    use_when: "話の転換点で一度だけ立ち止まらせたいとき"
+    layout: |
+      +--------------------------------------+
+      |     「強調したい一文」                 |
+      |      ─ 補足                          |
+      +--------------------------------------+
+    slots: [statement, sub]
+    rules: ["デッキ全体で1〜2回まで。背景 bg_subtle、他要素なし", "本案件では p2 と p33 の2回のみ"]
+
+  - id: T15_summary
+    name: サマリ / まとめ
+    use_when: "2枚目（結論先出し）または最終章"
+    layout: |
+      page_title
+      ──────────────────
+      ▍結論
+
+      01 ポイント ─ 一行説明
+      02 ポイント ─ 一行説明
+      03 ポイント ─ 一行説明
+    slots: [page_title, conclusion, "points[{label, body}]"]
+    rules: ["ポイントは3つ。以降のページ見出しと文言を一致させる"]
+
+  - id: T16_next
+    name: ネクストアクション
+    use_when: "最終ページ"
+    layout: |
+      page_title
+      ──────────────────
+      | アクション | 担当 | 期限 | 決めたいこと |
+      |    …      |  …  |  …  |      …       |
+      ──────────────────
+      ▍本日決めたいこと
+    slots: [page_title, "actions[{action, owner, due, decision}]", ask]
+    rules: ["3〜5行", "依頼事項（ask）を必ず明記"]
+
+  - id: T17_appendix
+    name: Appendix
+    use_when: "補足データ"
+    layout: |
+      Appendix / label
+      ──────────────────
+      （詳細データ・前提条件）
+    slots: [label, body]
+    rules: ["本編と同じデザイン。情報密度は上げてよいが色数は守る"]
+
+  # --- 以下は本案件で追加したテンプレート ---
+
+  - id: T18_cycle
+    name: サイクル（循環）
+    use_when: "終わりが始まりに戻る反復を示すとき。T09 の直線フローでは「①に戻る」が表現できない"
+    layout: |
+      page_title
+      ──────────────────
+              ┌──▶ ① label ──┐
+              │              ▼
+          ⑤ label        ② label
+              ▲              │
+              │              ▼
+          ④ label ◀──── ③ label
+      ──────────────────
+      ▍key_message
+    slots: [page_title, "steps[{no, label, body}]", highlight_step, key_message]
+    rules:
+      - "4〜5ステップ。円環に配置し、最後から最初へ戻る矢印を必ず描く"
+      - "highlight_step に指定した1ステップのみ accent。他は text_muted、矢印は border"
+      - "人がやる工程を highlight_step にする"
+
+  - id: T19_stack
+    name: 積み上げ層
+    use_when: "下の層が上の層を支える依存関係を示すとき。並列カード（T06）では上下関係が消える"
+    layout: |
+      page_title
+      ──────────────────
+              [   最上層   ]
+            [    第2層      ]
+          [     第3層        ]
+        [       土台          ]
+      ──────────────────
+      ▍key_message
+    slots: [page_title, "layers[{label, body}]", key_message]
+    rules:
+      - "3〜4層。先頭が土台（最下段）、末尾が最上段"
+      - "下ほど幅を広く取る。土台のみ accent_soft、他は bg_subtle"
+      - "層の中に要素名を並べてよいが、層あたり2要素まで"
+
+# --------------------------------------------------------------
+# 全ページ共通の制約
+# --------------------------------------------------------------
+constraints:
+  ng_source: "docs/design/design-system-notion-like.md#7-dos-and-dontsガードレール"
+
+  checklist:
+    - "各ページのキーメッセージだけを読んで筋が通るか"
+    - "使用色が chart_palette の3色に収まっているか"
+    - "数値に出典と期間があるか"
+    - "余白がマージン規定を満たしているか"
+    - "最終ページに担当・期限・依頼事項があるか"
+
+  # 本案件固有のチェック
+  deck_specific:
+    - "「loop駆動」「複利化」が残っていないか（段階名は「ループ化」に統一）"
+    - "部品名が「Agent」になっていないか（「Subagent」に統一）"
+    - "「Instruction」が残っていないか（「Rule」に統一）"
+    - "GitHub Copilot 前提の記述が残っていないか（対象は Claude のみ）"
+    - "p8 と p36 のサイクル図が同じ形で描かれているか（p36 は p8 の再掲）"
+    - "p5 のデモ画面が p21 で再掲されているか"
+
+# --------------------------------------------------------------
+# 素材
+# --------------------------------------------------------------
+materials:
+  - path: "materials/ハンズオン_生成AI活用推進.pptx"
+    kind: "document"
+    used_by: []
+    note: "旧版（GitHub Copilot 前提・全30枚）。本指示書の元ネタ。デザインは踏襲せず、内容の参照のみに使う"
+  # TODO: p5 のデモ画面スクリーンショットを撮ったら materials/demo-*.png として追加し、
+  #       used_by: [5, 21] で参照する（p21 の回収に必須）
+
+# --------------------------------------------------------------
+# 内容
+# --------------------------------------------------------------
+content:
+  raw_input: |
+    旧版 pptx（materials/ハンズオン_生成AI活用推進.pptx・全30枚・GitHub Copilot 前提）を
+    起点に、対象を Claude のみへ変更し、別途実施したレビュー指摘を反映して再構成したもの。
+
+    主な変更:
+    - 対象ツールを Claude（Claude Code）のみに変更。Copilot 前提の記述と
+      Appendix「Claude Code 対応表」を全廃
+    - 合計90分（座学33分 / 実践47分 / 振り返り10分）に再配分
+    - 段階名「loop駆動」を廃止し「ループ化」に統一。業界呼称は注記で残す
+    - 部品名 Agent → Subagent（段階名との用語衝突を解消）
+    - Instruction → Rule（.claude/rules/）に統一
+    - 部品に MCP / Plugin を追加（旧版は4点セットのみ）
+    - ループ化サイクル（5ステップ）を独立ページに昇格
+    - 事前確認 / トリガー早見表 / 歯止め / 成果物イメージ / クロージングを新設
+    - 実践を「作る→動かす→不満→修正→再実行」の2周構成に再設計
+
+    未確定: ハンズオン用リポジトリ（Claude版）が再作成中のため、
+    「※リポジトリ確定後に記載」の箇所は実物と揃えて後日埋める。
+
+  pages:
+    - no: 1
+      template: T01_title
+      values:
+        eyebrow_label: "AI-DRIVEN WORK / Hands-on"
+        title: "AI駆動で、業務をやる。"
+        subtitle: "「開発」を超えて、すべての業務をAI駆動に。Skill / Rule / Subagent / Hook / MCP / Plugin ハンズオン"
+        date: "2026-06-23"
+        author: "※登壇者名を記載"
+
+    - no: 2
+      template: T14_emphasis
+      values:
+        statement: "「自分の作業をAIに任せる型」を、持ち帰る"
+        sub: "作って終わりではなく、出力への不満をSkillに書き戻すところまで一周する。持ち帰って自分の仕事で回し続けることが本番"
+
+    - no: 3
+      template: T02_agenda
+      values:
+        items:
+          - { no: "01", label: "座学（33分）", note: "AI駆動の現在地 / Claudeを構成する部品 / どこに置くか" }
+          - { no: "02", label: "実践 前半（32分）", note: "棚卸し → Skill作成 → 実行" }
+          - { no: "03", label: "実践 後半（15分）", note: "不満を挙げる → Skill修正 → 再実行" }
+          - { no: "04", label: "振り返り（10分）", note: "成果物の確認 / 明日やる1つ / 次のリソース" }
+        note: "実践は「作って終わり」にしない。修正して再実行するところまでを47分に含む"
+
+    - no: 4
+      template: T05_bullets
+      values:
+        page_title: "はじめる前に — 動く状態か確認"
+        key_message: "ここで詰まると実践47分が丸ごと溶ける。先に全員の環境を揃える"
+        items:
+          - { label: "Claude Code", body: "インストール済みで、起動して認証が通る" }
+          - { label: "リポジトリ", body: "※リポジトリ確定後に記載（clone / fork 済みであること）" }
+          - { label: "起動確認", body: "リポジトリのルートで `claude` が起動し、対話できる" }
+          - { label: "動いていない方", body: "この時点で挙手 — 実践が始まる前に解消します" }
+
+    - no: 5
+      template: T09_process
+      values:
+        page_title: "【デモ】議事録からタスク化まで、全自動"
+        key_message: "Claudeに任せるとはこういうこと。人は「投げる」と「確認する」だけ"
+        steps:
+          - { no: 1, label: "投げる", body: "Teams から書き出したトランスクリプトを、そのまま Claude に渡す" }
+          - { no: 2, label: "議事録化", body: "決定事項・議論・宿題を、決められたフォーマットに整理する" }
+          - { no: 3, label: "タスク化", body: "宿題を GitHub Projects のタスクとして MCP 経由で起票する" }
+          - { no: 4, label: "確認する", body: "人の仕事は、できあがったものを見て過不足を指摘することだけ" }
+        caption: "この裏側は6つの部品でできています。座学の後半（p21）で分解します"
+
+    - no: 6
+      template: T03_section
+      values:
+        section_no: "L01"
+        section_title: "AI駆動の現在地"
+        section_lead: "「AIにコードを書かせる」段階は終わり、「AIに仕事を任せて、育てる」段階へ"
+
+    - no: 7
+      template: T09_process
+      values:
+        page_title: "AI活用の4段階"
+        key_message: "人の関与が「やる」から「設計する」に変わる"
+        steps:
+          - { no: 1, label: "手動", body: "自分で書く。AIは介在しない" }
+          - { no: 2, label: "補助", body: "補完・チャットで聞く。人が主役、AIは助手" }
+          - { no: 3, label: "エージェント駆動", body: "タスクごと任せて、人はレビューする" }
+          - { no: 4, label: "ループ化", body: "スキルを書いて回す。やるほど次が楽になる" }
+        highlight_step: 4
+        caption: "本日のゴールは、エージェント駆動を身につけ、ループ化の入り口に立つこと"
+
+    - no: 8
+      template: T18_cycle
+      values:
+        page_title: "ループ化サイクル — AIに任せる作業の育て方"
+        key_message: "AIの出力に不満が出たら、直すのはプロンプトではなく“スキル”"
+        steps:
+          - { no: 1, label: "見つける", body: "自分が繰り返しやっている作業を見つける" }
+          - { no: 2, label: "書き出す", body: "手順を Skill / Subagent として書き出す" }
+          - { no: 3, label: "実行させる", body: "AI に実行させ、成果物を生成させる" }
+          - { no: 4, label: "不満を見つける", body: "出力を見て「もっとこうしてほしい」を1つ見つける" }
+          - { no: 5, label: "直す", body: "プロンプトではなく Skill を直し、①へ戻る" }
+        highlight_step: 4
+        caption: "業界では Compounding Engineering / Loop Engineering と呼ばれる。life-os リポジトリでは「Loop Engineering」と呼んでいて、その中身がこのループ化サイクル"
+
+    - no: 9
+      template: T13_before_after
+      values:
+        page_title: "変わるのは、人の役割"
+        before:
+          - "自分で手順を実行する"
+          - "「どう書くか」を考える"
+          - "対象は自分の担当領域"
+        after:
+          - "任せる形を設計し、結果を確かめる"
+          - "「何を任せ、どう確かめるか」を考える"
+          - "対象は調査・資料作成・運用まで全業務"
+        before_label: "これまで — 実装者"
+        after_label: "これから — 設計者・レビュアー"
+        takeaway: "差がつくのは「何を任せるか」の設計と、そのための資産づくり"
+
+    - no: 10
+      template: T05_bullets
+      values:
+        page_title: "3回やったら、AI化。"
+        key_message: "「面倒・毎回ググる・コピペ」を感じた瞬間が、AI化のシグナル"
+        items:
+          - { label: "繰り返しに気付く", body: "「手動で繰り返している作業はないか？」を常に問う" }
+          - { label: "手順が固まっている", body: "3回以上やった作業は、既に仕組み化できるだけ手順が固まっている" }
+          - { label: "効果が大きい候補", body: "「面倒・毎回ググる・コピペ」が多い作業ほど、AI化の効果が大きい" }
+          - { label: "シグナルを見逃さない", body: "「面倒」を感じた瞬間こそ、AI化のシグナル" }
+
+    - no: 11
+      template: T03_section
+      values:
+        section_no: "L02"
+        section_title: "Claude を構成する部品"
+        section_lead: "CLAUDE.md を土台に、6つの部品を積み上げるほど任せられる範囲が広がる"
+
+    - no: 12
+      template: T19_stack
+      values:
+        page_title: "1つの共通方針 + 6種のAI資産"
+        key_message: "本日のハンズオンで実際に作るのは Skill。残りは「この先こう広がる」地図として見てください"
+        layers:
+          - { label: "共通方針: CLAUDE.md", body: "全セッションで常時ロードされる、リポジトリ全体の前提と方針" }
+          - { label: "手順と規約: Skill / Rule", body: "やり方と守ることを渡す" }
+          - { label: "分業と歯止め: Subagent / Hook", body: "仕事を分け、実行に歯止めをかける" }
+          - { label: "接続と配布: MCP / Plugin", body: "外部ツールにつなぎ、作った資産を配る" }
+
+    - no: 13
+      template: T07_table
+      values:
+        page_title: "Skill ① — 2種類ある"
+        key_message: "Skill には「知識を渡す型」と「呼び出して実行する型」の2種類がある"
+        columns: ["リファレンス型", "アクション型"]
+        rows:
+          - { axis: "渡すもの", values: ["判断に使う知識", "手順そのもの"] }
+          - { axis: "使いどころ", values: ["判断のときに参照してほしい", "「この作業をやって」と言える"] }
+          - { axis: "例", values: ["API規約・スタイルガイド・命名規則", "議事録作成・リリース手順"] }
+        conclusion: "どちらもコンテキストに載るため、AIは「知っている」状態で作業できる。Subagent はコンテキストを分離して要約だけ返す点が違う"
+
+    - no: 14
+      template: T09_process
+      values:
+        page_title: "Skill ② — 今日作るのはこれ"
+        key_message: "SKILL.md に「いつ使うか」「手順」「守ること」を書くだけで作れる"
+        steps:
+          - { no: 1, label: "いつ使うか を書く", body: "どんな依頼のときにこの Skill が呼ばれるべきかを書く" }
+          - { no: 2, label: "手順を書く", body: "自分が普段やっている順番を、そのまま箇条書きにする" }
+          - { no: 3, label: "守ることを書く", body: "禁止事項・前提・出力フォーマットなど、外してほしくない条件を書く" }
+          - { no: 4, label: "呼び出して試す", body: "実際に呼び出し、出力を見て手順を書き足していく" }
+        caption: "※リポジトリ確定後に記載（同梱するサンプル Skill と、実践で作る Skill の題材例）"
+
+    - no: 15
+      template: T07_table
+      values:
+        page_title: "Rule — `.claude/rules/`"
+        key_message: "CLAUDE.md との違いは、ロードのされ方だけ"
+        columns: ["CLAUDE.md", ".claude/rules/"]
+        rows:
+          - { axis: "いつロードされるか", values: ["全セッションで常時", "paths に一致するファイルを触ったときだけ"] }
+          - { axis: "何を書くか", values: ["リポジトリ全体の前提・方針", "特定のファイル種別・領域にだけ効かせたい規約"] }
+        conclusion: "経験則: CLAUDE.md は200行以下に保つ。超えたら rules/ か Skill に逃がす"
+
+    - no: 16
+      template: T07_table
+      values:
+        page_title: "Subagent — 役割別の分身"
+        key_message: "独自のコンテキストを持つ独立ワーカーに分業させ、本体の会話を汚さない"
+        columns: ["Skill", "Subagent"]
+        rows:
+          - { axis: "それは何か", values: ["再利用可能な指示・知識・ワークフロー", "独自コンテキストを持つ独立ワーカー"] }
+          - { axis: "主な利点", values: ["コンテキスト全体でコンテンツを共有", "コンテキスト分離。サマリーのみ返る"] }
+          - { axis: "最適な用途", values: ["リファレンス、呼び出し可能なワークフロー", "多ファイル読み込み、並列作業、専門ワーカー"] }
+        conclusion: "発展形として Agent teams（独立セッション同士が直接メッセージし合い、共有タスクリストで自己調整する）。※実験的機能・デフォルト無効"
+
+    - no: 17
+      template: T09_process
+      values:
+        page_title: "Hook — 実行に歯止めをかける"
+        key_message: "「毎回聞かれずに、必ず実行してほしい」ことを Hook にする。人が見ていなくても効く唯一の部品"
+        steps:
+          - { no: 1, label: "実行前", body: "危険な操作をブロックする、実行内容を検査する" }
+          - { no: 2, label: "実行中", body: "監査ログを残す、外部システムへ通知する" }
+          - { no: 3, label: "実行後", body: "フォーマッタやテストを自動で走らせる" }
+          - { no: 4, label: "セッション終了時", body: "結果をまとめる、後片付けをする" }
+        caption: "実行できるもの: シェルコマンド / HTTPリクエスト / LLMプロンプト / subagent"
+
+    - no: 18
+      template: T06_cards
+      values:
+        page_title: "MCP — 外部ツールに直接つなぐ"
+        key_message: "見えないツールの情報をコピペし続けるのをやめ、AIを直接つなぐ"
+        cards:
+          - { label: "GitHub", title: "Issue / PR / Projects", body: "冒頭デモの「GitHub Projects へタスク起票」は、これで実現している" }
+          - { label: "Notion", title: "ページ・DBの検索と更新", body: "議事録や仕様書を、Claude から直接読み書きできる" }
+          - { label: "その他", title: "社内ツール・SaaS", body: "MCP サーバーが提供されているツールに接続できる" }
+        caption: "※Teams のトランスクリプトはファイルとして渡している（公式 MCP が使えるとは限らないため）"
+
+    - no: 19
+      template: T06_cards
+      values:
+        page_title: "Plugin — 束ねて、配る"
+        key_message: "plugin が「束ねる」、marketplace が「配る」"
+        cards:
+          - { label: "Plugin", title: "束ねる", body: "Skill / Rule / Subagent / Hook / MCP設定 を1つにまとめる。導入する側は1コマンドで環境が揃う" }
+          - { label: "Marketplace", title: "配る", body: "GitHub リポジトリをそのまま marketplace にできる。自作 plugin を公開して、他の人に使ってもらえる" }
+        caption: "「別のリポジトリでも同じ環境が要る」と思ったら plugin にするタイミング"
+
+    - no: 20
+      template: T07_table
+      values:
+        page_title: "どれから作る？ — トリガー早見表"
+        key_message: "「3回やったらAI化」の次の問い。この状況になったら、この部品を作る"
+        columns: ["これを作る"]
+        rows:
+          - { axis: "規約やコマンドを Claude が2回間違える", values: ["CLAUDE.md に追記"] }
+          - { axis: "同じ手順書を3回目に貼っている", values: ["Skill にする"] }
+          - { axis: "特定のファイル種別だけのルールがある", values: [".claude/rules/"] }
+          - { axis: "毎回聞かれずに実行してほしい", values: ["Hook"] }
+          - { axis: "見えないツールの情報をコピペし続けている", values: ["MCP"] }
+          - { axis: "脇道の出力で会話が埋まる", values: ["Subagent"] }
+          - { axis: "別のリポジトリでも同じ環境が要る", values: ["Plugin"] }
+        conclusion: "本日のハンズオンは、2行目「同じ手順書を3回目に貼っている」から始める"
+        note: "評価表ではなく対応表。○△×の評価記号と推奨列の面塗りは使わない。2行目のみ accent で強調する"
+
+    - no: 21
+      template: T05_bullets
+      values:
+        page_title: "デモの裏側 — 6つの部品でできていた"
+        key_message: "冒頭のデモは、いま見た部品の組み合わせでできている。特別なことは何もしていない"
+        items:
+          - { label: "議事録のフォーマット", body: "Skill（アクション型）" }
+          - { label: "宿題の切り出しと分解", body: "Subagent" }
+          - { label: "GitHub Projects への起票", body: "MCP" }
+          - { label: "起票前の確認・機密チェック", body: "Hook / CLAUDE.md" }
+        note: "p5 のデモ画面スクリーンショットを再掲して、参加者の記憶を戻してから分解する"
+
+    - no: 22
+      template: T03_section
+      values:
+        section_no: "L03"
+        section_title: "どこに置くか"
+        section_lead: "リポジトリ自体を、AI駆動の作業場にする"
+
+    - no: 23
+      template: T05_bullets
+      values:
+        page_title: "`.claude/` にAI資産を集約する"
+        key_message: "前提・手順・役割・安全装置を `.claude/` 配下に集約する"
+        items:
+          - { label: "CLAUDE.md", body: "リポジトリ全体の前提・方針" }
+          - { label: "rules/*.md", body: "条件付きで効かせたい規約" }
+          - { label: "skills/*/SKILL.md", body: "再利用する作業手順" }
+          - { label: "agents/*.md", body: "役割特化の Subagent" }
+          - { label: "hooks/*.sh + settings.json", body: "実行タイミングごとの自動処理" }
+
+    - no: 24
+      template: T04_message
+      values:
+        page_title: "なぜ、リポジトリに置くのか"
+        key_message: "個人の工夫で終わらせず、チームの資産として共有・改善できるようにするため"
+        points:
+          - "チャット履歴に書いた工夫は、他人に渡らず、自分も次回は忘れている"
+          - "リポジトリに置けば差分でレビューでき、他の人が改善を積める。なぜそうしたかも Pull Request に残る"
+          - "リポジトリを持たない業務でも考え方は同じ — 個人のフォルダに置いても、資産として貯まる"
+
+    - no: 25
+      template: T05_bullets
+      values:
+        page_title: "歯止め — 権限・コスト・機密"
+        key_message: "任せる範囲を広げるほど、止め方を先に設計しておく必要がある"
+        items:
+          - { label: "権限", body: "実行を自動許可する範囲を決める。危険操作は必ず確認を挟む" }
+          - { label: "コスト", body: "自動で回すものには、反復回数の上限と予算の上限を先に置く" }
+          - { label: "機密", body: "顧客情報・認証情報を渡さない。Hook で検出してブロックする" }
+          - { label: "最後の歯止め", body: "Pull Request — main に入る前に、人が必ず1回見る" }
+        caption: "歯止めのない自律化はしない。life-os の「ハードストップ」の考え方と同じ"
+
+    - no: 26
+      template: T15_summary
+      values:
+        page_title: "ここまでが、全員共通"
+        conclusion: "思想は共有できた。ここから手を動かして、47分後にはこれが手元に残る"
+        points:
+          - { label: "3回やったらAI化", body: "「面倒」を感じた瞬間がシグナル" }
+          - { label: "ループ化サイクル", body: "不満が出たら、直すのはプロンプトではなく Skill" }
+          - { label: "6つの部品と早見表", body: "自分がどの行にいるかで、次に作るものが決まる" }
+        caption: "47分後に手元に残るもの: 自分の作業を実行できる Skill 1つ／それを1回改善した履歴／次に作る部品の当たり"
+
+    - no: 27
+      template: T03_section
+      values:
+        section_no: "PRACTICE"
+        section_title: "実践編 — Skillを作って、育てる。"
+        section_lead: "作って動かすだけで終わらせない。不満を見つけて直すまでが今日の成果物"
+
+    - no: 28
+      template: T02_agenda
+      values:
+        items:
+          - { no: "0", label: "リポジトリを開く（5分）", note: "Claude Code を起動し、同梱資産を確認する" }
+          - { no: "1", label: "棚卸し（7分）", note: "3回やった作業を書き出し、1つ選ぶ" }
+          - { no: "2", label: "Skillを作る（12分）", note: "対話しながら SKILL.md を書く" }
+          - { no: "3", label: "動かす（8分）", note: "呼び出して実行し、出力を見る" }
+          - { no: "4-6", label: "不満 → 修正 → 再実行（15分）", note: "ここまで到達することを最優先にする" }
+        note: "詰まったら挙手 — ※リポジトリ確定後に記載（TA体制・質問チャネル）。時間内に終わらない場合は、Skill の完成度を下げてでも「修正して再実行」まで到達することを優先する"
+
+    - no: 29
+      template: T05_bullets
+      values:
+        page_title: "実践0 — リポジトリを開く"
+        key_message: "同梱の資産を確認して、今日の作業場を立ち上げる"
+        items:
+          - { label: "リポジトリを取得", body: "※リポジトリ確定後に記載（URL・clone 手順）" }
+          - { label: "同梱物を確認", body: "※リポジトリ確定後に記載（Skill / Rule / Subagent / Hook の一覧）" }
+          - { label: "構成を目で見る", body: "`.claude/` を開いて、座学で見た構成が実物としてあることを確認する" }
+
+    - no: 30
+      template: T09_process
+      values:
+        page_title: "実践1 — 棚卸し：AI化する作業を1つ選ぶ"
+        key_message: "ループの燃料は自分の繰り返し作業。まず書き出して、1つに絞る"
+        steps:
+          - { no: 1, label: "書き出す", body: "直近で3回以上やった作業を、思い出せるだけ書き出す（コードに限らない）" }
+          - { no: 2, label: "言語化する", body: "各作業に「手順 / 入力 / 出力 / つまずき」を一言添える" }
+          - { no: 3, label: "絞る", body: "「面倒・毎回ググる・コピペ」が多い作業ほど効果が大きい" }
+          - { no: 4, label: "1つ選ぶ", body: "迷ったら「今日の自分が助かるもの」を選ぶ" }
+
+    - no: 31
+      template: T09_process
+      values:
+        page_title: "実践2 — Skillを作る"
+        key_message: "Claude に質問させながら、自分の手順を SKILL.md に書き出す"
+        steps:
+          - { no: 1, label: "説明する", body: "選んだ作業を、口頭のつもりで Claude に説明する" }
+          - { no: 2, label: "質問させる", body: "手順・前提・禁止事項・出力フォーマットを Claude に聞き出させる" }
+          - { no: 3, label: "書き出させる", body: "SKILL.md として書き出させ、.claude/skills/ に配置する" }
+          - { no: 4, label: "自分で読む", body: "暗黙知の抜けと、勝手に足された仕様がないかを確認する" }
+        caption: "任せきりにしない。レビュー観点: 自分の手順が反映されているか／暗黙知が抜けていないか／余計な仕様が入っていないか"
+
+    - no: 32
+      template: T05_bullets
+      values:
+        page_title: "実践3 — 動かす"
+        key_message: "作った Skill を実際に呼び出して、狙った作業が完遂できるか確かめる"
+        items:
+          - { label: "呼び出す", body: "Skill を名前で呼び出す、または自然文で依頼して発火させる" }
+          - { label: "出力を見る", body: "「使える」レベルか、あと少しか、まだ遠いかを見る" }
+          - { label: "メモする", body: "うまくいった点・崩れた点を書き留める — 次のステップの入力になる" }
+        caption: "一発で完璧には動かない。それが正常です"
+
+    - no: 33
+      template: T14_emphasis
+      values:
+        statement: "AIの出力に不満が出たら、直すのはプロンプトではなく“スキル”"
+        sub: "実践4（5分）— 不満は1つに絞り、「現象」「期待」「対応案」の3行で書く。ここで書いたものが、次の Skill 修正の指示書になる"
+
+    - no: 34
+      template: T04_message
+      values:
+        page_title: "実践5 — Skillを直す"
+        key_message: "プロンプトを工夫するのではなく、SKILL.md に書き戻す"
+        points:
+          - "挙げた不満を Claude に渡し、SKILL.md のどこを直すべきか相談する"
+          - "「毎回言い忘れる前提」は手順に、「守ってほしい制約」は禁止事項として書き足す"
+          - "その場のプロンプトで直すと、次回また同じことを言う羽目になる。書き戻した瞬間に、その改善は資産になる"
+
+    - no: 35
+      template: T13_before_after
+      values:
+        page_title: "実践6 — もう一度動かす"
+        before:
+          - "手順は動くが、聞き漏らしがある"
+          - "出力フォーマットが揃わない"
+        after:
+          - "書き足した前提を、聞かなくても踏まえている"
+          - "フォーマットが安定する"
+        before_label: "1周目の出力"
+        after_label: "2周目の出力"
+        takeaway: "改善されていれば、あなたはもうループ化サイクルを一周している。されていなければ直す場所が違った — それも学び。もう一度④に戻る"
+
+    - no: 36
+      template: T18_cycle
+      values:
+        page_title: "実践まとめ — いま、一周した"
+        key_message: "座学で見た図を、いま自分の手で一周した。この Skill は、明日もう一度使えば、また一段良くなる"
+        steps:
+          - { no: 1, label: "見つける", body: "実践1でやったこと" }
+          - { no: 2, label: "書き出す", body: "実践2でやったこと" }
+          - { no: 3, label: "実行させる", body: "実践3でやったこと" }
+          - { no: 4, label: "不満を見つける", body: "実践4でやったこと" }
+          - { no: 5, label: "直す", body: "実践5・6でやったこと" }
+        highlight_step: 4
+        note: "p8 と同じ図を使い、各ステップに実践番号を重ねる"
+
+    - no: 37
+      template: T15_summary
+      values:
+        page_title: "今日、手元に残ったもの"
+        conclusion: "Skill が1つと、それを1回育てた経験。この2つが持ち帰りのすべて"
+        points:
+          - { label: "Skill 1つ", body: "自分の作業を実行できる形になっている" }
+          - { label: "育てた履歴", body: "ループ化サイクルを一周した経験そのもの" }
+          - { label: "次の当たり", body: "早見表のどの行に自分がいるか" }
+        caption: "隣の人と、作った Skill を見せ合ってみてください"
+
+    - no: 38
+      template: T16_next
+      values:
+        page_title: "明日やる1つと、次のリソース"
+        actions:
+          - { action: "今日作った Skill をもう一度使い、不満を1つ書き戻す", owner: "参加者全員", due: "明日", decision: "ループ化サイクルの2周目に入る" }
+          - { action: "公式ドキュメント「Claude Code を拡張する」を読む", owner: "参加者全員", due: "今週中", decision: "次に作る部品を決める" }
+          - { action: "早見表で自分に当てはまる行を1つ選び、その部品を作る", owner: "参加者全員", due: "今月中", decision: "Skill 以外の部品に手を広げる" }
+        ask: "明日、今日作った Skill を1回使ってください。それだけでループは回り始めます"
+        caption: "公式: https://code.claude.com/docs/ja/features-overview ／ 考え方: guides/development-policy/loop-engineering.md ／ 業界呼称: Compounding Engineering / Loop Engineering"

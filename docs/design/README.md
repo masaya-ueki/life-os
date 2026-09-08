@@ -74,4 +74,4 @@ decks/<案件名>/
 
 - デザインシステムを変えたら、**A の手順で Claude Design 側も差し替える**（リポジトリだけ直しても反映されない）
 - 図表 3 色ルール・スペーシングスケールなど**制約そのものを変える**場合は ADR を追加する（[docs/adr/README.md](../adr/README.md)）
-- テンプレート（17 種のページ型）を増やすときは [`slide-spec-writer`](../../.claude/skills/slide-spec-writer/SKILL.md) の `assets/slide_spec_template.yml` を直す。案件ごとの `spec.yml` に独自テンプレートを増やさない
+- テンプレート（19 種のページ型）を増やすときは [`slide-spec-writer`](../../.claude/skills/slide-spec-writer/SKILL.md) の `assets/slide_spec_template.yml` を直す。案件ごとの `spec.yml` に独自テンプレートを増やさない
