@@ -36,6 +36,7 @@ design_system:
 #   実践     47分 / p27-36
 #   振り返り 10分 / p37-38
 #   Appendix  投影しない / p39-45（より学習したい人向けの持ち帰り資料）
+#             ※Routines と Artifacts はスライド化せず口頭で触れる方針
 #
 # 用語の方針:
 #   「loop駆動」は使わない。段階名は「ループ化」とする。
@@ -108,7 +109,7 @@ deck:
     - { no: 42, template: T07_table,       note: "汎用プラグイン① .claude/ 直置き vs プラグイン化" }
     - { no: 43, template: T09_process,     note: "汎用プラグイン② ハンズオン：チームで共有する" }
     - { no: 44, template: T09_process,     note: "仕様駆動開発（GitHub Spec Kit）＋ハンズオン" }
-    - { no: 45, template: T05_bullets,     note: "Routines（定期実行）＋ハンズオン" }
+    - { no: 45, template: T05_bullets,     note: "Dynamic workflows（Subagentの大規模オーケストレーション）" }
 
 # --------------------------------------------------------------
 # ページテンプレート定義
@@ -891,9 +892,9 @@ content:
           - { label: "開発の型", body: "`feature-dev`（機能開発）／`code-review`・`pr-review-toolkit`（レビュー）／`code-simplifier`・`code-modernization`（改善）" }
           - { label: "コード知能（LSP）", body: "`typescript-lsp` / `pyright-lsp` / `rust-analyzer-lsp` / `gopls-lsp` など言語別。定義ジャンプと型エラーが効き、ファイル読みが減る" }
           - { label: "資産づくり", body: "`skill-creator`（Skill生成）／`plugin-dev`（プラグイン開発）／`claude-md-management`（CLAUDE.md の整理）／`hookify`（Hook化）" }
-          - { label: "参考リポジトリ", body: "`anthropics/claude-plugins-official`（公式プラグイン集）／`anthropics/skills`（公式Skill集）／`anthropics/claude-code`（本体・plugins ディレクトリ）" }
+          - { label: "★ まず参考にすべき環境", body: "**ECC（Effective Claude Code）** `github.com/affaan-m/ECC` — Subagent 68種・Skill 286種・Rule・Hook を一式で入れる MIT ライセンスの環境。`plan → test → implement → review → verify → remember → improve` を決定的に回す。導入は `npx ecc-universal setup`（Claude Code のプラグインマーケットプレイス経由でも可）" }
           - { label: "ハンズオン", body: "タスク管理アプリを作る — ①空リポジトリで `claude` 起動 → ②作りたい画面と機能を説明 → ③`/init` で CLAUDE.md 生成 → ④LSPプラグイン導入 → ⑤`feature-dev` で1機能ずつ実装 → ⑥`code-review` でレビューさせる" }
-        caption: "※「Effective Claude Code」という名称の公式リポジトリは確認できなかった。上記の公式リポジトリ3つが同等の役割を果たす（要確認）"
+        caption: "公式リポジトリ: `anthropics/claude-plugins-official`（公式プラグイン集）／`anthropics/skills`（公式Skill集）／`anthropics/claude-code`（本体）。ECC は必要な言語だけ入れる（全部入れない）"
 
     - no: 42
       template: T07_table
@@ -938,11 +939,12 @@ content:
     - no: 45
       template: T05_bullets
       values:
-        page_title: "Routines — PCを閉じていても動かす"
-        key_message: "スキルは「呼び出す」だけでなく「勝手に走らせる」ところまで行ける"
+        page_title: "Dynamic workflows — Subagent を数十〜数百まとめて走らせる"
+        key_message: "プランを Claude の頭からスクリプトへ移す。だから何十エージェントでも破綻しない"
         items:
-          - { label: "何ができるか", body: "プロンプトとトリガーを保存しておくと、Anthropic のクラウド上で Claude Code が定期的に走る" }
-          - { label: "トリガー3種", body: "スケジュール（hourly / daily / weekdays / weekly、またはカスタム cron。最短1時間間隔）／ API ／ GitHub イベント" }
-          - { label: "設定方法", body: "claude.ai/code/routines、または CLI の `/schedule`。Pro / Max / Team / Enterprise で利用可能" }
-          - { label: "ハンズオン", body: "「朝確認すること」Skill を作り、平日 8:00 の Routine にする — 本日のタスク・会議／昨日のメール／昨日のアクションサマリ を1枚にまとめさせる" }
-        caption: "前提: Microsoft 365 のメール・予定・タスクに触るには M365 の MCP 接続が必要。※要確認 — Routines は Anthropic のクラウドで動くため、手元でしか動かないローカル MCP サーバーは参照できない。リモート接続にするか、当面はローカルの `/schedule` 相当（cron など）で回す"
+          - { label: "何が違うか", body: "Subagent は Claude が1手ずつ次を決める。Workflow は Claude が書いた JavaScript がループと分岐を持ち、途中結果はスクリプト変数に残る。Claude のコンテキストには最終結果だけが返る" }
+          - { label: "起動のしかた", body: "プロンプトに `ultracode` と書く、または「ワークフローで」と頼むだけ。スクリプトは Claude が書く。実行前に「フェーズ一覧」が出るので承認して走らせる" }
+          - { label: "まず試すなら", body: "`/deep-research <調べたいこと>` — 標準搭載。複数の観点でWeb検索を並列に走らせ、出典を突き合わせ、裏が取れなかった主張を落として引用付きレポートにする" }
+          - { label: "効く場面", body: "コードベース全体のバグ一掃／500ファイルの一括移行／PR全ファイルのレビューを1本のサマリに集約／型チェックが通るまで直し続ける — 「Subagent 数個では足りない」規模" }
+          - { label: "資産にする", body: "`/workflows` で走行中を見られる（進捗・トークン・停止）。良かった run は `s` キーで `.claude/workflows/` に保存すると `/<名前>` で再実行できる。プラグインに同梱してチーム配布も可能" }
+        caption: "コスト注意: 1回で通常会話よりかなり多くトークンを使う。まず狭い範囲（1ディレクトリ）で試す。既定の規模ガイドラインは medium（15エージェント未満目安）で `/config` から変更可。上限は同時16・1 run あたり1,000エージェント。25エージェント超で警告が出る"
