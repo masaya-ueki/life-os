@@ -12,7 +12,7 @@ meta:
   language: ja
   aspect_ratio: "16:9"
   slide_size: { w: 1920, h: 1080 }
-  page_count: 38
+  page_count: 45
   delivery: "画面投影"
 
 # --------------------------------------------------------------
@@ -35,6 +35,7 @@ design_system:
 #   座学     33分 / p1-26（うちデモ 3分）
 #   実践     47分 / p27-36
 #   振り返り 10分 / p37-38
+#   Appendix  投影しない / p39-45（より学習したい人向けの持ち帰り資料）
 #
 # 用語の方針:
 #   「loop駆動」は使わない。段階名は「ループ化」とする。
@@ -99,6 +100,15 @@ deck:
     # --- クロージング（p37-38 / 10分）---
     - { no: 37, template: T15_summary,     note: "今日、手元に残ったもの" }
     - { no: 38, template: T16_next,        note: "明日やる1つと、次のリソース" }
+
+    # --- Appendix（p39-45 / 本編では話さない。より学習したい人向けの持ち帰り資料）---
+    - { no: 39, template: T03_section,     note: "章扉：より学習したい人へ" }
+    - { no: 40, template: T07_table,       note: "AI駆動開発環境① 環境を作る（新規 / 既存）" }
+    - { no: 41, template: T05_bullets,     note: "AI駆動開発環境② 公式プラグインと参考リポジトリ＋ハンズオン" }
+    - { no: 42, template: T07_table,       note: "汎用プラグイン① .claude/ 直置き vs プラグイン化" }
+    - { no: 43, template: T09_process,     note: "汎用プラグイン② ハンズオン：チームで共有する" }
+    - { no: 44, template: T09_process,     note: "仕様駆動開発（GitHub Spec Kit）＋ハンズオン" }
+    - { no: 45, template: T05_bullets,     note: "Routines（定期実行）＋ハンズオン" }
 
 # --------------------------------------------------------------
 # ページテンプレート定義
@@ -846,3 +856,93 @@ content:
           - { action: "早見表で自分に当てはまる行を1つ選び、その部品を作る", owner: "参加者全員", due: "今月中", decision: "Skill 以外の部品に手を広げる" }
         ask: "明日、今日作った Skill を1回使ってください。それだけでループは回り始めます"
         caption: "公式: https://code.claude.com/docs/ja/features-overview ／ 考え方: guides/development-policy/loop-engineering.md ／ 業界呼称: Compounding Engineering / Loop Engineering"
+
+    # ============================================================
+    # Appendix — 本編では話さない。より学習したい人向けの持ち帰り資料
+    # ============================================================
+
+    - no: 39
+      template: T03_section
+      values:
+        section_no: "APPENDIX"
+        section_title: "より学習したい人へ"
+        section_lead: "本編は Skill 1つに絞った。ここから先は、開発環境・チーム共有・仕様駆動・定期実行へ広げる道筋"
+
+    - no: 40
+      template: T07_table
+      values:
+        page_title: "AI駆動開発環境 ① — まず環境を作る"
+        key_message: "環境づくりも Claude 自身にやらせる。新規と既存で入口が違うだけ"
+        columns: ["新規プロジェクト", "既存プロジェクト"]
+        rows:
+          - { axis: "最初にやること", values: ["空のリポジトリを作り `claude` を起動して、作りたいものを説明する", "リポジトリのルートで `claude` を起動し `/init` を実行する"] }
+          - { axis: "`/init` がやること", values: ["対話しながら CLAUDE.md を新規作成する", "コードベースを解析して CLAUDE.md を生成する（構成・ビルド・テストの記述）"] }
+          - { axis: "次の一手", values: ["言語の LSP プラグインを入れてコード知能を効かせる", "`claude-code-setup` プラグインに「この プロジェクトの自動化を提案して」と頼む"] }
+          - { axis: "claude-code-setup とは", values: ["—", "コードベースを解析し MCP / Skill / Hook / Subagent / スラッシュコマンドを各カテゴリ1〜2個推奨する読み取り専用スキル"] }
+        conclusion: "どちらも出発点は CLAUDE.md。`/init` で土台を作り、`claude-code-setup` の提案から自分に効くものだけ採用する"
+        caption: "導入: `/plugin install claude-code-setup@claude-plugins-official`（公式マーケットプレイスは初回起動時に自動登録される）"
+
+    - no: 41
+      template: T05_bullets
+      values:
+        page_title: "AI駆動開発環境 ② — 公式プラグインと、参考にすべきリポジトリ"
+        key_message: "コード開発に効くものは公式マーケットプレイスに揃っている。まずここから取る"
+        items:
+          - { label: "開発の型", body: "`feature-dev`（機能開発）／`code-review`・`pr-review-toolkit`（レビュー）／`code-simplifier`・`code-modernization`（改善）" }
+          - { label: "コード知能（LSP）", body: "`typescript-lsp` / `pyright-lsp` / `rust-analyzer-lsp` / `gopls-lsp` など言語別。定義ジャンプと型エラーが効き、ファイル読みが減る" }
+          - { label: "資産づくり", body: "`skill-creator`（Skill生成）／`plugin-dev`（プラグイン開発）／`claude-md-management`（CLAUDE.md の整理）／`hookify`（Hook化）" }
+          - { label: "参考リポジトリ", body: "`anthropics/claude-plugins-official`（公式プラグイン集）／`anthropics/skills`（公式Skill集）／`anthropics/claude-code`（本体・plugins ディレクトリ）" }
+          - { label: "ハンズオン", body: "タスク管理アプリを作る — ①空リポジトリで `claude` 起動 → ②作りたい画面と機能を説明 → ③`/init` で CLAUDE.md 生成 → ④LSPプラグイン導入 → ⑤`feature-dev` で1機能ずつ実装 → ⑥`code-review` でレビューさせる" }
+        caption: "※「Effective Claude Code」という名称の公式リポジトリは確認できなかった。上記の公式リポジトリ3つが同等の役割を果たす（要確認）"
+
+    - no: 42
+      template: T07_table
+      values:
+        page_title: "汎用プラグイン ① — チームで Skill / Agent を共有する"
+        key_message: "2つ目のリポジトリで同じ設定が要るときが、プラグイン化のタイミング"
+        columns: [".claude/ に直置き", "プラグイン化"]
+        rows:
+          - { axis: "呼び出し方", values: ["`/hello`", "`/plugin-name:hello`（名前空間つき）"] }
+          - { axis: "共有範囲", values: ["そのリポジトリの中だけ", "マーケットプレイス経由で誰でも導入できる"] }
+          - { axis: "更新の伝わり方", values: ["手でコピーする", "`/plugin marketplace update` で全員に届く"] }
+          - { axis: "向いている場面", values: ["個人の工夫、プロジェクト固有、素早い試行", "チーム共有、複数リポジトリでの再利用、バージョン管理"] }
+        conclusion: "まず `.claude/` で作って回し、育ってから切り出す。最初からプラグインにしなくてよい"
+        caption: "中身は Skill / Subagent / Hook / MCP設定 / LSP設定 / 監視 をまとめられる。ディレクトリは必ずプラグイン直下（`.claude-plugin/` の中に入れない）"
+
+    - no: 43
+      template: T09_process
+      values:
+        page_title: "汎用プラグイン ② — ハンズオン：タスク化スキルを共有資産にする"
+        key_message: "GitHub リポジトリ1つで、チーム全員が同じ Skill を使えるようになる"
+        steps:
+          - { no: 1, label: "切り出す", body: "`.claude/skills/タスク化/SKILL.md` を、新しいプラグイン用ディレクトリの `skills/` 配下へコピーする" }
+          - { no: 2, label: "名乗らせる", body: "`.claude-plugin/plugin.json` に name / description / version を書く。`claude plugin init <名前>` で雛形も作れる" }
+          - { no: 3, label: "手元で試す", body: "`claude --plugin-dir ./<プラグイン名>` で起動し `/<プラグイン名>:タスク化` が動くか確認する" }
+          - { no: 4, label: "配る", body: "GitHub リポジトリの `.claude-plugin/marketplace.json` に name / owner / plugins を書いて push する" }
+          - { no: 5, label: "別リポジトリで使う", body: "`/plugin marketplace add <org>/<repo>` → `/plugin install タスク化@<マーケット名>`" }
+        caption: "社内限定にするなら private リポジトリでよい（git 認証情報がそのまま使われる）。プロジェクトの `.claude/settings.json` に `extraKnownMarketplaces` と `enabledPlugins` を書けば、チームは clone するだけで有効になる"
+
+    - no: 44
+      template: T09_process
+      values:
+        page_title: "仕様駆動開発 — GitHub Spec Kit"
+        key_message: "コードの前に仕様を書く。Kiro（AWS のIDE）と同じ考え方を、Claude Code の上で回す"
+        steps:
+          - { no: 1, label: "/speckit.constitution", body: "プロジェクトの原則を決める（守らせたい方針・制約）" }
+          - { no: 2, label: "/speckit.specify", body: "要件とユーザーストーリーを書く。ここが仕様の正本になる" }
+          - { no: 3, label: "/speckit.plan", body: "技術的な実装計画に落とす" }
+          - { no: 4, label: "/speckit.tasks", body: "実行可能なタスク一覧に分解する" }
+          - { no: 5, label: "/speckit.implement", body: "タスクを実行して作る。`/speckit.converge` で仕様との差分を検証する" }
+        caption: "導入: `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` → `specify init <プロジェクト名> --integration claude`。ハンズオン: 小さなCLIツール（例: 経費集計）を仕様から作り、`/speckit.specify` の内容を1つ変えて再度 `/speckit.implement` を回す。Claude Code 専用の実装としては `angelsen/claude-kiro` もある"
+
+    - no: 45
+      template: T05_bullets
+      values:
+        page_title: "Routines — PCを閉じていても動かす"
+        key_message: "スキルは「呼び出す」だけでなく「勝手に走らせる」ところまで行ける"
+        items:
+          - { label: "何ができるか", body: "プロンプトとトリガーを保存しておくと、Anthropic のクラウド上で Claude Code が定期的に走る" }
+          - { label: "トリガー3種", body: "スケジュール（hourly / daily / weekdays / weekly、またはカスタム cron。最短1時間間隔）／ API ／ GitHub イベント" }
+          - { label: "設定方法", body: "claude.ai/code/routines、または CLI の `/schedule`。Pro / Max / Team / Enterprise で利用可能" }
+          - { label: "ハンズオン", body: "「朝確認すること」Skill を作り、平日 8:00 の Routine にする — 本日のタスク・会議／昨日のメール／昨日のアクションサマリ を1枚にまとめさせる" }
+        caption: "前提: Microsoft 365 のメール・予定・タスクに触るには M365 の MCP 接続が必要。※要確認 — Routines は Anthropic のクラウドで動くため、手元でしか動かないローカル MCP サーバーは参照できない。リモート接続にするか、当面はローカルの `/schedule` 相当（cron など）で回す"
