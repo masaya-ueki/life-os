@@ -9,9 +9,10 @@ life-os のプレゼン・ドキュメント・UI モックは **[Claude Design]
 
 ## ファイル一覧
 
-| ファイル | 役割 | 変わる頻度 |
+| パス | 役割 | 変わる頻度 |
 |---|---|---|
 | [design-system-notion-like.md](./design-system-notion-like.md) | **デザインシステム**（Notion ライク）。色・タイポ・余白・コンポーネント・禁止事項の唯一の基準 | ほぼ変わらない |
+| `decks/<案件名>.yml` | **指示書**。案件ごとの構成・ページテンプレート・内容 | 案件ごとに増える |
 
 ---
 
@@ -22,7 +23,7 @@ life-os のプレゼン・ドキュメント・UI モックは **[Claude Design]
 | 層 | 何を決めるか | 正本 |
 |---|---|---|
 | **デザインシステム** | どう見えるか（色・文字・余白・部品） | [design-system-notion-like.md](./design-system-notion-like.md) |
-| **指示書** | 何を何ページで話すか（構成・テンプレート・内容） | 案件ごとに `slide-spec-writer` スキルが YAML を生成 |
+| **指示書** | 何を何ページで話すか（構成・テンプレート・内容） | `decks/<案件名>.yml`（`slide-spec-writer` スキルが生成） |
 
 内容が差し替わってもデザインは崩れず、デザインを更新しても構成は作り直さずに済む。
 
@@ -48,10 +49,18 @@ Claude Design のチャットに [design-system-notion-like.md](./design-system-
 
 1. `slide-spec-writer` スキル（[claude.ai](https://claude.ai) 側の個人スキル）で指示書 YAML を作る
    — `[[スライド指示書]]` または「スライドの指示書を作りたい」で起動する
-2. Claude Design に **デザインシステム ＋ 指示書 YAML** の 2 つを渡す
-3. Claude Design 上で仕上げ、PDF / PPTX / URL で書き出す
+2. **`decks/<案件名>.yml` としてこのリポジトリにコミットする**
+   — スキルの出力先（`/mnt/user-data/outputs/`）はセッション終了で消えるため、残すなら手で移す
+3. Claude Design に **デザインシステム ＋ 指示書 YAML** の 2 つを渡す
+4. Claude Design 上で仕上げ、PDF / PPTX / URL で書き出す
 
-指示書 YAML はデザイン値を再定義せず、このデザインシステムを参照する形で書く（二重管理を避ける）。
+指示書 YAML はデザイン値を再定義せず、デザインシステムを参照する形で書く（二重管理を避ける）。
+
+### `decks/` の決まり
+
+- **1 案件 1 ファイル**。ファイル名は kebab-case（例: `data-analysis-platform.yml`）
+- 置くのは**指示書（入力）だけ**。書き出した PDF / PPTX は Claude Design 側に置き、コミットしない（[R-STRUCT-4](../../rule/directory-structure.md)）
+- 社外秘・個人情報を含む素材はそのまま貼らない。伏せる箇所は `※既存資料を記載` のようなプレースホルダにする
 
 ---
 

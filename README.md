@@ -67,7 +67,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 │   └── pull_request_template.md
 ├── docs/
 │   ├── adr/                   # 設計決定記録（Architecture Decision Records）
-│   └── design/                # Claude Design に渡すデザイン資産（デザインシステム）
+│   └── design/                # Claude Design への入力（デザインシステム・スライド指示書）
 ├── guides/
 │   ├── development-policy/    # 開発運用ルール（Issue 運用など）
 │   └── business/              # 収益組織の運用ルール（役割・収益 loop・歯止め）
@@ -111,6 +111,6 @@ docker compose build            # 依存を変えたときにイメージを再�
 - [Issue メモリスキル](./.claude/skills/issue-memory/SKILL.md) — Issue の起票から作業完了報告まで一本化する
 - [コードレビュー運用ルール](./guides/development-policy/code-review-rules.md) — PR を観点別スキルでレビューし、修正PR作成 or 検証付き自動マージまで回す（`pr-reviewer` エージェント）
 - [ADR（設計決定記録）](./docs/adr/README.md) — 「なぜその設計にしたか」を残す
-- [Claude Design 用デザイン資産](./docs/design/README.md) — プレゼン・ドキュメント・UI モックの見た目を揃えるデザインシステム（[ADR-0016](./docs/adr/0016-claude-design-design-system-file.md)）
+- [Claude Design 用デザイン資産](./docs/design/README.md) — 見た目を揃えるデザインシステムと、案件ごとのスライド指示書（[ADR-0016](./docs/adr/0016-claude-design-design-system-file.md)）
 - 構成チェック: `python scripts/check_structure.py`（ルール準拠の決定的チェック）
 - ラベルの一括作成: `./scripts/setup-github-labels.sh --dry-run`（確認）/ `./scripts/setup-github-labels.sh`（適用）

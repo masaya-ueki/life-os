@@ -31,7 +31,7 @@ ADR（Architecture Decision Record）は「なぜその設計にしたのか」�
 | [ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md) | presentation 領域を廃止し Claude Design へ移行する | 承認済み | 2026-07-30 |
 | [ADR-0014](./0014-deprecate-certification-own-repo.md) | certification 領域を廃止し独立リポジトリへ移管する | 承認済み | 2026-08-01 |
 | [ADR-0015](./0015-revenue-org-inside-life-os.md) | 収益組織を life-os 内に置き、売り物だけを別リポジトリへ切り出す | 承認済み | 2026-08-14 |
-| [ADR-0016](./0016-claude-design-design-system-file.md) | Claude Design のデザインシステムを単一ファイルで持ち docs/design/ に置く | 承認済み | 2026-09-08 |
+| [ADR-0016](./0016-claude-design-design-system-file.md) | Claude Design への入力（デザインシステム／指示書）を docs/design/ に集約する | 承認済み | 2026-09-08 |
 
 ---
 
