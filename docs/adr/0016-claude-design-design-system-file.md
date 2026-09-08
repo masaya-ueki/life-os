@@ -21,7 +21,7 @@
 
 ## 決定事項
 
-**Claude Design への入力を content 領域 `docs/design/` に集約する。** デザインシステムは `DESIGN.md` 形式（9 セクション）の単一ファイル [design-system-notion-like.md](../design/design-system-notion-like.md)、案件ごとの指示書は `docs/design/decks/<案件名>.yml` として管理し、「どう見えるか」と「何を話すか」を 2 層に分離する。Anthropic 公式のデザイン系プラグインは導入しない。
+**Claude Design への入力を content 領域 `docs/design/` に集約する。** デザインシステムは `DESIGN.md` 形式（9 セクション）の単一ファイル [design-system-notion-like.md](../design/design-system-notion-like.md)、案件ごとの指示書と素材は `docs/design/decks/<案件名>/`（`spec.yml` ＋ `materials/`）として管理し、「どう見えるか」と「何を話すか」を 2 層に分離する。Anthropic 公式のデザイン系プラグインは導入しない。
 
 ## 検討した選択肢
 
@@ -57,9 +57,12 @@
 ## 結果・トレードオフ
 
 - **新設**: content 領域 `docs/design/`（コードを持たない。uv workspace member でも Bounded Context でもないため `pyproject.toml` / `.importlinter` の更新は不要）。
-- **2 層構成**: デザインシステム（`docs/design/`・不変に近い）／ 案件ごとの指示書（`docs/design/decks/<案件名>.yml`・案件ごとに増える）。指示書はデザイン値を再定義せず参照する。
-- **移動**: `domains/presentation/decks/data-analysis-platform/outline.yml` を `docs/design/decks/data-analysis-platform.yml` へ移し、空になった `domains/presentation/` を削除した。これで C-DOMAIN 警告が解消する。中身は旧 `deckgen` 形式（`expression` / `data`）のままで、次に使うときに `slide-spec-writer` 形式へ書き換える。
+- **2 層構成**: デザインシステム（`docs/design/`・不変に近い）／ 案件ごとの指示書と素材（`docs/design/decks/<案件名>/`・案件ごとに増える）。指示書は `design_system.source` でデザインシステムを参照し、値を複製しない。
+- **1 案件 1 ディレクトリ**: 画像・xlsx などユーザー入力の素材を伴うため、ファイル数を固定しない。`spec.yml` と `materials/` を同じディレクトリに置く。
+- **移動**: `domains/presentation/decks/data-analysis-platform/outline.yml` を `docs/design/decks/data-analysis-platform/spec.yml` へ移し、空になった `domains/presentation/` を削除した。これで C-DOMAIN 警告が解消する。中身は旧 `deckgen` 形式（`expression` / `data`）のままで、次に使うときに `slide-spec-writer` 形式へ書き換える。
 - **書き出し物は置かない**: PDF / PPTX / HTML は Claude Design 側に残し、リポジトリにはコミットしない（[R-STRUCT-4](../../rule/directory-structure.md)）。
+- **スキルをリポジトリ管理へ移した**: 指示書が自動でリポジトリに残るよう、claude.ai 側の個人スキルだった `slide-spec-writer` を [`.claude/skills/slide-spec-writer/`](../../.claude/skills/slide-spec-writer/SKILL.md) に取り込み、出力先を `docs/design/decks/<案件名>/spec.yml` に固定した。あわせてテンプレートの `design_system` ブロック（色・タイポの値を丸ごと持っていた）を `source` 参照に置き換え、コンテキスト 1 の複製問題を解消した。
+- **残る制約**: life-os の外（claude.ai のチャット等）でスキルを使う場合はリポジトリに書き込めないため、従来どおり `/mnt/user-data/outputs/` に出力して手で移す運用になる。claude.ai 側の同名の個人スキルは重複するので削除するか無効化する。
 - **同期は手動**: リポジトリのファイルを更新したら Claude Design 側のデザインシステムを差し替える必要がある。自動同期は行わない（`DesignSync` 相当の仕組みはコンポーネントライブラリ向けで、Markdown 1 枚の運用には過剰）。
 - **プラグインは入れない**: 公式・非公式を問わずデザイン系プラグインは導入しない。将来 Anthropic がスライドの指示フォーマットを公式提供したら本 ADR を見直す。
 - **見直し条件**: (1) Claude Design がデザインシステムの公式ファイル形式を定義したとき、(2) デザイン資産がコンポーネント単位の管理を要する規模になったとき、(3) デッキが増えて書き出し物や素材を伴い、選択肢E（トップレベル `decks/`）が見合うようになったとき。

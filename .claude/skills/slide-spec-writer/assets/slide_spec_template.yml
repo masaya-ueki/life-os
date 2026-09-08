@@ -1,0 +1,334 @@
+# ==============================================================
+# Claude Design スライド指示書テンプレート
+# 使い方: (1) meta と deck を埋める → (2) content に内容を貼る
+#         → (3) このYAMLと design_system.source のファイルをClaude Designに渡す
+# 保存先: docs/design/decks/<案件名>/spec.yml
+# ==============================================================
+
+meta:
+  title: ""                      # 表紙タイトル
+  subtitle: ""                   # サブタイトル / 一言説明
+  purpose: ""                    # このスライドで何を決めたい/伝えたいか
+  audience: ""                   # 誰に見せるか（例: 経営会議、顧客、社内チーム）
+  tone: "落ち着いた・事実ベース・装飾過多にしない"
+  language: ja
+  aspect_ratio: "16:9"
+  slide_size: { w: 1920, h: 1080 }
+  page_count: 0                  # 目安枚数（0=自動）
+  delivery: "画面投影"            # 画面投影 / 資料配布 / 両方
+
+# --------------------------------------------------------------
+# デザインシステム（共通・全ページ適用）
+#
+# ★ 値をここに複製しない。正本は下記ファイル1枚だけ（ADR-0016）。
+#   Claude Design には「この指示書」と「参照先ファイル」の2つを渡す。
+# --------------------------------------------------------------
+design_system:
+  source: "docs/design/design-system-notion-like.md"
+
+  # 図表3色ルール（正本の再掲ではなく、割り付け時の判断用メモ）
+  #   1色目 accent      = 注目させたい系列・推奨案・現在地
+  #   2色目 text_muted  = 比較対象・その他
+  #   3色目 border      = 母数・背景・非注目
+
+  # この案件だけ正本から外す場合のみ記載する。空なら正本どおり。
+  # 逸脱には必ず理由を書く（「見栄えのため」は理由にならない）。
+  overrides: {}
+    # 例:
+    # color.accent: "#0F766E"   # reason: コーポレートカラーに合わせる
+
+# --------------------------------------------------------------
+# 全体構成（使うテンプレートIDを並べる）
+# --------------------------------------------------------------
+deck:
+  flow_pattern: "結論先出し"   # 結論先出し / 課題→解決 / 時系列 / 提案型
+  pages:
+    - { no: 1,  template: T01_title,       note: "表紙" }
+    - { no: 2,  template: T15_summary,     note: "サマリ（結論を先に）" }
+    - { no: 3,  template: T02_agenda,      note: "目次" }
+    - { no: 4,  template: T03_section,     note: "章扉：現状" }
+    - { no: 5,  template: T04_message,     note: "" }
+    - { no: 6,  template: T10_chart,       note: "" }
+    - { no: 7,  template: T03_section,     note: "章扉：提案" }
+    - { no: 8,  template: T06_cards,       note: "" }
+    - { no: 9,  template: T07_table,       note: "" }
+    - { no: 10, template: T09_process,     note: "" }
+    - { no: 11, template: T16_next,        note: "ネクストアクション" }
+    - { no: 12, template: T17_appendix,    note: "Appendix" }
+
+# --------------------------------------------------------------
+# ページテンプレート定義
+# --------------------------------------------------------------
+page_templates:
+
+  - id: T01_title
+    name: 表紙
+    use_when: "1枚目"
+    layout: |
+      +--------------------------------------+
+      |                                      |
+      |   [label] 案件種別                    |
+      |   TITLE（大）                         |
+      |   subtitle                            |
+      |   ───────────                        |
+      |   日付 / 作成者                        |
+      +--------------------------------------+
+    slots: [eyebrow_label, title, subtitle, date, author]
+    rules: ["左下寄せ or 中央。背景は bg。装飾図形は入れない"]
+
+  - id: T02_agenda
+    name: 目次
+    use_when: "全体像を共有するとき"
+    layout: |
+      Agenda
+      ──────────────────
+      01  項目            ─ 補足
+      02  項目            ─ 補足
+      03  項目            ─ 補足
+    slots: ["items[{no, label, note}]"]
+    rules: ["4〜6項目。番号は連番が意味を持つ場合のみ", "現在地を示す場合は accent で該当行のみ強調"]
+
+  - id: T03_section
+    name: 章扉
+    use_when: "話題が切り替わるとき"
+    layout: |
+      +--------------------------------------+
+      |            02                        |
+      |            章タイトル                 |
+      |            この章で分かること          |
+      +--------------------------------------+
+    slots: [section_no, section_title, section_lead]
+    rules: ["背景 bg_subtle。文字は3行以内"]
+
+  - id: T04_message
+    name: メッセージ＋本文（基本形）
+    use_when: "説明・主張を1つ伝えるとき"
+    layout: |
+      page_title
+      ──────────────────
+      ▍key_message（1〜2行）
+      
+      ・根拠1
+      ・根拠2
+      ・根拠3
+      
+      caption / 出典
+    slots: [page_title, key_message, "points[]", caption]
+    rules: ["根拠は3点まで", "key_message は callout で表現", "本文は1文40字以内"]
+
+  - id: T05_bullets
+    name: 要点リスト
+    use_when: "並列の情報を列挙するとき"
+    layout: |
+      page_title
+      ──────────────────
+      01 見出し  本文…
+      02 見出し  本文…
+      03 見出し  本文…
+    slots: [page_title, "items[{label, body}]"]
+    rules: ["3〜5項目。各項目は見出し＋1〜2行", "順序に意味がなければ番号を付けない"]
+
+  - id: T06_cards
+    name: 並列カード（3カラム）
+    use_when: "同列の選択肢・要素を比較なしで並べるとき"
+    layout: |
+      page_title
+      ──────────────────
+      [ card ]  [ card ]  [ card ]
+       label     label     label
+       body      body      body
+    slots: [page_title, "cards[{label, title, body}]"]
+    rules: ["2〜4枚。カード内テキストは同じ粒度に揃える", "強調したい1枚のみ accent_soft、他は bg_subtle"]
+
+  - id: T07_table
+    name: 比較表
+    use_when: "複数案を評価軸で比べるとき"
+    layout: |
+      page_title
+      ──────────────────
+      |      | 案A | 案B | 案C |
+      | 軸1  |  ○  |  △  |  ×  |
+      | 軸2  | ... | ... | ... |
+      ──────────────────
+      ▍結論（どれを採るか＋理由）
+    slots: [page_title, "columns[]", "rows[{axis, values[]}]", conclusion]
+    rules:
+      - "評価記号は ○ △ × の3段階。色は chart_palette 3色に対応させる"
+      - "推奨案の列のみ accent_soft で面塗り"
+      - "横罫線のみ。表の下に必ず結論を置く"
+
+  - id: T08_matrix
+    name: 2軸マトリクス
+    use_when: "ポジショニング・優先度を示すとき"
+    layout: |
+      page_title
+      ──────────────────
+          高 |  ②  |  ①  |
+             |-----+-----|
+          低 |  ④  |  ③  |
+              低       高
+    slots: [page_title, x_axis, y_axis, "quadrants[{label, items[]}]", takeaway]
+    rules: ["注目象限のみ accent。他はグレー", "プロットは最大8点"]
+
+  - id: T09_process
+    name: プロセス / ステップ
+    use_when: "順序や手順を示すとき（順序に意味がある場合のみ）"
+    layout: |
+      page_title
+      ──────────────────
+      ①──────▶②──────▶③──────▶④
+      label    label    label    label
+      body     body     body     body
+    slots: [page_title, "steps[{no, label, body, owner, due}]"]
+    rules: ["3〜5ステップ。矢印は border 色の細線", "現在地/次アクションのみ accent"]
+
+  - id: T10_chart
+    name: グラフ＋示唆
+    use_when: "数値で語るとき"
+    layout: |
+      page_title
+      ──────────────────
+      [ graph            ]  ▍示唆
+                            ・読み取り1
+                            ・読み取り2
+      caption（出典・期間）
+    slots: [page_title, "chart{type, x, series[]}", insight, "points[]", caption]
+    rules:
+      - "グラフは1ページ1つ。系列は3つまで（chart_palette準拠）"
+      - "凡例より直接ラベル。グリッド線は最小限、枠線なし"
+      - "注目させたい系列のみ accent、他は grey/light"
+      - "出典と期間を caption に必ず記載"
+
+  - id: T11_kpi
+    name: 数値ハイライト
+    use_when: "インパクトのある数字を見せるとき"
+    layout: |
+      page_title
+      ──────────────────
+       1,240      ▲12%      3.5h
+       label      label     label
+      ──────────────────
+      ▍この数字が意味すること
+    slots: [page_title, "metrics[{value, unit, label, delta}]"]
+    rules: ["数値は3つまで", "増減はプラス=accent / マイナス=text_muted（赤緑は使わない）"]
+
+  - id: T12_timeline
+    name: タイムライン / ロードマップ
+    use_when: "期間つきの計画を示すとき"
+    layout: |
+      page_title
+      ──────────────────
+        Q1      Q2      Q3      Q4
+      ├──────┼──────┼──────┼──────┤
+      [ bar        ]
+              [ bar        ]
+    slots: [page_title, "periods[]", "tracks[{name, bars[{from, to, label}]}]"]
+    rules: ["トラックは4本まで", "バーは accent / grey / light の3色で塗り分け"]
+
+  - id: T13_before_after
+    name: Before / After
+    use_when: "変化・改善を示すとき"
+    layout: |
+      page_title
+      ──────────────────
+      Before            →     After
+      ・課題                  ・解決後
+      ・課題                  ・解決後
+      ──────────────────
+      ▍変化のポイント
+    slots: [page_title, "before[]", "after[]", takeaway]
+    rules: ["Before は grey 系、After のみ accent 系", "項目数は左右で揃える"]
+
+  - id: T14_emphasis
+    name: 一言強調
+    use_when: "話の転換点で一度だけ立ち止まらせたいとき"
+    layout: |
+      +--------------------------------------+
+      |     「強調したい一文」                 |
+      |      ─ 補足                          |
+      +--------------------------------------+
+    slots: [statement, sub]
+    rules: ["デッキ全体で1〜2回まで。背景 bg_subtle、他要素なし"]
+
+  - id: T15_summary
+    name: サマリ / まとめ
+    use_when: "2枚目（結論先出し）または最終章"
+    layout: |
+      page_title
+      ──────────────────
+      ▍結論
+      
+      01 ポイント ─ 一行説明
+      02 ポイント ─ 一行説明
+      03 ポイント ─ 一行説明
+    slots: [page_title, conclusion, "points[{label, body}]"]
+    rules: ["ポイントは3つ。以降のページ見出しと文言を一致させる"]
+
+  - id: T16_next
+    name: ネクストアクション
+    use_when: "最終ページ"
+    layout: |
+      page_title
+      ──────────────────
+      | アクション | 担当 | 期限 | 決めたいこと |
+      |    …      |  …  |  …  |      …       |
+      ──────────────────
+      ▍本日決めたいこと
+    slots: [page_title, "actions[{action, owner, due, decision}]", ask]
+    rules: ["3〜5行", "依頼事項（ask）を必ず明記"]
+
+  - id: T17_appendix
+    name: Appendix
+    use_when: "補足データ"
+    layout: |
+      Appendix / label
+      ──────────────────
+      （詳細データ・前提条件）
+    slots: [label, body]
+    rules: ["本編と同じデザイン。情報密度は上げてよいが色数は守る"]
+
+# --------------------------------------------------------------
+# 全ページ共通の禁止事項・チェックリスト
+# --------------------------------------------------------------
+constraints:
+  ng:
+    - "図表で4色以上使う（例外条件を満たす場合を除く）"
+    - "グラデーション・ドロップシャドウ・立体・3Dグラフ・円グラフの多系列"
+    - "装飾用のイラスト・写真・アイコンの多用"
+    - "1ページに複数の主張を詰める"
+    - "文字サイズを本文16px未満に下げて情報を詰め込む"
+    - "赤=悪 / 緑=良 のような色頼みの表現（記号や語で示す）"
+  checklist:
+    - "各ページのキーメッセージだけを読んで筋が通るか"
+    - "使用色が chart_palette の3色に収まっているか"
+    - "数値に出典と期間があるか"
+    - "余白がマージン規定を満たしているか"
+    - "最終ページに担当・期限・依頼事項があるか"
+
+# --------------------------------------------------------------
+# 素材（画像・xlsx・元資料）
+#
+# ファイルは同じ案件ディレクトリの materials/ に置き、相対パスで参照する。
+#   docs/design/decks/<案件名>/
+#   ├── spec.yml      ← このファイル
+#   └── materials/    ← ここ
+# Claude Design には spec.yml と一緒にこれらのファイルも渡す。
+# --------------------------------------------------------------
+materials:
+  - path: ""            # 例: materials/kpi-2026q3.xlsx
+    kind: ""            # image / spreadsheet / document / other
+    used_by: []         # 使うページ番号（例: [6, 10]）
+    note: ""            # 何のデータか・どう使うか（出典と期間も）
+
+# --------------------------------------------------------------
+# 内容（ここに素材を貼る。各ページに割り当てる）
+# --------------------------------------------------------------
+content:
+  raw_input: |
+    （ここに元ネタ・議事メモ・データを貼る）
+  pages:
+    - no: 1
+      template: T01_title
+      values:
+        title: ""
+        subtitle: ""

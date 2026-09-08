@@ -61,7 +61,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 │   └── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
 ├── .claude/
 │   ├── agents/               # Claude Code サブエージェント（pr-reviewer / biz-* 等）
-│   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper）
+│   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper / slide-spec-writer）
 ├── .github/
 │   ├── ISSUE_TEMPLATE/        # Issue テンプレート（ProductBacklog / Task / 調査）
 │   └── pull_request_template.md
@@ -112,5 +112,6 @@ docker compose build            # 依存を変えたときにイメージを再�
 - [コードレビュー運用ルール](./guides/development-policy/code-review-rules.md) — PR を観点別スキルでレビューし、修正PR作成 or 検証付き自動マージまで回す（`pr-reviewer` エージェント）
 - [ADR（設計決定記録）](./docs/adr/README.md) — 「なぜその設計にしたか」を残す
 - [Claude Design 用デザイン資産](./docs/design/README.md) — 見た目を揃えるデザインシステムと、案件ごとのスライド指示書（[ADR-0016](./docs/adr/0016-claude-design-design-system-file.md)）
+- [slide-spec-writer](./.claude/skills/slide-spec-writer/SKILL.md) — Claude Design 用のスライド指示書を作り `docs/design/decks/` に保存するスキル
 - 構成チェック: `python scripts/check_structure.py`（ルール準拠の決定的チェック）
 - ラベルの一括作成: `./scripts/setup-github-labels.sh --dry-run`（確認）/ `./scripts/setup-github-labels.sh`（適用）
