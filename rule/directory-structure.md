@@ -23,7 +23,7 @@ life-os/
 │   ├── english/           # (1) 領域: 英語学習（archetype B）             ※ workspace member
 │   └── tools/             # (1) 領域: ユーティリティスクリプト集（archetype B）※ workspace member
 ├── shared/            # (1) Shared Kernel（領域非依存の最小基盤）※ workspace member・ルート直下
-├── docs/              # (2) content: 設計ドキュメント（adr/ など）
+├── docs/              # (2) content: 設計ドキュメント（adr/ 設計決定記録・design/ Claude Design への入力）
 ├── guides/            # (2) content: 開発運用の手順・ルール
 ├── rule/              # (2) content: 構造ガバナンスルール（このディレクトリ）
 ├── scripts/           # (3) 支援: 自動化スクリプト
@@ -90,6 +90,18 @@ compose.yaml  .dockerignore   （← テスト実行環境 / ADR-0006）
 ### R-STRUCT-7: 不要物はアーカイブまたは削除
 使われなくなったものを「念のため」放置しない。役目を終えたものは削除し、履歴として残すべき意思決定は
 [ADR](../docs/adr/) に `置き換え済み` 等で残す（ADR 自体は削除しない）。
+
+### R-STRUCT-8: 成果物の置き場所を「作る道具」ではなく「用途」で決める
+
+廃止した領域のパス配下に成果物を置かない。領域（`domains/<領域>/`）は uv workspace member 専用であり、
+コードを持たない成果物をそこに置くと C-DOMAIN 違反になる（[ADR-0013](../docs/adr/0013-deprecate-presentation-adopt-claude-design.md) 廃止後の
+`domains/presentation/` に指示書が置かれた実例がある）。
+
+**Claude Design で作る成果物（スライド・ドキュメント・UI モック）の入力は [`docs/design/`](../docs/design/README.md) に置く。**
+デザインシステムと案件ごとの指示書・素材をここに集約する（根拠は [ADR-0016](../docs/adr/0016-claude-design-design-system-file.md)、
+ディレクトリ構成と運用の正本は [docs/design/README.md](../docs/design/README.md)）。
+
+書き出した PDF / PPTX / HTML は生成物なのでコミットしない（[R-STRUCT-4](#r-struct-4-生成物はコミットしないgitignore-する)）。
 
 ---
 
