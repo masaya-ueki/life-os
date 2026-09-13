@@ -7,7 +7,7 @@ meta:
   title: "AI駆動で、業務をやる。"
   subtitle: "Claude ではじめる、自分の作業のAI化ハンズオン"
   purpose: "参加者が「自分の作業をAIに任せる型」を持ち帰る。Skillを1つ作り、実行し、不満を書き戻して再実行するまでを一周体験させる"
-  audience: "社内メンバー（Claude Code 利用者。エンジニア以外も含む）"
+  audience: "社内メンバー（Claude Desktop の Code タブで Claude Code を使う。エンジニア以外も含む）"
   tone: "落ち着いた・事実ベース・装飾過多にしない"
   language: ja
   aspect_ratio: "16:9"
@@ -44,8 +44,15 @@ design_system:
 #   life-os が正式名として使う「Loop Engineering」への橋渡しを1行入れる。
 #   部品名は「Subagent」に統一する（段階名「エージェント駆動」との用語衝突を避けるため）。
 #
+# ハンズオン教材:
+#   JMASystems/all_common_ai_handson（private）。受講者には Zip で配布し、Git / GitHub は使わない。
+#   Claude Desktop の Code タブで教材フォルダを開いて実施する。
+#   実践は同梱の issue-management（Agent）に作業を説明し、Skill / rule / Agent / Hook を生成させる。
+#   冒頭デモは同梱サンプル meeting-task-extraction 一式（Agent / rule / Skill）と sample/meeting/デモ用議事録.vtt。
+#   用語: 教材は「Agent」「rule」表記。スライドは部品名を「Subagent」「Rule」とし、実物のフォルダ名（agents/ rules/）で橋渡しする。
+#
 # 未確定:
-#   「※リポジトリ確定後に記載」はハンズオン用リポジトリ（Claude版）の再作成待ち。
+#   「※運営確定後に記載」は TA 体制・質問チャネル・登壇者名・開催日。
 # --------------------------------------------------------------
 deck:
   flow_pattern: "時系列"   # 研修の進行順（座学 → 実践 → 振り返り）
@@ -55,7 +62,7 @@ deck:
     - { no: 2,  template: T14_emphasis,    note: "本日の目的（強調1回目/全2回）" }
     - { no: 3,  template: T02_agenda,      note: "本日の流れ＋時間配分の内訳" }
     - { no: 4,  template: T05_bullets,     note: "事前確認：動く状態か（挙手確認）" }
-    - { no: 5,  template: T09_process,     note: "デモ：議事録→タスク化。裏側は後で分解の予告" }
+    - { no: 5,  template: T09_process,     note: "デモ：議事録(.vtt)→タスク抽出→承認→登録。裏側は後で分解の予告" }
 
     # --- L01 AI駆動の現在地（p6-10 / 約9分）---
     - { no: 6,  template: T03_section,     note: "章扉：AI駆動の現在地" }
@@ -89,7 +96,7 @@ deck:
     # --- 実践（p27-36 / 47分）---
     - { no: 27, template: T03_section,     note: "章扉：実践編" }
     - { no: 28, template: T02_agenda,      note: "実践の進め方と、詰まったときの導線" }
-    - { no: 29, template: T05_bullets,     note: "実践0 リポジトリを開く（5分）" }
+    - { no: 29, template: T05_bullets,     note: "実践0 教材フォルダを開く（5分）" }
     - { no: 30, template: T09_process,     note: "実践1 棚卸し（7分）" }
     - { no: 31, template: T09_process,     note: "実践2 Skillを作る（12分）" }
     - { no: 32, template: T05_bullets,     note: "実践3 動かす（8分）" }
@@ -406,6 +413,8 @@ constraints:
     - "GitHub Copilot 前提の記述が残っていないか（対象は Claude のみ）"
     - "p8 と p36 のサイクル図が同じ形で描かれているか（p36 は p8 の再掲）"
     - "p5 のデモ画面が p21 で再掲されているか"
+    - "実践手順に clone / fork / Pull Request が残っていないか（教材は Zip 配布・Git 不使用）"
+    - "デモの裏側に MCP / Hook を使ったと書いていないか（実物は gh CLI と承認ゲート。Hook は意図的に置いていない）"
 
 # --------------------------------------------------------------
 # 素材
@@ -438,8 +447,12 @@ content:
     - 事前確認 / トリガー早見表 / 歯止め / 成果物イメージ / クロージングを新設
     - 実践を「作る→動かす→不満→修正→再実行」の2周構成に再設計
 
-    未確定: ハンズオン用リポジトリ（Claude版）が再作成中のため、
-    「※リポジトリ確定後に記載」の箇所は実物と揃えて後日埋める。
+    ハンズオン教材（JMASystems/all_common_ai_handson）の実物に合わせて反映したこと:
+    - 配布は Zip・Git 不使用・Claude Desktop の Code タブで教材フォルダを開く（p4 / p29）
+    - デモは同梱サンプル meeting-task-extraction（.vtt → 抽出 → 一括承認 → gh で Draft item 登録）。
+      MCP・Hook は使っていないため、p5 / p18 / p21 の説明を実物に揃えた
+    - 実践は issue-management に作業を説明し、5ステップの聞き取りで成果物を生成（モード A）、
+      不満を伝えて差分更新（モード B）。変更履歴が残らないため変更サマリをメモする（p31-35）
 
   pages:
     - no: 1
@@ -449,7 +462,7 @@ content:
         title: "AI駆動で、業務をやる。"
         subtitle: "「開発」を超えて、すべての業務をAI駆動に。Skill / Rule / Subagent / Hook / MCP / Plugin ハンズオン"
         date: "2026-06-23"
-        author: "※登壇者名を記載"
+        author: "※運営確定後に記載（登壇者名）"
 
     - no: 2
       template: T14_emphasis
@@ -473,22 +486,22 @@ content:
         page_title: "はじめる前に — 動く状態か確認"
         key_message: "ここで詰まると実践47分が丸ごと溶ける。先に全員の環境を揃える"
         items:
-          - { label: "Claude Code", body: "インストール済みで、起動して認証が通る" }
-          - { label: "リポジトリ", body: "※リポジトリ確定後に記載（clone / fork 済みであること）" }
-          - { label: "起動確認", body: "リポジトリのルートで `claude` が起動し、対話できる" }
+          - { label: "Claude Desktop", body: "インストール済みでログインでき、画面上部の Code タブが開ける" }
+          - { label: "教材フォルダ", body: "配布 Zip を展開済みで、隠しフォルダ `.claude` が見えている（Windows は「表示 → 隠しファイル」をオン）" }
+          - { label: "起動確認", body: "Code タブで教材フォルダを選び、左隣が「ローカル」と表示され、対話できる" }
           - { label: "動いていない方", body: "この時点で挙手 — 実践が始まる前に解消します" }
 
     - no: 5
       template: T09_process
       values:
-        page_title: "【デモ】議事録からタスク化まで、全自動"
-        key_message: "Claudeに任せるとはこういうこと。人は「投げる」と「確認する」だけ"
+        page_title: "【デモ】会議の文字起こしから、タスク登録まで"
+        key_message: "Claudeに任せるとはこういうこと。人は「渡す」と「承認する」だけ"
         steps:
-          - { no: 1, label: "投げる", body: "Teams から書き出したトランスクリプトを、そのまま Claude に渡す" }
-          - { no: 2, label: "議事録化", body: "決定事項・議論・宿題を、決められたフォーマットに整理する" }
-          - { no: 3, label: "タスク化", body: "宿題を GitHub Projects のタスクとして MCP 経由で起票する" }
-          - { no: 4, label: "確認する", body: "人の仕事は、できあがったものを見て過不足を指摘することだけ" }
-        caption: "この裏側は6つの部品でできています。座学の後半（p21）で分解します"
+          - { no: 1, label: "渡す", body: "Teams の文字起こし（.vtt）を、そのまま Claude に渡す" }
+          - { no: 2, label: "抽出する", body: "「誰が・いつまでに・何をするか」を拾う。担当や期限が読み取れないものは推測せず「確認待ち」に分ける" }
+          - { no: 3, label: "承認する", body: "登録予定の一覧を人が見て、除外・修正を指示してから承認する" }
+          - { no: 4, label: "登録する", body: "承認された分だけを GitHub Project にタスクとして登録する" }
+        caption: "この裏側は部品の組み合わせでできています。座学の後半（p21）で分解します。題材は教材同梱の sample/meeting/デモ用議事録.vtt"
 
     - no: 6
       template: T03_section
@@ -591,17 +604,17 @@ content:
           - { no: 2, label: "手順を書く", body: "自分が普段やっている順番を、そのまま箇条書きにする" }
           - { no: 3, label: "守ることを書く", body: "禁止事項・前提・出力フォーマットなど、外してほしくない条件を書く" }
           - { no: 4, label: "呼び出して試す", body: "実際に呼び出し、出力を見て手順を書き足していく" }
-        caption: "※リポジトリ確定後に記載（同梱するサンプル Skill と、実践で作る Skill の題材例）"
+        caption: "教材のサンプル: `.claude/skills/meeting-task-extraction/SKILL.md`（冒頭デモの手順）。実践の題材例: 月次の売上レポート作成（CSV 取得 → 集計 → グラフ → メール送信）。守ることは rule に分けて書く"
 
     - no: 15
       template: T07_table
       values:
         page_title: "Rule — `.claude/rules/`"
-        key_message: "CLAUDE.md との違いは、ロードのされ方だけ"
-        columns: ["CLAUDE.md", ".claude/rules/"]
+        key_message: "rules/ は、テーマごとに分けた CLAUDE.md。paths を書けば、効かせる範囲を絞れる"
+        columns: ["CLAUDE.md", "rules/（paths なし）", "rules/（paths あり）"]
         rows:
-          - { axis: "いつロードされるか", values: ["全セッションで常時", "paths に一致するファイルを触ったときだけ"] }
-          - { axis: "何を書くか", values: ["リポジトリ全体の前提・方針", "特定のファイル種別・領域にだけ効かせたい規約"] }
+          - { axis: "いつロードされるか", values: ["全セッションで常時", "全セッションで常時", "paths に一致するファイルを読んだときだけ"] }
+          - { axis: "何を書くか", values: ["リポジトリ全体の前提・方針", "テーマ別に分けたい規約（例: 承認ゲート・個人情報）", "特定のファイル種別・領域にだけ効かせたい規約"] }
         conclusion: "経験則: CLAUDE.md は200行以下に保つ。超えたら rules/ か Skill に逃がす"
 
     - no: 16
@@ -626,7 +639,7 @@ content:
           - { no: 2, label: "実行中", body: "監査ログを残す、外部システムへ通知する" }
           - { no: 3, label: "実行後", body: "フォーマッタやテストを自動で走らせる" }
           - { no: 4, label: "セッション終了時", body: "結果をまとめる、後片付けをする" }
-        caption: "実行できるもの: シェルコマンド / HTTPリクエスト / LLMプロンプト / subagent"
+        caption: "実行できるもの: シェルコマンド / HTTPリクエスト / MCPツール / LLMプロンプト / subagent"
 
     - no: 18
       template: T06_cards
@@ -634,7 +647,7 @@ content:
         page_title: "MCP — 外部ツールに直接つなぐ"
         key_message: "見えないツールの情報をコピペし続けるのをやめ、AIを直接つなぐ"
         cards:
-          - { label: "GitHub", title: "Issue / PR / Projects", body: "冒頭デモの「GitHub Projects へタスク起票」は、これで実現している" }
+          - { label: "GitHub", title: "Issue / PR / Projects", body: "冒頭デモの登録は gh コマンドで行っているが、MCP にすれば同じことを専用ツールとして呼べる" }
           - { label: "Notion", title: "ページ・DBの検索と更新", body: "議事録や仕様書を、Claude から直接読み書きできる" }
           - { label: "その他", title: "社内ツール・SaaS", body: "MCP サーバーが提供されているツールに接続できる" }
         caption: "※Teams のトランスクリプトはファイルとして渡している（公式 MCP が使えるとは限らないため）"
@@ -669,14 +682,14 @@ content:
     - no: 21
       template: T05_bullets
       values:
-        page_title: "デモの裏側 — 6つの部品でできていた"
+        page_title: "デモの裏側 — 3つのファイルでできていた"
         key_message: "冒頭のデモは、いま見た部品の組み合わせでできている。特別なことは何もしていない"
         items:
-          - { label: "議事録のフォーマット", body: "Skill（アクション型）" }
-          - { label: "宿題の切り出しと分解", body: "Subagent" }
-          - { label: "GitHub Projects への起票", body: "MCP" }
-          - { label: "起票前の確認・機密チェック", body: "Hook / CLAUDE.md" }
-        note: "p5 のデモ画面スクリーンショットを再掲して、参加者の記憶を戻してから分解する"
+          - { label: "抽出→照合→一覧→承認→登録 の手順", body: "Skill（アクション型）— `skills/meeting-task-extraction/SKILL.md`" }
+          - { label: "タスクか・担当は誰か・期限は・重複か の判断", body: "Subagent — `agents/meeting-task-extractor.md`" }
+          - { label: "承認なしに書き込まない・推測しない・個人情報を出さない", body: "Rule — `rules/meeting-task-extraction.md`" }
+          - { label: "登録と、最後の歯止め", body: "gh コマンドで登録。実行前の権限確認と、人の一括承認が歯止め" }
+        note: "p5 のデモ画面スクリーンショットを再掲して、参加者の記憶を戻してから分解する。教材は自動ブロックの Hook を意図的に置いていない（承認記録は AI 自身が作れてしまい防御にならないため）ので、Hook を使ったとは書かない"
 
     - no: 22
       template: T03_section
@@ -705,7 +718,7 @@ content:
         points:
           - "チャット履歴に書いた工夫は、他人に渡らず、自分も次回は忘れている"
           - "リポジトリに置けば差分でレビューでき、他の人が改善を積める。なぜそうしたかも Pull Request に残る"
-          - "リポジトリを持たない業務でも考え方は同じ — 個人のフォルダに置いても、資産として貯まる"
+          - "リポジトリを持たない業務でも考え方は同じ — 今日の教材も Git を使わないフォルダだが、`.claude/` に置けば資産として貯まる"
 
     - no: 25
       template: T05_bullets
@@ -716,7 +729,7 @@ content:
           - { label: "権限", body: "実行を自動許可する範囲を決める。危険操作は必ず確認を挟む" }
           - { label: "コスト", body: "自動で回すものには、反復回数の上限と予算の上限を先に置く" }
           - { label: "機密", body: "顧客情報・認証情報を渡さない。Hook で検出してブロックする" }
-          - { label: "最後の歯止め", body: "Pull Request — main に入る前に、人が必ず1回見る" }
+          - { label: "最後の歯止め", body: "人の承認 — 外に書き込む前に一覧を見せて承認させる（冒頭デモの形）。リポジトリ運用なら Pull Request" }
         caption: "歯止めのない自律化はしない。life-os の「ハードストップ」の考え方と同じ"
 
     - no: 26
@@ -728,7 +741,7 @@ content:
           - { label: "3回やったらAI化", body: "「面倒」を感じた瞬間がシグナル" }
           - { label: "ループ化サイクル", body: "不満が出たら、直すのはプロンプトではなく Skill" }
           - { label: "6つの部品と早見表", body: "自分がどの行にいるかで、次に作るものが決まる" }
-        caption: "47分後に手元に残るもの: 自分の作業を実行できる Skill 1つ／それを1回改善した履歴／次に作る部品の当たり"
+        caption: "47分後に手元に残るもの: 自分の作業を実行できる Skill 1つ／それを1回改善した変更サマリ／次に作る部品の当たり"
 
     - no: 27
       template: T03_section
@@ -741,22 +754,23 @@ content:
       template: T02_agenda
       values:
         items:
-          - { no: "0", label: "リポジトリを開く（5分）", note: "Claude Code を起動し、同梱資産を確認する" }
+          - { no: "0", label: "教材フォルダを開く（5分）", note: "Claude Desktop の Code タブで開き、同梱資産を確認する" }
           - { no: "1", label: "棚卸し（7分）", note: "3回やった作業を書き出し、1つ選ぶ" }
-          - { no: "2", label: "Skillを作る（12分）", note: "対話しながら SKILL.md を書く" }
+          - { no: "2", label: "Skillを作る（12分）", note: "課題整理エージェントの質問に答えて、SKILL.md を生成させる" }
           - { no: "3", label: "動かす（8分）", note: "呼び出して実行し、出力を見る" }
           - { no: "4-6", label: "不満 → 修正 → 再実行（15分）", note: "ここまで到達することを最優先にする" }
-        note: "詰まったら挙手 — ※リポジトリ確定後に記載（TA体制・質問チャネル）。時間内に終わらない場合は、Skill の完成度を下げてでも「修正して再実行」まで到達することを優先する"
+        note: "詰まったら挙手 — ※運営確定後に記載（TA体制・質問チャネル）。やり直したいときは配布 Zip を別の場所に展開し直す。時間内に終わらない場合は、Skill の完成度を下げてでも「修正して再実行」まで到達することを優先する"
 
     - no: 29
       template: T05_bullets
       values:
-        page_title: "実践0 — リポジトリを開く"
+        page_title: "実践0 — 教材フォルダを開く"
         key_message: "同梱の資産を確認して、今日の作業場を立ち上げる"
         items:
-          - { label: "リポジトリを取得", body: "※リポジトリ確定後に記載（URL・clone 手順）" }
-          - { label: "同梱物を確認", body: "※リポジトリ確定後に記載（Skill / Rule / Subagent / Hook の一覧）" }
-          - { label: "構成を目で見る", body: "`.claude/` を開いて、座学で見た構成が実物としてあることを確認する" }
+          - { label: "教材を開く", body: "配布 Zip を展開し、Claude Desktop の Code タブ →「フォルダなし」ボタン → `all_common_ai_handson` を選ぶ。Git は使わない" }
+          - { label: "今日使う道具", body: "`agents/issue-management.md`（課題整理エージェント）と、それが呼ぶ `issue-reviewer`（レビュー役）。呼び出しはスラッシュコマンドではなく自然文" }
+          - { label: "完成見本", body: "冒頭デモの一式 — `agents/meeting-task-extractor.md` / `rules/meeting-task-extraction.md` / `skills/meeting-task-extraction/SKILL.md`" }
+          - { label: "構成を目で見る", body: "`.claude/` を開いて、座学で見た構成（agents / rules / skills / settings.json）が実物としてあることを確認する" }
 
     - no: 30
       template: T09_process
@@ -773,13 +787,13 @@ content:
       template: T09_process
       values:
         page_title: "実践2 — Skillを作る"
-        key_message: "Claude に質問させながら、自分の手順を SKILL.md に書き出す"
+        key_message: "課題整理エージェントに質問させながら、自分の手順を SKILL.md に書き出させる"
         steps:
-          - { no: 1, label: "説明する", body: "選んだ作業を、口頭のつもりで Claude に説明する" }
-          - { no: 2, label: "質問させる", body: "手順・前提・禁止事項・出力フォーマットを Claude に聞き出させる" }
-          - { no: 3, label: "書き出させる", body: "SKILL.md として書き出させ、.claude/skills/ に配置する" }
-          - { no: 4, label: "自分で読む", body: "暗黙知の抜けと、勝手に足された仕様がないかを確認する" }
-        caption: "任せきりにしない。レビュー観点: 自分の手順が反映されているか／暗黙知が抜けていないか／余計な仕様が入っていないか"
+          - { no: 1, label: "説明する", body: "選んだ作業を、口頭のつもりでチャットに書く（例:「毎月月末に売上レポートを Excel で手作成しています」）" }
+          - { no: 2, label: "質問に答える", body: "作業概要 → 手順と入出力 → 守るルール → AI化する範囲 の順に聞かれる" }
+          - { no: 3, label: "生成させる", body: "`.claude/skills/` に Skill が作られる。必要と判定されれば rule / Agent / Hook も一緒に作られる" }
+          - { no: 4, label: "自分で読む", body: "レビューするか聞かれたら「はい」でレビュー役に第三者チェックさせ、自分でも抜けと余計な仕様を確認する" }
+        caption: "任せきりにしない。レビュー観点: 自分の手順が反映されているか／暗黙知が抜けていないか／余計な仕様が入っていないか。「お任せします」ではレビューは始まらない"
 
     - no: 32
       template: T05_bullets
@@ -796,7 +810,7 @@ content:
       template: T14_emphasis
       values:
         statement: "AIの出力に不満が出たら、直すのはプロンプトではなく“スキル”"
-        sub: "実践4（5分）— 不満は1つに絞り、「現象」「期待」「対応案」の3行で書く。ここで書いたものが、次の Skill 修正の指示書になる"
+        sub: "実践4（5分）— 不満は1つに絞り、「どこで起きたか」「期待していた動作」「実際の動作」の3行で書く。ここで書いたものが、次の Skill 修正の指示書になる"
 
     - no: 34
       template: T04_message
@@ -804,9 +818,9 @@ content:
         page_title: "実践5 — Skillを直す"
         key_message: "プロンプトを工夫するのではなく、SKILL.md に書き戻す"
         points:
-          - "挙げた不満を Claude に渡し、SKILL.md のどこを直すべきか相談する"
-          - "「毎回言い忘れる前提」は手順に、「守ってほしい制約」は禁止事項として書き足す"
-          - "その場のプロンプトで直すと、次回また同じことを言う羽目になる。書き戻した瞬間に、その改善は資産になる"
+          - "3行の不満をそのままチャットに貼る（例:「monthly-report の Skill を試したら手順3で止まった。集計対象の列名が書かれていない」）。課題整理エージェントが改善モードで聞き取り、既存ファイルを差分だけ直す"
+          - "「毎回言い忘れる前提」は手順に、「守ってほしい制約」は rule に書き足させる"
+          - "直したあとに出る変更サマリを手元にメモする（教材は変更履歴が残らない）。その場のプロンプトで直すと次回また同じことを言う羽目になる。書き戻した瞬間に、その改善は資産になる"
 
     - no: 35
       template: T13_before_after
@@ -843,7 +857,7 @@ content:
         conclusion: "Skill が1つと、それを1回育てた経験。この2つが持ち帰りのすべて"
         points:
           - { label: "Skill 1つ", body: "自分の作業を実行できる形になっている" }
-          - { label: "育てた履歴", body: "ループ化サイクルを一周した経験そのもの" }
+          - { label: "育てた記録", body: "メモした変更サマリと、ループ化サイクルを一周した経験" }
           - { label: "次の当たり", body: "早見表のどの行に自分がいるか" }
         caption: "隣の人と、作った Skill を見せ合ってみてください"
 
@@ -859,7 +873,7 @@ content:
         caption: "公式: https://code.claude.com/docs/ja/features-overview ／ 考え方: guides/development-policy/loop-engineering.md ／ 業界呼称: Compounding Engineering / Loop Engineering"
 
     # ============================================================
-    # Appendix — 本編では話さない。より学習したい人向けの持ち帰り資料
+    # Appendix — 本内容をすでに知っている人・より学習したい人向け
     # ============================================================
 
     - no: 39
