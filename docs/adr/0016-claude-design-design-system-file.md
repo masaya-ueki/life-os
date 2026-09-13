@@ -4,6 +4,7 @@
 - **決定日**: 2026-09-08
 - **決定者**: masaya_ueki
 - **関連 ADR**: [ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md)（本 ADR はその積み残しに対応する）
+- **関連 ADR（後続）**: [ADR-0018](./0018-design-system-slide-first-windows-fonts.md)（デザインシステムの主用途をスライドに置き、フォントとコード配色を改めた）
 
 ---
 
