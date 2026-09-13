@@ -4,7 +4,7 @@
 - **決定日**: 2026-09-13
 - **決定者**: masaya_ueki
 - **関連タスク**: #159
-- **関連 ADR**: [ADR-0016](./0016-claude-design-design-system-file.md)（デザインシステムを `docs/design/` に置く判断）／ ADR-0017（指示書形式の改訂。#158 で並行して追加）
+- **関連 ADR**: [ADR-0016](./0016-claude-design-design-system-file.md)（デザインシステムを `docs/design/` に置く判断）／ [ADR-0017](./0017-slide-spec-claim-materials-deck-types.md)（指示書形式の改訂）
 
 ---
 
