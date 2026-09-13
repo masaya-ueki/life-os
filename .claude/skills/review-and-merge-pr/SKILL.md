@@ -124,7 +124,7 @@ gh pr diff <N> --name-only
 
 ### ③ 領域横断のカウント
 
-判定対象の Bounded Context 集合 = **`{task, content-sales, media, travel, english}`**。
+判定対象の Bounded Context 集合 = **`{task, content-sales, media, travel, english, tools}`**（ルート `pyproject.toml` の `[tool.uv.workspace] members` にある `domains/*`）。
 変更ファイルが属する**異なる領域が 2 つ以上**なら横断 → human。
 （`shared` はこの集合に含めない＝②で先に human になる。`docs` / `scripts` 等の content・ツールは領域数にカウントしない。）
 

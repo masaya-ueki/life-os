@@ -138,6 +138,15 @@ COPY domains/<領域>/pyproject.toml domains/<領域>/
 - [`/guides/development-policy/issue-operation-rules.md`](../../../guides/development-policy/issue-operation-rules.md) の scope / `system:` ラベル表に `<領域>` を追加
 - [`/scripts/setup-github-labels.sh`](../../../scripts/setup-github-labels.sh) に `system: <領域>` を追加
 - GitHub 側にラベルが無ければ作成: `gh label create "system: <領域>" --repo masaya-ueki/life-os --color 7e57c2 --description "…"`
+- [`/.claude/skills/issue-memory/SKILL.md`](../issue-memory/SKILL.md) の scope 一覧に `<領域>` を追加（起票時の scope 選択肢）
+
+### ステップ6b: スコープゲートの領域集合に追加
+
+PR 自動マージ判定（[ADR-0008](../../../docs/adr/0008-pr-auto-merge-scope-gate.md)）は領域横断を Bounded Context 集合で数える。
+新領域が集合に無いと「新領域 + 既存1領域」の横断 PR が単一領域と数えられ、無人マージされうる。
+
+- [`/.claude/skills/review-and-merge-pr/SKILL.md`](../review-and-merge-pr/SKILL.md) の「③ 領域横断のカウント」の集合に `<領域>` を追加
+- [`/guides/development-policy/code-review-rules.md`](../../../guides/development-policy/code-review-rules.md) のスコープゲート表（領域横断の行）に `<領域>` を追加
 
 ---
 
@@ -160,7 +169,8 @@ docker compose run --rm test             # pytest スモーク
 - [ ] `.importlinter`: root_packages / shared-is-foundation / 新コントラクト / **既存全領域の forbidden 追記**
 - [ ] `docker/Dockerfile` の COPY
 - [ ] README / rule/directory-structure.md / CLAUDE.md のツリー
-- [ ] `system: <領域>` ラベル（運用ルール表 + setup-github-labels.sh + GitHub 側）
+- [ ] `system: <領域>` ラベル（運用ルール表 + setup-github-labels.sh + GitHub 側 + issue-memory の scope 一覧）
+- [ ] スコープゲートの領域集合（review-and-merge-pr ③ + code-review-rules.md の表）
 - [ ] `check_structure.py` / `lint-imports` / `pytest` が通る
 
 > このチェックリストは `code-review-architecture` スキルの観点と対応する。境界・構造を伴う
