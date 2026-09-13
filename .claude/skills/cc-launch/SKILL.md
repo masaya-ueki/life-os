@@ -10,7 +10,7 @@ allowed-tools: Bash, Read, Glob, Grep
 このスキルは Claude Code の作業を **モード選択式** で起動します。タスクの性質に応じて
 「Issue の自動読み込み」「計画フェーズの有無」「使用モデル」を切り替えます。
 
-> **設計根拠**: [ADR-0010 作業起動フローをモード選択式スキル + Issue 自動読み込みで標準化する](../../docs/adr/0010-cc-launch-skill-and-issue-memory.md)
+> **設計根拠**: [ADR-0010 作業起動フローをモード選択式スキル + Issue 自動読み込みで標準化する](../../../docs/adr/0010-cc-launch-skill-and-issue-memory.md)
 > **連携スキル**: [issue-memory](../issue-memory/SKILL.md)（Issue 自動読み込み）
 
 ---
