@@ -287,6 +287,44 @@ page_templates:
     slots: [label, body]
     rules: ["本編と同じデザイン。情報密度は上げてよいが色数は守る"]
 
+  - id: T18_cycle
+    name: サイクル（循環）
+    use_when: "終わりが始まりに戻る反復を示すとき。T09 の直線フローでは「①に戻る」が表現できない"
+    layout: |
+      page_title
+      ──────────────────
+              ┌──▶ ① label ──┐
+              │              ▼
+          ⑤ label        ② label
+              ▲              │
+              │              ▼
+          ④ label ◀──── ③ label
+      ──────────────────
+      ▍key_message
+    slots: [page_title, "steps[{no, label, body}]", highlight_step, key_message]
+    rules:
+      - "4〜5ステップ。円環に配置し、最後から最初へ戻る矢印を必ず描く"
+      - "highlight_step に指定した1ステップのみ accent。他は text_muted、矢印は border"
+      - "人がやる工程を highlight_step にする"
+
+  - id: T19_stack
+    name: 積み上げ層
+    use_when: "下の層が上の層を支える依存関係を示すとき。並列カード（T06）では上下関係が消える"
+    layout: |
+      page_title
+      ──────────────────
+              [   最上層   ]
+            [    第2層      ]
+          [     第3層        ]
+        [       土台          ]
+      ──────────────────
+      ▍key_message
+    slots: [page_title, "layers[{label, body}]", key_message]
+    rules:
+      - "3〜4層。先頭が土台（最下段）、末尾が最上段"
+      - "下ほど幅を広く取る。土台のみ accent_soft、他は bg_subtle"
+      - "層の中に要素名を並べてよいが、層あたり2要素まで"
+
 # --------------------------------------------------------------
 # 全ページ共通の制約
 #
