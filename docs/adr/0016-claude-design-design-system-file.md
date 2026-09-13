@@ -4,6 +4,7 @@
 - **決定日**: 2026-09-08
 - **決定者**: masaya_ueki
 - **関連 ADR**: [ADR-0013](./0013-deprecate-presentation-adopt-claude-design.md)（本 ADR はその積み残しに対応する）
+  - 指示書の形式は [ADR-0017](./0017-slide-spec-claim-materials-deck-types.md) で改訂
 
 ---
 
