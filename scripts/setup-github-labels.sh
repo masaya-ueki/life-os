@@ -68,7 +68,7 @@ LABELS=(
   "type: ci|1d76db|CI/CD 設定"
   "type: perf|a4f2a4|パフォーマンス改善"
 
-  # === system ラベル（7 件、Conventional Commits の scope と一致） ===
+  # === system ラベル（8 件、Conventional Commits の scope と一致） ===
   "system: task|7e57c2|タスク管理"
   "system: travel|7e57c2|旅行の行先管理"
   "system: media|7e57c2|画像・動画管理"
