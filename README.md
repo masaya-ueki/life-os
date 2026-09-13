@@ -61,7 +61,7 @@ life-os は **Stage 2 を運用しつつ Stage 3 の部品（意図の構造化�
 │   └── tools/                # 領域: ユーティリティスクリプト集（csv_splitter 等）
 ├── .claude/
 │   ├── agents/               # Claude Code サブエージェント（pr-reviewer / biz-* 等）
-│   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper / slide-spec-writer）
+│   └── skills/               # Claude Code スキル（issue-memory / code-review-* / directory-keeper / slide-spec-writer / claude-code-release-watcher）
 ├── .github/
 │   ├── ISSUE_TEMPLATE/        # Issue テンプレート（ProductBacklog / Task / 調査）
 │   └── pull_request_template.md
@@ -107,6 +107,7 @@ docker compose build            # 依存を変えたときにイメージを再�
 - [収益組織の運用ルール](./guides/business/README.md) — Claude エージェント組織で収益 loop を回す（役割・歯止め・撤退基準／[ADR-0015](./docs/adr/0015-revenue-org-inside-life-os.md)）
 - [ディレクトリ構成論ルール](./rule/README.md) — リポジトリがどうあるべきか（配置・命名・ドキュメント重複禁止）
 - [directory-keeper](./.claude/skills/directory-keeper/SKILL.md) — 構成を日次で監査し整頓するエージェント（Routines で定期実行・[ADR-0005](./docs/adr/0005-directory-governance-daily-keeper.md)）
+- [claude-code-release-watcher](./.claude/skills/claude-code-release-watcher/SKILL.md) — Claude Code の新リリースを Notion にリリース要約・機能説明書として記録するスキル（Routines で毎日実行）
 - [Issue 運用ルール](./guides/development-policy/issue-operation-rules.md) — Issue の分類・ラベル・作業フロー
 - [Issue メモリスキル](./.claude/skills/issue-memory/SKILL.md) — Issue の起票から作業完了報告まで一本化する
 - [コードレビュー運用ルール](./guides/development-policy/code-review-rules.md) — PR を観点別スキルでレビューし、修正PR作成 or 検証付き自動マージまで回す（`pr-reviewer` エージェント）
