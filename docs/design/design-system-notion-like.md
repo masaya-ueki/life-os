@@ -121,7 +121,7 @@ Claude Design はこのファイル 1 枚を読めば、未定義のケースに
 --font-mono: "BIZ UDゴシック", "BIZ UDGothic", "MS Gothic", monospace;
 ```
 
-基本は **Yu Gothic UI**、コードは等幅の **BIZ UDゴシック**。どちらも Windows に標準搭載（Yu Gothic UI は 8.1 以降、BIZ UDゴシックは Windows 10 1809 以降）で、PowerPoint で置き換わらない。
+基本は **Yu Gothic UI**、コードは等幅の **BIZ UDゴシック**。どちらも Windows 10 以降に標準搭載（BIZ UDゴシックは Windows 10 1809 以降）で、PowerPoint で置き換わらない。
 **欧文用フォントを別に指定しない。** 両書体とも和文と揃う欧文字形を持つため、1 書体で和欧混植を賄う（欧文だけ別書体にすると、配布先に無い書体が置き換わる原因になる）。
 
 ### スケール（スライド 1920×1080px）
@@ -185,7 +185,7 @@ pt は PowerPoint 上の値（`pt = px × 0.75`）。
 
 - **ラベル語を必ず書く。** 色だけで TIPS と注意を区別しない
 - **TIPS と注意は合わせて 1 ページに 1 つまで**
-- **キーメッセージの帯と同じページに帯で置かない。** 並べたいときは帯にせず、脚注の位置にラベル語＋1 行（本文スタイル・`--text-muted`）で置く
+- **キーメッセージの帯と同じページに帯で置かない。** 並べたいときは帯にせず、脚注の位置にラベル語＋1 行（本文スタイル・`--text-muted`）で置く（この形でも 1 ページ 1 つに数える）
 
 ### 手順番号
 
@@ -197,7 +197,7 @@ pt は PowerPoint 上の値（`pt = px × 0.75`）。
 ### 画面キャプチャの枠
 
 - `1px solid --border` / `radius 4px` / 影なし。縦横比を保つ（引き伸ばさない）
-- 注目箇所は `2px --accent` の矩形（`radius 4px`）で囲む。1 枚に 1 か所まで
+- 注目箇所は `2px --accent` の矩形（`radius 4px`）で囲む。1 枚に 1 か所まで（「枠線 1px」の例外はこの注目枠だけ）
 - 画像の下にキャプション（脚注スタイル）で「何の画面か」を書く
 - 小さくすると読めない場合は、縮小せず必要な部分だけを切り抜く
 - 個人情報・社外秘は `--bg-subtle` で塗りつぶす
@@ -272,7 +272,7 @@ pt は PowerPoint 上の値（`pt = px × 0.75`）。
 
 - **左揃えが基本。** 中央揃えは表紙・章扉のみ
 - 数値は右揃え、単位は揃える
-- 1 ページ ＝ 1 メッセージ。主張が 2 つ入りそうなら、1 つに絞り、もう一方は削る
+- 1 ページ ＝ 1 メッセージ。主張が 2 つ入りそうなら 1 つに絞る。もう一方の扱いは §9 原則 4 に従う
 
 ---
 
@@ -354,7 +354,7 @@ pt は PowerPoint 上の値（`pt = px × 0.75`）。
 
 ```
 このデザインシステムをスライドに適用して。
-ページ構成と内容は、添付の指示書 YAML と、deck_type に対応する資料タイプの型に従う。
+ページ構成と内容は、添付の指示書 YAML（資料タイプの型ファイルが添付されていればそれも）に従う。
 レイアウト・図の種類・文章表現は、このデザインシステムの範囲で任せる。
 デザインの判断はすべてこのデザインシステムを優先する。
 ```
@@ -389,12 +389,12 @@ pt は PowerPoint 上の値（`pt = px × 0.75`）。
 | H2 | 30px | 600 | 1.3 | `--text` |
 | H3 | 24px | 600 | 1.3 | `--text` |
 | Body | 16px | 400 | 1.5 | `--text` |
-| Small / Label | 14px | 500 | 1.4 | `--text` |
+| Small / Label | 14px | 600 | 1.4 | `--text` |
 | Caption | 12px | 400 | 1.4 | `--text-muted` |
 
 - 和文は欧文より字面が大きいため、**本文の line-height は 1.5 を下限**とし、長文は 1.7 まで上げてよい
 - 本文を 14px より小さくして情報を詰め込まない
-- weight 500 は Yu Gothic UI に無いため、ブラウザでは Regular で表示される
+- weight は本文（§3）と同じ 400 / 600 / 700 の 3 段だけ使う（Yu Gothic UI に 500 は無い）
 
 ### Button
 
@@ -405,7 +405,7 @@ pt は PowerPoint 上の値（`pt = px × 0.75`）。
 | ghost | 透明 | `--text` | なし |
 | danger | `--danger` | `#FFFFFF` | なし |
 
-共通: `height 32px` / `padding 0 12px` / `radius 4px` / `font-size 14px` / `font-weight 500`
+共通: `height 32px` / `padding 0 12px` / `radius 4px` / `font-size 14px` / `font-weight 600`
 状態: `hover` = 背景を 1 段濃く（ghost/secondary は `--bg-hover`、primary は `--accent-hover`） / `active` = さらに 1 段 / `focus-visible` = `outline 2px --accent, offset 2px` / `disabled` = `opacity .5, cursor not-allowed`
 
 ### Input / Select / Textarea
@@ -417,7 +417,7 @@ pt は PowerPoint 上の値（`pt = px × 0.75`）。
 ### Navigation（サイドバー）
 
 `bg --bg-subtle` / 幅 240px / 項目 `height 28px, radius 4px, 14px`
-hover `--bg-hover`、選択中 `--bg-hover` ＋ `font-weight 500`（**選択の表現に accent は使わない**）。
+hover `--bg-hover`、選択中 `--bg-hover` ＋ `font-weight 600`（**選択の表現に accent は使わない**）。
 
 ### Table（Web の追加）
 
