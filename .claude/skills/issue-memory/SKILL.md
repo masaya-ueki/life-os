@@ -86,12 +86,15 @@ description: GitHub Issue を Claude の作業メモリとして活用するス�
 | scope | 対象 | 対応する system ラベル |
 |-------|------|---------------------|
 | `task` | タスク管理 | `system: task` |
+| `travel` | 旅行の行先管理 | `system: travel` |
+| `media` | 画像・動画管理 | `system: media` |
 | `english` | 英語学習 | `system: english` |
 | `common` | 横断的・共通基盤 | `system: common` |
 | `content-sales` | 自作ツール等の販売管理 | `system: content-sales` |
+| `tools` | ユーティリティスクリプト集 | `system: tools` |
 | `deps` | 依存パッケージ | `system: deps` |
 
-> 今後 life-os の領域が増えたら、scope と `system: *` ラベルを `guides/development-policy/issue-operation-rules.md` と `scripts/setup-github-labels.sh` に追加する。
+> 本表は `guides/development-policy/issue-operation-rules.md` の system ラベル表を正とする。今後 life-os の領域が増えたら、scope と `system: *` ラベルを同表・`scripts/setup-github-labels.sh`・本表に追加する（手順は `domain-scaffold` スキルのステップ6）。
 
 ### 手順 C: Issue 本文の収集
 

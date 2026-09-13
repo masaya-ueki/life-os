@@ -104,7 +104,7 @@ PR
 |------|----------------------|------|
 | human | 方針・境界・契約パスを含む（`**/public.py` / `.importlinter` / `pyproject.toml` / `docs/adr` / `guides` / `rule` / `.claude` / `.github` / ルート `CLAUDE.md`・`README.md` 等） | マージしない |
 | human | `shared/**` を含む（基盤・全領域波及） | マージしない |
-| human | Bounded Context（`task`/`content-sales`/`media`/`travel`/`english`）を2つ以上含む（領域横断） | マージしない |
+| human | Bounded Context（`task`/`content-sales`/`media`/`travel`/`english`/`tools`）を2つ以上含む（領域横断） | マージしない |
 | auto | 上記いずれにも非該当（単一領域内 or content のみ） | 検証ゲートへ |
 
 > **auto のみ**が上記の検証ゲートに進み、通過すれば無人マージされる。**human はマージせず人間レビューに委ねる**。設計根拠は [ADR-0008](../../docs/adr/0008-pr-auto-merge-scope-gate.md)。
