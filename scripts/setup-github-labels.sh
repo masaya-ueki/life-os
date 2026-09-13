@@ -68,7 +68,7 @@ LABELS=(
   "type: ci|1d76db|CI/CD 設定"
   "type: perf|a4f2a4|パフォーマンス改善"
 
-  # === system ラベル（7 件、Conventional Commits の scope と一致） ===
+  # === system ラベル（8 件、Conventional Commits の scope と一致） ===
   "system: task|7e57c2|タスク管理"
   "system: travel|7e57c2|旅行の行先管理"
   "system: media|7e57c2|画像・動画管理"
@@ -107,8 +107,11 @@ DEPRECATED_LABELS=(
   "system: etl"
   "system: terraform-aws"
   "system: terraform-snowflake"
-  # === 廃止済み領域（別リポジトリへ移管） ===
+  # === 廃止済み領域 ===
+  # certification: 別リポジトリへ移管（ADR-0014）
   "system: certification"
+  # presentation: Claude Design へ移行（ADR-0013）
+  "system: presentation"
 )
 
 #########################################
