@@ -53,11 +53,12 @@ deck:
   deck_type: handson
   max_pages: 44
   chapters:
-    - { id: opening,  title: "オープニング（表紙〜デモ）",   max_pages: 5,  minutes: 7 }
-    - { id: l01,      title: "L01 AI駆動の現在地",           max_pages: 5,  minutes: 9 }
-    - { id: l02,      title: "L02 Claudeを構成する部品",     max_pages: 10, minutes: 14 }
-    - { id: l03,      title: "L03 どこに置くか",             max_pages: 4,  minutes: 7 }
-    - { id: summary,  title: "ここまでの整理",               max_pages: 1,  minutes: 2 }
+    # 座学（opening〜summary）は合計 33分。章ごとの内訳は未確定のため minutes を書かない
+    - { id: opening,  title: "オープニング（表紙〜デモ）",   max_pages: 5 }
+    - { id: l01,      title: "L01 AI駆動の現在地",           max_pages: 5 }
+    - { id: l02,      title: "L02 Claudeを構成する部品",     max_pages: 10 }
+    - { id: l03,      title: "L03 どこに置くか",             max_pages: 4 }
+    - { id: summary,  title: "ここまでの整理",               max_pages: 1 }
     - { id: practice, title: "実践",                         max_pages: 10, minutes: 47 }
     - { id: closing,  title: "クロージング",                 max_pages: 2,  minutes: 10 }
     - { id: appendix, title: "Appendix（投影しない）",       max_pages: 7 }
@@ -146,7 +147,7 @@ content:
     # オープニング（p1-5 / 約7分・うちデモ3分）
     # ============================================================
 
-    - no: 1
+    - page: 1
       chapter: opening
       role: 表紙
       message: "Claude に業務を任せる方法を、手を動かして身につけるハンズオンである"
@@ -163,7 +164,7 @@ content:
       avoid: []
       speaker_notes: "表紙。開始の挨拶と、90分の枠組みだけ伝える。"
 
-    - no: 2
+    - page: 2
       chapter: opening
       role: 強調
       message: "今日持ち帰るのは「自分の作業をAIに任せる型」"
@@ -176,7 +177,7 @@ content:
         - "持ち帰るものを2つ以上並べる"
       speaker_notes: "強調1回目。作って終わりではない、という一点だけ置く。"
 
-    - no: 3
+    - page: 3
       chapter: opening
       role: 流れと時間
       message: "90分のうち47分を実践に使い、修正して再実行するところまでやる"
@@ -191,7 +192,7 @@ content:
       avoid: []
       speaker_notes: "時間配分を明示。実践に47分取ることを強調する。"
 
-    - no: 4
+    - page: 4
       chapter: opening
       role: 事前準備
       message: "実践の前に、全員の環境が動く状態かを確かめる"
@@ -208,7 +209,7 @@ content:
         - "SharePoint の場所や会社アカウントのサインイン手順などの社内情報"
       speaker_notes: "ハンズオン開始前に各自で確認してもらう。フォルダの階層（.claude がある階層を選ぶ）に注意させる。動かない人はここで挙手。"
 
-    - no: 5
+    - page: 5
       chapter: opening
       role: デモ
       message: "Claude に任せると、人は「渡す」と「承認する」だけになる"
@@ -233,7 +234,7 @@ content:
     # L01 AI駆動の現在地（p6-10 / 約9分）
     # ============================================================
 
-    - no: 6
+    - page: 6
       chapter: l01
       role: 章扉
       message: "「AIにコードを書かせる」段階は終わり、「AIに仕事を任せて、育てる」段階へ"
@@ -244,7 +245,7 @@ content:
       avoid: []
       speaker_notes: "章扉。ここから座学の1章目。"
 
-    - no: 7
+    - page: 7
       chapter: l01
       role: 要点
       message: "AI活用は4段階あり、人の関与が「やる」から「設計する」に変わる"
@@ -260,11 +261,12 @@ content:
         - "「loop駆動」と書く"
       speaker_notes: "4段階。本日のゴールは3段目を身につけ、4段目の入り口に立つこと。"
 
-    - no: 8
+    - page: 8
       chapter: l01
       role: 要点
       message: "AIの出力に不満が出たら、直すのはプロンプトではなく“スキル”"
       must_include:
+        - "キーフレーズ（原文どおり）: AIの出力に不満が出たら、直すのはプロンプトではなく“スキル”"
         - "ループ化サイクルの5ステップ: ①見つける → ②書き出す → ③実行させる → ④不満を見つける → ⑤直す → ①へ戻る"
         - "①見つける: 自分が繰り返しやっている作業を見つける"
         - "②書き出す: 手順を Skill / Subagent として書き出す"
@@ -279,7 +281,7 @@ content:
         - "「loop駆動」「複利化」と書く"
       speaker_notes: "★最重要。ここが今日の背骨。④だけが人の仕事だと強調する。p35で再掲する。"
 
-    - no: 9
+    - page: 9
       chapter: l01
       role: 要点
       message: "変わるのは人の役割で、実装者から設計者・レビュアーになる"
@@ -292,11 +294,12 @@ content:
       avoid: []
       speaker_notes: "実装者からレビュアーへ。対象が全業務に広がる点を押す。"
 
-    - no: 10
+    - page: 10
       chapter: l01
       role: 要点
       message: "3回やったら、AI化。「面倒・毎回ググる・コピペ」を感じた瞬間がシグナル"
       must_include:
+        - "タイトル（原文どおり）: 3回やったら、AI化。"
         - "繰り返しに気付く: 「手動で繰り返している作業はないか？」を常に問う"
         - "手順が固まっている: 3回以上やった作業は、既に仕組み化できるだけ手順が固まっている"
         - "効果が大きい候補: 「面倒・毎回ググる・コピペ」が多い作業ほど効果が大きい"
@@ -309,7 +312,7 @@ content:
     # L02 Claudeを構成する部品（p11-20 / 約14分）
     # ============================================================
 
-    - no: 11
+    - page: 11
       chapter: l02
       role: 章扉
       message: "CLAUDE.md を土台に、6つの部品を積み上げるほど任せられる範囲が広がる"
@@ -320,7 +323,7 @@ content:
       avoid: []
       speaker_notes: "章扉。部品の話に入る。作るのはSkillだけ、と先に言う。"
 
-    - no: 12
+    - page: 12
       chapter: l02
       role: 要点
       message: "1つの共通方針と6種のAI資産が積み上がっている。今日作るのは Skill で、残りはこの先の地図"
@@ -336,13 +339,13 @@ content:
         - Skill = 手順書。背表紙だけ常に見えていて、必要なときだけ抜き出す
         - Subagent = 担当者。別の人に作業を振って、結果だけ報告してもらう
         - Hook = 任意のタイミングで必ずやること。作業の前に必ず手を洗う
-        - MCP = 他サービスとの接続。AIにアカウントを発行して Teams や GitHub に問い合わせできるようにする
+        - MCP = 他サービスとの接続。AIにアカウントを発行して GitHub などに問い合わせできるようにする
         - Plugin = 上記一式を詰めたセット。部門共通にして配りたいときに使う
       avoid:
         - "部品を上下関係のない横並びとして書く"
       speaker_notes: "下の層が上の層を支える。今日作るのはSkillだけで、残りは地図。"
 
-    - no: 13
+    - page: 13
       chapter: l02
       role: 説明
       message: "Skill は、毎回貼り直している手順や規約を SKILL.md に切り出し、必要なときだけ Claude に読ませる仕組み。今日作るのはこれ"
@@ -383,7 +386,7 @@ content:
         - "スラッシュコマンドでしか呼べないように書く"
       speaker_notes: "Skillは2種類。今日作るのはアクション型。SKILL.md は「いつ使うか・手順・守ること」を書くだけで作れる、と伝える。"
 
-    - no: 14
+    - page: 14
       chapter: l02
       role: 説明
       message: "rules/ はテーマごとに分けた CLAUDE.md。paths を書けば効かせる範囲を絞れる"
@@ -407,7 +410,7 @@ content:
         - "「Instruction」と書く"
       speaker_notes: "CLAUDE.md を分冊にしたものが rules/。paths を書くと必要なときだけ読まれる。CLAUDE.md は200行以下が目安。"
 
-    - no: 15
+    - page: 15
       chapter: l02
       role: 説明
       message: "Subagent は独自のコンテキストを持つ役割別の分身で、本体の会話を汚さずに分業させられる"
@@ -442,7 +445,7 @@ content:
         - "部品名を「Agent」と書く（段階名「エージェント駆動」と衝突するため）"
       speaker_notes: "Skill は会話に載る、Subagent は別のコンテキストで動いて要約だけ返す。この差だけ押さえてもらう。Agent teams は実験的機能として一言触れる程度。"
 
-    - no: 16
+    - page: 16
       chapter: l02
       role: 説明
       message: "「毎回聞かれずに、必ず実行してほしい」ことを Hook にする。人が見ていなくても効く唯一の部品"
@@ -479,7 +482,7 @@ content:
         - "冒頭デモで Hook を使ったと書く（教材は Hook を意図的に置いていない）"
       speaker_notes: "Hook は AI の判断を通らずに必ず動く。守らせたいことは Hook、判断が要ることは Skill / Subagent、という使い分けを一言で。"
 
-    - no: 17
+    - page: 17
       chapter: l02
       role: 説明
       message: "見えないツールの情報をコピペし続けるのをやめ、MCP で AI を外部ツールに直接つなぐ"
@@ -510,7 +513,7 @@ content:
         - "API キーを設定ファイルに直書きする例を載せる"
       speaker_notes: "MCP は AI を外のツールにつなぐ共通の端子。冒頭デモは gh コマンドで登録していて MCP ではない、と正確に言う。"
 
-    - no: 18
+    - page: 18
       chapter: l02
       role: 説明
       message: "Plugin が「束ねる」、Marketplace が「配る」"
@@ -544,7 +547,7 @@ content:
         - "作り方の手順をこのページに詳しく書く（Appendix で扱う）"
       speaker_notes: "束ねるのが Plugin、配るのが Marketplace。別のリポジトリでも同じ環境が要ると思ったときが作りどき。詳しくは Appendix。"
 
-    - no: 19
+    - page: 19
       chapter: l02
       role: 要点
       message: "「3回やったらAI化」の次の問い。この状況になったら、この部品を作る"
@@ -564,7 +567,7 @@ content:
         - "○△× の評価記号で表す"
       speaker_notes: "自分がどの行にいるかで、次に作るものが決まる。今日は Skill の行から始める。"
 
-    - no: 20
+    - page: 20
       chapter: l02
       role: 要点
       message: "冒頭のデモは、いま見た部品の組み合わせでできていた。特別なことは何もしていない"
@@ -586,7 +589,7 @@ content:
     # L03 どこに置くか（p21-24 / 約7分）
     # ============================================================
 
-    - no: 21
+    - page: 21
       chapter: l03
       role: 章扉
       message: "リポジトリ自体を、AI駆動の作業場にする"
@@ -597,7 +600,7 @@ content:
       avoid: []
       speaker_notes: "章扉。置き場所の話。"
 
-    - no: 22
+    - page: 22
       chapter: l03
       role: 要点
       message: "前提・手順・役割・安全装置を .claude/ 配下に集約する"
@@ -613,13 +616,13 @@ content:
         - Skill: 知識・手順を足す / description で自動、または名前で呼ぶ / 呼ばれるまでコンテキストへの影響はほぼ 0 / 確実性は LLM の判断（お願い）
         - Rule: 規約を足す / 常時、または paths に一致したとき / 確実性は LLM の判断
         - Subagent: 専門の働き手を足す / 自動委任、または明示指名 / 別コンテキストで要約だけ返る / 確実性は LLM の判断
-        - Hook: 確定的な処理を足す / イベントで必ず / 確実性 100%（ただのシェル）
+        - Hook: 確定的な処理を足す / イベントで必ず / 確実性: 発火は必ず（AI の判断を通らない）
         - MCP: 外部の道具を足す / Claude がツールとして呼ぶ / ツール定義が常時載る / 接続は確実、利用判断は LLM
         - Plugin: 上記の配布単位 / インストール時
       avoid: []
       speaker_notes: "実践0で実物を見る構成。ここは目で覚えてもらう。"
 
-    - no: 23
+    - page: 23
       chapter: l03
       role: 要点
       message: "リポジトリに置くのは、個人の工夫で終わらせず、チームの資産として共有・改善できるようにするため"
@@ -634,7 +637,7 @@ content:
         - "今日の実践で Git や Pull Request を使うように読める書き方"
       speaker_notes: "リポジトリを持たない業務の人にも刺さるよう3点目を必ず言う。"
 
-    - no: 24
+    - page: 24
       chapter: l03
       role: 要点
       message: "任せる範囲を広げるほど、止め方を先に設計しておく必要がある"
@@ -652,9 +655,9 @@ content:
     # ここまでの整理（p25 / 約2分）
     # ============================================================
 
-    - no: 25
+    - page: 25
       chapter: summary
-      role: 整理
+      role: ここまでの整理
       message: "ここまでが全員共通。ここから手を動かし、47分後には成果物が手元に残る"
       must_include:
         - "3回やったらAI化: 「面倒」を感じた瞬間がシグナル"
@@ -670,7 +673,7 @@ content:
     # 実践（p26-35 / 47分）
     # ============================================================
 
-    - no: 26
+    - page: 26
       chapter: practice
       role: 章扉
       message: "作って動かすだけで終わらせない。不満を見つけて直すまでが今日の成果物"
@@ -681,9 +684,9 @@ content:
       avoid: []
       speaker_notes: "章扉。ここから47分。手を動かす。"
 
-    - no: 27
+    - page: 27
       chapter: practice
-      role: 実践の進め方
+      role: 進め方と時間
       message: "実践は47分。完成度より「修正して再実行」まで一周することを優先する"
       must_include:
         - "実践0 教材フォルダを開く（5分）: Claude Desktop の Code タブで開き、同梱資産を確認する"
@@ -699,7 +702,7 @@ content:
         - "やり直し方として clone し直す・Git で戻すと書く"
       speaker_notes: "時間配分と詰まったときの導線。完成度より一周を優先すると明言する。"
 
-    - no: 28
+    - page: 28
       chapter: practice
       role: 実践
       message: "同梱の資産を確認して、今日の作業場を立ち上げる"
@@ -718,7 +721,7 @@ content:
         - "リポジトリを clone / fork すると書く"
       speaker_notes: "5分。全員が同じ画面になったことを確認してから次へ。"
 
-    - no: 29
+    - page: 29
       chapter: practice
       role: 実践
       message: "ループの燃料は自分の繰り返し作業。まず書き出して、1つに絞る"
@@ -739,7 +742,7 @@ content:
       avoid: []
       speaker_notes: "7分。コードに限らない。1つに絞らせることが重要。迷っている人には、議事録からのToDo抽出・日報週報・定例の情報収集サマリの3つを勧める。"
 
-    - no: 30
+    - page: 30
       chapter: practice
       role: 実践
       message: "課題整理エージェントに質問させながら、自分の手順を SKILL.md に書き出させる"
@@ -759,7 +762,7 @@ content:
       avoid: []
       speaker_notes: "12分。任せきりにせず自分で読ませる。レビュー観点を読み上げる。"
 
-    - no: 31
+    - page: 31
       chapter: practice
       role: 実践
       message: "作った Skill を実際に呼び出して、狙った作業が完遂できるか確かめる"
@@ -774,11 +777,12 @@ content:
       avoid: []
       speaker_notes: "8分。一発で動かないのが正常だと先に言っておく。"
 
-    - no: 32
+    - page: 32
       chapter: practice
       role: 強調
       message: "AIの出力に不満が出たら、直すのはプロンプトではなく“スキル”"
       must_include:
+        - "キーフレーズ（原文どおり・p8 と同じ）: AIの出力に不満が出たら、直すのはプロンプトではなく“スキル”"
         - "実践4（5分）: 不満を1つに絞る"
         - "3行で書く: どこで起きたか / 期待していた動作 / 実際の動作"
         - "ここで書いた3行が、次の Skill 修正の指示書になる"
@@ -789,7 +793,7 @@ content:
         - "不満を複数並べさせる"
       speaker_notes: "強調2回目。3行で書かせる。ここが今日の山場。"
 
-    - no: 33
+    - page: 33
       chapter: practice
       role: 実践
       message: "プロンプトを工夫するのではなく、SKILL.md に書き戻す"
@@ -807,7 +811,7 @@ content:
         - "変更履歴を Git で確認すると書く"
       speaker_notes: "6分。書き戻した瞬間に資産になる、が結論。変更サマリをメモさせる。"
 
-    - no: 34
+    - page: 34
       chapter: practice
       role: 実践
       message: "直した Skill をもう一度動かし、1周目と比べる"
@@ -823,7 +827,7 @@ content:
       avoid: []
       speaker_notes: "4分。改善していなくても学び。④に戻る。"
 
-    - no: 35
+    - page: 35
       chapter: practice
       role: 実践まとめ
       message: "座学で見た図を、いま自分の手で一周した。この Skill は、明日もう一度使えばまた一段良くなる"
@@ -840,7 +844,7 @@ content:
     # クロージング（p36-37 / 10分）
     # ============================================================
 
-    - no: 36
+    - page: 36
       chapter: closing
       role: 手元に残ったもの
       message: "Skill が1つと、それを1回育てた経験。この2つが持ち帰りのすべて"
@@ -854,7 +858,7 @@ content:
         - "「履歴」を Git の履歴と読める書き方（教材は変更履歴が残らない。残るのはメモした変更サマリ）"
       speaker_notes: "隣の人と見せ合う時間を取る。"
 
-    - no: 37
+    - page: 37
       chapter: closing
       role: 明日やること
       message: "明日、今日作った Skill を1回使う。それだけでループは回り始める"
@@ -875,7 +879,7 @@ content:
     # Appendix（p38-44 / 本編では話さない。より学習したい人向けの持ち帰り資料）
     # ============================================================
 
-    - no: 38
+    - page: 38
       chapter: appendix
       role: Appendix
       message: "本編は Skill 1つに絞った。ここから先は、開発環境・チーム共有・仕様駆動・大規模な並列実行へ広げる道筋"
@@ -887,7 +891,7 @@ content:
       avoid: []
       speaker_notes: "Appendixの扉。本編で終わってよい。ここから先は希望者向け。"
 
-    - no: 39
+    - page: 39
       chapter: appendix
       role: Appendix
       message: "環境づくりも Claude 自身にやらせる。新規と既存で入口が違うだけ"
@@ -903,7 +907,7 @@ content:
       avoid: []
       speaker_notes: "環境づくりもClaude自身にやらせる。新規と既存で入口が違うだけ。"
 
-    - no: 40
+    - page: 40
       chapter: appendix
       role: Appendix
       message: "コード開発に効くものは公式マーケットプレイスに揃っている。まずここから取る"
@@ -921,7 +925,7 @@ content:
       avoid: []
       speaker_notes: "公式マーケットプレイスから取る。ECCは参考環境として紹介。必要な言語だけ入れる。"
 
-    - no: 41
+    - page: 41
       chapter: appendix
       role: Appendix
       message: "2つ目のリポジトリで同じ設定が要るときが、プラグイン化のタイミング"
@@ -938,7 +942,7 @@ content:
         - "部品名を「Agent」と書く"
       speaker_notes: "2つ目のリポジトリで同じ設定が要るときがプラグイン化のタイミング。最初からやらなくてよい。"
 
-    - no: 42
+    - page: 42
       chapter: appendix
       role: Appendix
       message: "GitHub リポジトリ1つで、チーム全員が同じ Skill を使えるようになる"
@@ -956,7 +960,7 @@ content:
       avoid: []
       speaker_notes: "実際の手順。5ステップ。社内限定はprivateリポジトリでよい。"
 
-    - no: 43
+    - page: 43
       chapter: appendix
       role: Appendix
       message: "コードの前に仕様を書く。Kiro（AWS のIDE）と同じ考え方を、Claude Code の上で回す"
@@ -974,7 +978,7 @@ content:
       avoid: []
       speaker_notes: "コードの前に仕様を書く。Kiroと同じ考え方をClaude Codeの上で回す。"
 
-    - no: 44
+    - page: 44
       chapter: appendix
       role: Appendix
       message: "プランを Claude の頭からスクリプトへ移す。だから何十エージェントでも破綻しない"

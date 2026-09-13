@@ -97,7 +97,7 @@ life-os の外（claude.ai のチャットなど）で使う場合はリポジ�
 
 ### 4. ページごとの指示を書く
 
-各ページに `no` / `chapter` / `role`（任意）/ `message` / `must_include` / `notes` / `avoid` / `speaker_notes` を書く。
+各ページに `page`（ページ番号）/ `chapter` / `role`（任意）/ `message` / `must_include` / `notes` / `avoid` / `speaker_notes` を書く。
 
 | キー | 書くこと | 書かないこと |
 |---|---|---|
