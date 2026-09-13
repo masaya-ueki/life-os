@@ -65,3 +65,4 @@ docker compose build            # 依存を変えたときにイメージを再�
 - [.claude/skills/cc-launch/SKILL.md](./.claude/skills/cc-launch/SKILL.md) — モード選択式で作業を起動するスキル（plan / simple / interactive / fable）
 - [.claude/skills/close-task/SKILL.md](./.claude/skills/close-task/SKILL.md) — 作業完了後のクローズ処理（Issue クローズ・知識蓄積・worktree 削除・次タスク提示）を一括実行するスキル
 - [.claude/skills/slide-spec-writer/SKILL.md](./.claude/skills/slide-spec-writer/SKILL.md) — Claude Design 用のスライド指示書を作り `docs/design/decks/<案件名>/spec.yml` に保存するスキル（[ADR-0016](./docs/adr/0016-claude-design-design-system-file.md)）
+- [.claude/skills/claude-code-release-watcher/SKILL.md](./.claude/skills/claude-code-release-watcher/SKILL.md) — Claude Code の新リリースを Notion（リリース要約・機能説明書・Information Hub）に記録するスキル（Routines で毎日実行）
