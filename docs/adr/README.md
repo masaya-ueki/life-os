@@ -33,6 +33,7 @@ ADR（Architecture Decision Record）は「なぜその設計にしたのか」�
 | [ADR-0015](./0015-revenue-org-inside-life-os.md) | 収益組織を life-os 内に置き、売り物だけを別リポジトリへ切り出す | 承認済み | 2026-08-14 |
 | [ADR-0016](./0016-claude-design-design-system-file.md) | Claude Design への入力（デザインシステム／指示書）を docs/design/ に集約する | 承認済み | 2026-09-08 |
 | [ADR-0017](./0017-slide-spec-claim-materials-deck-types.md) | スライド指示書を「主張＋材料＋資料タイプ別の型」で書く | 提案中 | 2026-09-13 |
+| [ADR-0018](./0018-design-system-slide-first-windows-fonts.md) | デザインシステムの主用途をスライド（配布・投影）に置き、フォントとコード配色を改める | 承認済み | 2026-09-13 |
 
 ---
 
