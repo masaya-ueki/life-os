@@ -1,5 +1,5 @@
 # life-os ローカル開発用 Docker Compose
-# 設計根拠: docs/adr/0004-docker-test-environment.md
+# 設計根拠: docs/adr/0006-docker-test-environment.md
 #
 # 使い方:
 #   docker compose run --rm test    # スモークテスト（pytest）

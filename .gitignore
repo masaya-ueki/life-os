@@ -22,3 +22,7 @@ dist/
 
 # csv_splitter 実行時出力（タイムスタンプ付きサブディレクトリは生成物）
 domains/tools/data/csv_splitter/output/*/
+
+# TLS 傍受プロキシ用の追加 CA（環境ごとに異なり、失効もするためコミットしない）
+# 配置は .claude/hooks/session-start.sh が行う。詳細は docker/certs/README.md。
+docker/certs/*.crt
