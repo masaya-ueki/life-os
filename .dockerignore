@@ -1,5 +1,5 @@
 # Docker ビルドコンテキストから除外する（イメージに不要 / キャッシュを汚さない）
-# 設計根拠: docs/adr/0004-docker-test-environment.md
+# 設計根拠: docs/adr/0006-docker-test-environment.md
 
 # Git / Claude Code 作業領域
 .git
@@ -18,6 +18,9 @@ dist
 
 # Docker 定義自体（イメージ内に取り込む必要はない）
 docker
+# ただし追加 CA（TLS 傍受プロキシ用）はビルド時に必要なため除外しない。
+# 詳細: docker/certs/README.md
+!docker/certs
 compose.yaml
 .dockerignore
 
