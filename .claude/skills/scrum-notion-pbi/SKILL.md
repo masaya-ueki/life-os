@@ -1,6 +1,6 @@
 ---
 name: scrum-notion-pbi
-description: Notion の Product Backlog データベースに PBI（Product Backlog Item）を対話形式で作成するスキル。Title 命名規則・Sprint 提案・Project 特定・本文テンプレートを一本化する。Use when: PBI を作成したい、Notion にバックログを起票したい、Sprint Planning でバックログを追加したい。Triggers on: PBI作成, scrum-notion-pbi, Notionバックログ登録, PBI起票, プロダクトバックログ追加.
+description: Notion の Product Backlog データベースに PBI（Product Backlog Item）を対話形式で作成するスキル。Title 命名規則・Sprint 提案・Project 特定・本文テンプレートを一本化し、Point 傾向ログの追記 PR は review-and-merge-pr で自動マージまで進める。Use when: PBI を作成したい、Notion にバックログを起票したい、Sprint Planning でバックログを追加したい。Triggers on: PBI作成, scrum-notion-pbi, Notionバックログ登録, PBI起票, プロダクトバックログ追加.
 ---
 
 # scrum-notion-pbi スキル
@@ -128,7 +128,9 @@ Notion の **Product Backlog** データベースに PBI を対話形式で作�
      ↓
 ステップ7: notion-create-pages で Product Backlog データソース配下に作成
      ↓
-ステップ8:（通常PBIのみ）ステップ数・難易度をヒアリングし point-history.md に記録する
+ステップ8:（通常PBIのみ）ステップ数・難易度をヒアリングし point-history.md に追記 → PR を作成する
+     ↓
+ステップ9:（ステップ8で PR を作った場合）review-and-merge-pr を自動実行してマージする
 ```
 
 ### ステップ0: Project を特定する
@@ -174,6 +176,22 @@ Notion の **Product Backlog** データベースに PBI を対話形式で作�
 
 - 「イベント」PBI の場合はこのステップを行わない。
 - 通常 PBI の場合、ステップ数（このPBIに必要な Task 数の見込み）と難易度をユーザーにヒアリングし、[`domains/task/docs/point-history.md`](../../../domains/task/docs/point-history.md) に「PBI Title / ステップ数 / 難易度 / Point / 記録日」の1行を追記する。
+- 追記は PR で `main` に入れる。手順:
+  1. `git pull` で最新化した `main` から worktree を作り、ブランチ `docs/point-history-{作業名-kebab-case}` を切る（Notion 側の PBI 起票に付随するログ追記で、対応する GitHub Issue は無いため `issue-{N}` を含めない）。
+  2. **変更は `domains/task/docs/point-history.md` だけにする**。他のファイルを混ぜるとステップ9のスコープゲートが human になり、自動マージされない。
+  3. コミット・PR タイトルは `docs(task): PBI「{PBI Title}」をPoint傾向ログに追記`（スカッシュ後のコミット件名になる）。
+  4. push して `gh pr create --base main` で PR を作る。本文は「概要 / 関連 Issue（なし）/ 変更内容（追記した行）/ 確認内容」。
+- 同じセッションで複数の PBI を作った場合（Sprint Planning など）は、まとめて 1 PR にしてよい（タイトル例: `docs(task): Sprint {Sprint名} の新規 PBI {N}件を point-history に記録`）。
+
+### ステップ9: review-and-merge-pr の自動実行（ステップ8で PR を作った場合）
+
+- PR 作成後、**ユーザーに確認せず**続けて [`review-and-merge-pr`](../review-and-merge-pr/SKILL.md) スキルを PR 番号を引数に `Skill` ツールで実行する。
+- `point-history.md` は単一領域（`task`）の中なのでスコープゲートは auto になり、検証ゲート（pytest ∧ lint-imports ∧ `[must]`=0）を通ればスカッシュマージ → `main` pull まで進む。
+- 次の場合はマージされない。ゲートを回避して手動でマージせず、PR URL と理由をユーザーに報告して終える（Notion の PBI 作成は完了済み）:
+  - human 判定（ステップ8の手順2に反して他ファイルが混ざった）
+  - `[must]` あり、または検証失敗
+  - `mergeable` が CONFLICTING（同時期の別 PR も表の末尾に追記した場合に起きやすい）。追記行の衝突だけなら `origin/main` に rebase して再 push し、ステップ9を1回だけやり直してよい
+- マージ後は作成した worktree とローカルブランチを削除する。
 
 ---
 
@@ -184,6 +202,8 @@ Notion の **Product Backlog** データベースに PBI を対話形式で作�
 | `notion-query-data-sources` | Sprint 候補検索・Project 検索 |
 | `notion-create-pages` | PBI ページ作成 |
 | `notion-fetch` | 作成後の確認・スキーマ再確認 |
+
+ステップ8〜9 では Notion MCP ではなく `git` / `gh`（PR 作成）と `Skill`（`review-and-merge-pr`）を使う。
 
 ---
 

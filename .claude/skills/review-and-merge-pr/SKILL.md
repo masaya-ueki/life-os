@@ -1,6 +1,6 @@
 ---
 name: review-and-merge-pr
-description: PR の変更ファイルパスから「自動マージ / 人間レビュー必須」を決定的に判定するスキル。auto なら code-review-* でレビューし pytest ∧ lint-imports ∧ [must]=0 を満たせば無人マージ → main pull、human なら理由を明示してレビューのみ行う（マージしない）。判定はブラスト半径（パス）ベースで、領域横断・shared・方針/境界/契約ファイルは人間必須。Use when: PR をレビューして自動マージ可否を判定したい、レビューしてマージして、PR を確認して main に入れて。Triggers on: 自動レビュー, 自動マージ, レビューしてマージ, PRレビューしてマージ, PRを確認してマージ, review and merge, マージ判定.
+description: PR の変更ファイルパスから「自動マージ / 人間レビュー必須」を決定的に判定するスキル。auto なら code-review-* でレビューし pytest ∧ lint-imports ∧ [must]=0 を満たせば無人でスカッシュマージ → main pull、human なら理由を明示してレビューのみ行う（マージしない）。判定はブラスト半径（パス）ベースで、領域横断・shared・方針/境界/契約ファイルは人間必須。Use when: PR をレビューして自動マージ可否を判定したい、レビューしてマージして、PR を確認して main に入れて。Triggers on: 自動レビュー, 自動マージ, レビューしてマージ, PRレビューしてマージ, PRを確認してマージ, review and merge, マージ判定.
 argument-hint: "[PR番号]"
 allowed-tools: Bash, Read, Grep, Glob, Skill, Agent
 ---
@@ -21,6 +21,8 @@ PR を**変更ファイルパスから決定的に分類**し、「**自動マ�
 
 - ユーザーが `/review-and-merge-pr` または `/review-and-merge-pr <PR番号>` を実行した場合
 - ユーザーが「この PR をレビューして（自動）マージして」「PR を確認して main に入れて」と依頼した場合
+- 他スキルから自動で呼ばれた場合（例: [`scrum-notion-pbi`](../scrum-notion-pbi/SKILL.md) ステップ9。Point 傾向ログ追記 PR を作成した直後に、PR 番号を引数として実行する）
+  - 呼び出し元から実行されたときもゲートは緩めない。human / `[must]`>0 / 検証失敗ならマージせず、判定理由と PR URL を呼び出し元に返す
 
 ---
 
@@ -31,6 +33,7 @@ PR を**変更ファイルパスから決定的に分類**し、「**自動マ�
 - **レビュー観点・指摘記載・検証ゲート・マージ手順は既存資産を再利用する**
   （`code-review-*` スキル、`pr-reviewer` の検証ゲート、severity 語彙）。本スキルが足すのは**スコープゲート**のみ。
 - **auto は完全無人でマージする**（`[must]`=0 ∧ pytest ∧ lint-imports pass が条件。承認待ちしない）。
+- **マージ方式はスカッシュマージを基本とする**（`gh pr merge <N> --squash`）。1 PR = `main` 上の 1 コミットにし、履歴を PR 単位で追えるようにする。
 - **human はマージしない**。レビューコメントを投稿し、判定理由（①/②/③のどれか・該当パス）を明示して報告する。
 
 ---
@@ -228,13 +231,19 @@ docker compose run --rm lint    # lint-imports 違反なし
 ### マージ
 
 ゲート（pytest pass ∧ lint-imports pass ∧ `[must]`=0）を**すべて満たすときのみ**マージする。
-リポジトリ既存運用に合わせ**マージコミット方式**（squash にはしない。`Closes #N` で Issue 自動クローズ）。
+**スカッシュマージを基本とする**（PR 本文の `Closes #N` による Issue 自動クローズはスカッシュでも有効）。
 
 ```bash
-gh pr merge <N>
-git switch main && git pull
+gh pr merge <N> --squash
+
+# main を最新化する。worktree から実行していると main は本体側でチェックアウト済みのため、
+# git worktree list の先頭（本体の作業ツリー）で pull する
+MAIN_DIR=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
+git -C "$MAIN_DIR" switch main && git -C "$MAIN_DIR" pull --ff-only
 ```
 
+- スカッシュ後のコミット件名は **PR タイトル（末尾に `(#N)`）** になる。PR タイトルが Conventional Commits 形式（`{type}({scope}): {要約}`）でなければ、マージ前に `gh pr edit <N> --title` で直す。
+- スカッシュでマージできない設定のリポジトリ・PR の場合（`gh pr merge` がエラーを返す）は、ほかの方式に切り替えず**停止して報告**する。
 - いずれかの検証が失敗 → **マージせず停止**し、失敗内容（テスト/lint 出力）を報告する。
 
 ---
@@ -289,7 +298,7 @@ git switch main && git pull
 - **判定はパスのみで決定的に行う**: PR の自己説明や「簡易そう」という主観でゲートを緩めない。
 - **human は絶対にマージしない**: 領域横断・shared・方針/境界/契約に触れる PR は人間レビュー必須。
 - **auto の無人マージはゲート必須**: pytest ∧ lint-imports ∧ `[must]`=0 を満たさない限りマージしない。
-- **マージ方式はマージコミット**（`pr-reviewer` 既存運用に合わせる。squash にしない）。
+- **マージ方式はスカッシュマージが基本**（`gh pr merge <N> --squash`。`pr-reviewer` も同じ方式）。
 - **マージ後は必ず main を pull**（GitHub Flow・main 直接運用）。
 - **日本語統一**: 判定結果・レビューコメント・Issue 本文はすべて日本語で記述する。
 - 判定ロジック・観点・ゲートの実体は本スキルと既存資産が単一の真実。重複定義しない。

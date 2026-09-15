@@ -59,7 +59,7 @@ PR番号
 
 1. `uv run pytest` を実行（全パスを確認）。
 2. `uv run lint-imports` を実行（境界に違反が無いことを確認）。
-3. **両方 pass かつ `[must]`=0** のときのみ `gh pr merge {N}`（リポジトリ既存運用の**マージコミット**方式。`Closes #N` で Issue 自動クローズ）。
+3. **両方 pass かつ `[must]`=0** のときのみ `gh pr merge {N} --squash`（**スカッシュマージ**が基本。`Closes #N` で Issue 自動クローズ。手順の詳細は [`review-and-merge-pr`](../skills/review-and-merge-pr/SKILL.md) ステップ6）。
 4. マージ後 `git switch main && git pull` で `main` を最新化する。
 5. いずれかのコマンドが失敗したら**マージせず停止**し、失敗内容（テスト/lint の出力）を報告する。
 
