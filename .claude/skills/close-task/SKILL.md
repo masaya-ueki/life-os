@@ -135,7 +135,7 @@ git status
 ### 実行コマンド
 
 ```bash
-REPO="masaya-uuki/life-os"
+REPO="masaya-ueki/life-os"
 
 # 1. Issue 本文の「## 結果」セクションを更新（テンプレートにセクションがある場合）
 CURRENT_BODY=$(gh issue view <N> --repo "$REPO" --json body -q .body)
