@@ -259,15 +259,47 @@ echo "  main:     $MAIN_PATH"
 ```bash
 # worktree 削除（main から実行）
 git -C "$MAIN_PATH" worktree remove "$WORKTREE_PATH" --force
+# ロックされた worktree（git worktree list に locked と表示される）は --force を 2 回指定しないと削除できない
+# git -C "$MAIN_PATH" worktree remove "$WORKTREE_PATH" --force --force
 git -C "$MAIN_PATH" worktree prune
 
-# ローカルブランチ削除（マージ済み想定）
+# ローカルブランチ削除（通常のマージで main の祖先になっていれば成功する）
 git -C "$MAIN_PATH" branch -d "$BRANCH"
+```
+
+### スカッシュマージ後のブランチ削除
+
+PR はスカッシュマージが基本のため、作業ブランチのコミットは `main` の祖先にならず、`git branch -d` は通常「未マージ」として失敗する。
+その場合は「祖先かどうか」ではなく **「内容が main に入ったか」** で判定し、以下を**すべて**満たすときだけ `-D` で削除してよい。
+
+1. PR が `MERGED` である
+2. ブランチの内容が `origin/main` に含まれている
+
+```bash
+git -C "$MAIN_PATH" fetch origin main
+
+# 1. PR の状態（MERGED であること）。ブランチ名から PR を引く
+PR_STATE=$(gh pr view "$BRANCH" --repo masaya-ueki/life-os --json state -q .state)
+
+# 2.  内容が origin/main に入っているか（差分なしなら exit 0）
+# 2'. マージ後に main が先に進んでいて 2 で差分が出る場合は、
+#     「ブランチを origin/main にマージしても origin/main のツリーが変わらない」かで判定する。
+#     merge-tree はコンフリクト時に exit 1 になる（ツリーが一致して見えることがある）ため、必ず終了コードも条件に含める
+if [ "$PR_STATE" = "MERGED" ] && {
+     git -C "$MAIN_PATH" diff --quiet origin/main "$BRANCH" ||
+     { TREE=$(git -C "$MAIN_PATH" merge-tree --write-tree origin/main "$BRANCH") &&
+       [ "$TREE" = "$(git -C "$MAIN_PATH" rev-parse 'origin/main^{tree}')" ]; }
+   }; then
+  git -C "$MAIN_PATH" branch -D "$BRANCH"
+else
+  echo "内容が origin/main に含まれていることを確認できませんでした。削除せずユーザーに確認します。"
+fi
 ```
 
 ### 注意事項
 
-- `git branch -d` が失敗した場合（未マージ）は自動的に `-D` を実行せず、ユーザーに確認する
+- `git branch -d` が失敗し、上記「スカッシュマージ後のブランチ削除」の条件を満たさない場合（PR が `MERGED` でない・内容が `origin/main` に含まれない・`merge-tree` がコンフリクトで失敗する）は、自動的に `-D` を実行せずユーザーに確認する
+- ロックされた worktree は `git worktree remove --force --force` が必要。ロックは作業中のセッションが意図的に掛けていることがあるため、そのセッションが終了していることを確認してから実行する
 - worktree 削除後はそのシェルセッションは無効になるため、ユーザーに main へ移動するよう案内する
 
 ```
