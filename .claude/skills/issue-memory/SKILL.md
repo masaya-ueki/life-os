@@ -197,7 +197,7 @@ EOF
 
 ```bash
 gh issue create \
-  --repo masaya-uoki/life-os \
+  --repo masaya-ueki/life-os \
   --title "{type}({scope}): {タイトル}" \
   --label "no-product-backlog,type: {type},system: {scope}" \
   --body "$(cat <<'EOF'
