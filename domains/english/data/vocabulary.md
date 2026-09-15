@@ -37,3 +37,7 @@
 | word | option | 選択肢、案 | Please proceed with Option A. |
 | word | investigation | 調査 | Thank you for the investigation. |
 | idiom | look into | 調べる、調査する | Thank you for looking into this. |
+| word | input | 入力、入力内容 | Your input is longer than expected. |
+| word | output | 出力、出力内容 | The output was about fifty times longer. |
+| word | token | トークン（処理単位）、しるし | The model counts tokens, not words. |
+| word | philosopher | 哲学者、賢者 | The ancient philosopher wrote about virtue. |

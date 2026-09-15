@@ -20,3 +20,5 @@
 | by instinct | 本能的に、直感的に | Birds find their way south by instinct. |
 | Thank you for ~ing | 〜してくれてありがとう | Thank you for looking into this. |
 | proceed with ~ | 〜で進める、〜に着手する | Please proceed with Option A. |
+| ~ (before a number) | 約〜、およそ〜（approximately の略記） | The file is ~50 MB. |
+| 50x / N times the ~ | 〜のN倍 | Your output is 50x the length of the original. |
