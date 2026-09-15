@@ -91,7 +91,7 @@ PR
 `[must]` が 0 件の場合、pr-reviewer は**検証ゲート**を通してからマージする。
 
 - ゲート: `uv run pytest` **pass** ∧ `uv run lint-imports` **pass** ∧ `[must]` = 0
-- ゲート通過 → `gh pr merge`（マージコミット方式・`Closes #N` で Issue 自動クローズ）→ `git switch main && git pull`
+- ゲート通過 → `gh pr merge --squash`（**スカッシュマージが基本**。コミット件名は PR タイトルになるため Conventional Commits 形式を守る・`Closes #N` で Issue 自動クローズ）→ `git switch main && git pull`
 - いずれか不成立 → **マージせず**、失敗内容（テスト/lint 出力）を報告
 
 > GitHub Actions の CI は未設置のため、検証は**ローカル実行**（`uv run ...`）で行う。CI を導入したら、このゲートを CI の結果に置き換える（ADR-0004 のトレードオフ参照）。
