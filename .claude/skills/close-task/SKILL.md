@@ -2,7 +2,7 @@
 name: close-task
 description: 作業クローズの標準ワークフロー。Issue クローズ（テンプレート記録 + close）・気づき/拡張を continuous-learning に蓄積（confidence ≥ 0.7 は issue-memory でタスク化）・worktree とローカルブランチ削除・ProductBacklog 状況/次タスク提示を一括処理する。
 argument-hint: "[Issue番号]"
-allowed-tools: Bash, Read, Glob, Skill
+allowed-tools: Bash, Read, Glob, Edit, Write, Skill, ExitWorktree
 ---
 
 # close-task スキル
@@ -59,18 +59,27 @@ gh issue view <N> --repo masaya-ueki/life-os \
 ### ブランチ・worktree の状態確認
 
 ```bash
+# リモートの main を最新化（本体チェックアウトのローカル main は古い可能性があるため origin/main を基準にする）
+git fetch origin main
+
 # main からの差分コミット
-git log main..HEAD --oneline
+git log origin/main..HEAD --oneline
 
 # 変更ファイル一覧
-git diff main..HEAD --stat
+git diff origin/main...HEAD --stat
 
-# worktree 一覧（現在地の確認）
+# worktree 一覧（現在地の確認・locked の有無）
 git worktree list
 
 # 未プッシュコミットの確認
 git status
 ```
+
+#### worktree 分離セッション（EnterWorktree）から実行する場合
+
+- 本体チェックアウトを `git -C "$MAIN_PATH" ...` で指す git 操作はハーネスに拒否されるため使わない。状態確認は上記のとおり **worktree 内から `origin/main` を参照して**行う
+- 変数展開やパイプを含む複雑な git / gh コマンドも拒否されることがあるため、**1 コマンドずつ**実行する
+- ステップ4で本体に戻った後は現在のブランチ・worktree を取得できないため、ここで **ブランチ名・worktree の絶対パス・locked の有無・PR 番号を控えておく**
 
 ### ガード条件（エラー終了）
 
@@ -134,24 +143,23 @@ git status
 
 ### 実行コマンド
 
+本文・コメントは**変数展開を使わず、ファイルに書き出して `--body-file` で渡す**（worktree 分離セッションでは変数展開を含む gh コマンドが拒否されるため。通常セッションでも同じ手順でよい）。
+作業用ファイルはセッションの一時ディレクトリ（システムプロンプトで示される scratchpad 等、無ければ `/tmp`）に置く。コマンドにはディレクトリを**絶対パスで直接書き込み**、`$CLAUDE_JOB_DIR` のような環境変数は使わない（変数展開として拒否されうるため）。
+
 ```bash
-REPO="masaya-uuki/life-os"
-
 # 1. Issue 本文の「## 結果」セクションを更新（テンプレートにセクションがある場合）
-CURRENT_BODY=$(gh issue view <N> --repo "$REPO" --json body -q .body)
-# <!-- Issue クローズ後に記載 --> または <!-- 完了後に記載 --> を実際の内容に置換
-UPDATED_BODY=$(echo "$CURRENT_BODY" | sed 's|<!-- Issue クローズ後に記載 -->|{実施内容の要約}|' \
-                                    | sed 's|<!-- 完了後に記載 -->|{実施内容の要約}|')
-gh issue edit <N> --repo "$REPO" --body "$UPDATED_BODY"
+#    1-1. 現在の本文をファイルに書き出す
+gh issue view <N> --repo masaya-ueki/life-os --json body -q .body > <一時ディレクトリ>/issue-<N>-body.md
+#    1-2. Read ツールでファイルを読んでから、Edit ツールで <!-- Issue クローズ後に記載 --> または <!-- 完了後に記載 --> を実施内容の要約に置換する
+#         （Edit は Read していないファイルを編集できない）
+#    1-3. ファイルの内容で本文を更新する
+gh issue edit <N> --repo masaya-ueki/life-os --body-file <一時ディレクトリ>/issue-<N>-body.md
 
-# 2. クローズコメントを追記
-gh issue comment <N> --repo "$REPO" --body "$(cat <<'EOF'
-{上記テンプレートの内容}
-EOF
-)"
+# 2. クローズコメントを追記（Write ツールで上記テンプレートの内容を書き出してから渡す）
+gh issue comment <N> --repo masaya-ueki/life-os --body-file <一時ディレクトリ>/issue-<N>-close-comment.md
 
 # 3. Issue をクローズ
-gh issue close <N> --repo "$REPO" --reason completed
+gh issue close <N> --repo masaya-ueki/life-os --reason completed
 ```
 
 ---
@@ -259,15 +267,47 @@ echo "  main:     $MAIN_PATH"
 ```bash
 # worktree 削除（main から実行）
 git -C "$MAIN_PATH" worktree remove "$WORKTREE_PATH" --force
+# ロックされた worktree（git worktree list に locked と表示される）は --force を 2 回指定しないと削除できない
+# git -C "$MAIN_PATH" worktree remove "$WORKTREE_PATH" --force --force
 git -C "$MAIN_PATH" worktree prune
 
-# ローカルブランチ削除（マージ済み想定）
+# ローカルブランチ削除（通常のマージで main の祖先になっていれば成功する）
 git -C "$MAIN_PATH" branch -d "$BRANCH"
+```
+
+### スカッシュマージ後のブランチ削除
+
+PR はスカッシュマージが基本のため、作業ブランチのコミットは `main` の祖先にならず、`git branch -d` は通常「未マージ」として失敗する。
+その場合は「祖先かどうか」ではなく **「内容が main に入ったか」** で判定し、以下を**すべて**満たすときだけ `-D` で削除してよい。
+
+1. PR が `MERGED` である
+2. ブランチの内容が `origin/main` に含まれている
+
+```bash
+git -C "$MAIN_PATH" fetch origin main
+
+# 1. PR の状態（MERGED であること）。ブランチ名から PR を引く
+PR_STATE=$(gh pr view "$BRANCH" --repo masaya-ueki/life-os --json state -q .state)
+
+# 2.  内容が origin/main に入っているか（差分なしなら exit 0）
+# 2'. マージ後に main が先に進んでいて 2 で差分が出る場合は、
+#     「ブランチを origin/main にマージしても origin/main のツリーが変わらない」かで判定する。
+#     merge-tree はコンフリクト時に exit 1 になる（ツリーが一致して見えることがある）ため、必ず終了コードも条件に含める
+if [ "$PR_STATE" = "MERGED" ] && {
+     git -C "$MAIN_PATH" diff --quiet origin/main "$BRANCH" ||
+     { TREE=$(git -C "$MAIN_PATH" merge-tree --write-tree origin/main "$BRANCH") &&
+       [ "$TREE" = "$(git -C "$MAIN_PATH" rev-parse 'origin/main^{tree}')" ]; }
+   }; then
+  git -C "$MAIN_PATH" branch -D "$BRANCH"
+else
+  echo "内容が origin/main に含まれていることを確認できませんでした。削除せずユーザーに確認します。"
+fi
 ```
 
 ### 注意事項
 
-- `git branch -d` が失敗した場合（未マージ）は自動的に `-D` を実行せず、ユーザーに確認する
+- `git branch -d` が失敗し、上記「スカッシュマージ後のブランチ削除」の条件を満たさない場合（PR が `MERGED` でない・内容が `origin/main` に含まれない・`merge-tree` がコンフリクトで失敗する）は、自動的に `-D` を実行せずユーザーに確認する
+- ロックされた worktree は `git worktree remove --force --force` が必要。ロックは作業中のセッションが意図的に掛けていることがあるため、そのセッションが終了していることを確認してから実行する
 - worktree 削除後はそのシェルセッションは無効になるため、ユーザーに main へ移動するよう案内する
 
 ```
@@ -275,6 +315,43 @@ git -C "$MAIN_PATH" branch -d "$BRANCH"
 このシェルは無効になりました。main checkout に移動してください：
   cd {MAIN_PATH}
 ```
+
+### worktree 分離セッション（EnterWorktree）から実行する場合
+
+分離セッションでは上記の `git -C "$MAIN_PATH" ...` が拒否されるため、**先に本体へ戻ってから本体側で削除する**。
+値（ブランチ名・worktree パス・locked の有無）はステップ1で控えたものを使う。
+
+以下のコマンドの `<BRANCH>` / `<WORKTREE_PATH>` / `<PR番号>` は変数ではなく**控えた値をそのまま書き込み**、1 コマンドずつ実行する。
+
+1. **ExitWorktree（`action: "keep"`）で本体チェックアウトに戻る**
+   - `action: "remove"` は使わない。スカッシュマージ後のブランチを「未マージ」と判定して拒否し、ロックされた worktree は `discard_changes: true` でも削除できないため
+2. **本体に戻れたことを確認する**
+   - ExitWorktree は「このセッションの EnterWorktree で作った worktree」以外では何もしない（起動時に worktree へ固定されたセッション等）
+   - `git rev-parse --show-toplevel` が `git worktree list` の 1 行目（本体）のパスと一致しない場合は、削除対象の worktree 内に居るため**中断してユーザーに確認する**
+3. **本体側で worktree を削除する**（本体がカレントなので `-C` は不要）
+
+   ```bash
+   git worktree list                                   # 対象と locked の有無を確認
+   git worktree remove <WORKTREE_PATH> --force         # 通常
+   git worktree remove <WORKTREE_PATH> --force --force # locked の場合
+   git worktree prune
+   ```
+
+   - `--force --force` で外してよいのは、**このセッションの EnterWorktree が掛けたロック**（ExitWorktree で抜けた worktree）だけ。それ以外のロックは注意事項のとおり、ロックを掛けたセッションの終了をユーザーに確認してから実行する
+4. **本体側でローカルブランチを削除する**（「スカッシュマージ後のブランチ削除」の判定を単発コマンドに分解したもの）
+
+   ```bash
+   git branch -d <BRANCH>                                            # 成功すれば終了
+   git fetch origin main
+   gh pr view <PR番号> --repo masaya-ueki/life-os --json state -q .state # MERGED であること
+   git diff --quiet origin/main <BRANCH>                             # exit 0 なら内容は取り込み済み
+   git merge-tree --write-tree origin/main <BRANCH>                  # diff で差分が出た場合のみ。exit 0 であること
+   git rev-parse 'origin/main^{tree}'                                # merge-tree の出力（1 行）と一致すること
+   git branch -D <BRANCH>                                            # MERGED ∧（diff が exit 0 または merge-tree が exit 0 でツリー一致）の場合のみ
+   ```
+
+   - 条件を満たさない場合は従来どおり `-D` せずユーザーに確認する
+5. 通常フローの「このシェルは無効になりました。cd {MAIN_PATH}」の案内は不要（ExitWorktree で作業ディレクトリは本体に戻っている）
 
 ---
 
@@ -422,6 +499,7 @@ Claude:
 - **PR がない場合**: クローズコメントの「PR」欄は「PR なし（直接クローズ）」と記載し、そのままクローズする
 - **Issue 本文に `## 結果` セクションがない場合**: `gh issue edit` をスキップし、クローズコメントのみ追記する
 - **未プッシュコミットがある場合**: ステップ1で警告を表示し、push するかどうかをユーザーに確認する
+- **worktree 分離セッションからの実行**: `git -C` で本体を指す操作・変数展開を含む複雑なコマンドは拒否される。ステップ1は worktree 内から `origin/main` を参照、ステップ2は `--body-file`、ステップ4は ExitWorktree（`keep`）で本体に戻ってから削除する
 - **日本語統一**: Issue コメント・新規 Issue の本文はすべて日本語で記述する
 - **ステップの中断**: 気づき・拡張が両方「なし」の場合はステップ3の `/learn` をスキップしてよい
 - **次タスクの提示（ステップ5）**: 親 ProductBacklog が無い・open サブイシューが残っていない場合は、無理に候補を挙げず「次のタスク候補なし」または「ProductBacklog 完了」と明示する
